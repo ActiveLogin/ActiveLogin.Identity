@@ -103,6 +103,11 @@ namespace ActiveLogin.Identity.Swedish
             {
                 throw new ArgumentOutOfRangeException(nameof(serialNumber), serialNumber, "Invalid serial number. Must be in the range 0 to 999.");
             }
+
+            if (!validator.ChecksumIsValid())
+            {
+                throw new ArgumentException("Invalid checksum.", nameof(checksum));
+            }
         }
 
         /// <summary>
