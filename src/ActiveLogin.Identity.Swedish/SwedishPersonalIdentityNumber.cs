@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 
 namespace ActiveLogin.Identity.Swedish
 {
@@ -10,16 +9,45 @@ namespace ActiveLogin.Identity.Swedish
     /// </summary>
     public class SwedishPersonalIdentityNumber
     {
+        /// <summary>
+        /// The year for date of birth.
+        /// </summary>
         public int Year { get; }
+
+        /// <summary>
+        /// The month for date of birth.
+        /// </summary>
         public int Month { get; }
+
+        /// <summary>
+        /// The day for date of birth.
+        /// </summary>
         public int Day { get; }
+
+        /// <summary>
+        /// A serial number to distinguish people born on the same day. 
+        /// </summary>
         public int SerialNumber { get; }
+
+        /// <summary>
+        /// A checksum (last digit in personal identity number) used for validation.
+        /// </summary>
         public int Checksum { get; }
 
-        public SwedishPersonalIdentityNumber(int year, int month, int day, int serialNumber, int checksum)
-        {
-            EnsureIsValid(year, month, day, serialNumber, checksum);
+        /// <summary>
+        /// Date of birth for the person according to the personal identity number.
+        /// </summary>
+        public DateTime DateOfBirth { get; }
 
+        /// <summary>
+        /// Legal gender (juridiskt kön) in Sweden according to the last digit of the serial number in the personal identity number.
+        /// Odd number: Man
+        /// Even number: Woman
+        /// </summary>
+        public SwedishLegalGender LegalGender { get; }
+
+        private SwedishPersonalIdentityNumber(int year, int month, int day, int serialNumber, int checksum)
+        {
             Year = year;
             Month = month;
             Day = day;
@@ -27,36 +55,53 @@ namespace ActiveLogin.Identity.Swedish
             SerialNumber = serialNumber;
             Checksum = checksum;
 
-            DateOfBirth = new DateTime(Year, Month, Day, 0, 0, 0, DateTimeKind.Utc);
+            DateOfBirth = GetDateOfBirth(Year, Month, Day);
             LegalGender = GetLegalGender(SerialNumber);
+        }
+
+        /// <summary>
+        /// Creates an instance of <see cref="SwedishPersonalIdentityNumber"/> out of the individual parts.
+        /// </summary>
+        /// <param name="year">The year part.</param>
+        /// <param name="month">The month part.</param>
+        /// <param name="day">The day part.</param>
+        /// <param name="serialNumber">The serial number part.</param>
+        /// <param name="checksum">The checksum part.</param>
+        /// <returns>An instance of <see cref="SwedishPersonalIdentityNumber"/> if all the paramaters are valid by themselfes and in combination.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when any of the arguments are invalid.</exception>
+        public static SwedishPersonalIdentityNumber Create(int year, int month, int day, int serialNumber, int checksum)
+        {
+            EnsureIsValid(year, month, day, serialNumber, checksum);
+            return new SwedishPersonalIdentityNumber(year, month, day, serialNumber, checksum);
         }
 
         private static void EnsureIsValid(int year, int month, int day, int serialNumber, int checksum)
         {
             var validator = new SwedishPersonalIdentityNumberValidator(year, month, day, serialNumber, checksum);
+
             if (!validator.YearIsValid())
             {
-                throw new ArgumentException("Invalid year.", nameof(year));
+                throw new ArgumentOutOfRangeException(nameof(year), year, "Invalid year.");
             }
 
             if (!validator.MonthIsValid())
             {
-                throw new ArgumentException("Invalid month. Must be in the range 1 to 12.", nameof(month));
+                throw new ArgumentOutOfRangeException(nameof(month), month, "Invalid month. Must be in the range 1 to 12.");
             }
 
             if (!validator.DayIsValid())
             {
                 if (validator.DayIsValidCoOrdinationNumber())
                 {
-                    throw new ArgumentException("Invalid day of month. It might be a valid co-ordination number.", nameof(day));
+                    throw new ArgumentOutOfRangeException(nameof(day), day, "Invalid day of month. It might be a valid co-ordination number.");
                 }
 
-                throw new ArgumentException("Invalid day of month.", nameof(day));
+                throw new ArgumentOutOfRangeException(nameof(day), day, "Invalid day of month.");
             }
 
             if (!validator.SerialNumberIsValid())
             {
-                throw new ArgumentException("Invalid serial number. Must be in the range 0 to 999.", nameof(serialNumber));
+                throw new ArgumentOutOfRangeException(nameof(serialNumber), serialNumber, "Invalid serial number. Must be in the range 0 to 999.");
             }
         }
 
@@ -91,6 +136,7 @@ namespace ActiveLogin.Identity.Swedish
         /// Converts the string representation of the personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent  and returns a value that indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="personalIdentityNumber">A string representation of the personal identity number to parse.</param>
+        /// <param name="result">If valid, an instance of <see cref="SwedishPersonalIdentityNumber"/></param>
         public static bool TryParse(string personalIdentityNumber, out SwedishPersonalIdentityNumber result)
         {
             try
@@ -110,6 +156,7 @@ namespace ActiveLogin.Identity.Swedish
         /// </summary>
         /// <param name="personalIdentityNumber">A string representation of the personal identity number to parse.</param>
         /// <param name="pointInTime">The date to decide wheter the person is older than 100 years. That decides the delimiter (- or +).</param>
+        /// <param name="result">If valid, an instance of <see cref="SwedishPersonalIdentityNumber"/></param>
         public static bool TryParse(string personalIdentityNumber, DateTime pointInTime, out SwedishPersonalIdentityNumber result)
         {
             try
@@ -123,18 +170,6 @@ namespace ActiveLogin.Identity.Swedish
                 return false;
             }
         }
-
-        /// <summary>
-        /// Date of birth for the person according to the personal identity number.
-        /// </summary>
-        public DateTime DateOfBirth { get; private set; }
-
-        /// <summary>
-        /// Legal gender in Sweden according to the last digit of the serial number in the personal identity number.
-        /// Odd number: Man
-        /// Even number: Woman
-        /// </summary>
-        public SwedishLegalGender LegalGender { get; private set; }
 
         /// <summary>
         /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent short string representation.
@@ -206,6 +241,11 @@ namespace ActiveLogin.Identity.Swedish
             }
 
             return age;
+        }
+
+        private static DateTime GetDateOfBirth(int year, int month, int day)
+        {
+            return new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Utc);
         }
 
         private static SwedishLegalGender GetLegalGender(int serialNumber)
