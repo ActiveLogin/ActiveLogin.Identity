@@ -13,7 +13,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData(1899, 09, 13, 980, 1, "189909139801")]
         public void When_Older_Than_100_Years_Uses_No_Delimiter_But_Four_Digit_Year(int year, int month, int day, int serialNumber, int checksum, string expected)
         {
-            var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(year, month, day, serialNumber, checksum);
+            var personalIdentityNumber = new SwedishPersonalIdentityNumber(year, month, day, serialNumber, checksum);
             Assert.Equal(expected, personalIdentityNumber.ToLongString());
         }
 
@@ -22,7 +22,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData(2018, 01, 01, 239, 2, "201801012392")]
         public void When_Younger_Than_100_Years_Uses_No_Delimiter_But_Four_Digit_Year(int year, int month, int day, int serialNumber, int checksum, string expected)
         {
-            var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(year, month, day, serialNumber, checksum);
+            var personalIdentityNumber = new SwedishPersonalIdentityNumber(year, month, day, serialNumber, checksum);
             Assert.Equal(expected, personalIdentityNumber.ToLongString());
         }
 
@@ -32,7 +32,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData(2018, 01, 01, 239, 2, "201801012392")]
         public void When_Date_Parts_Has_Leading_Zeroes_String_Has_Leading_Zeroes(int year, int month, int day, int serialNumber, int checksum, string expected)
         {
-            var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(year, month, day, serialNumber, checksum);
+            var personalIdentityNumber = new SwedishPersonalIdentityNumber(year, month, day, serialNumber, checksum);
             Assert.Equal(expected, personalIdentityNumber.ToLongString());
         }
 
@@ -40,7 +40,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData(1990, 11, 16, 002, 6, "199011160026")]
         public void When_SerialNumber_Has_Leading_Zeroes_String_Has_Leading_Zeroes(int year, int month, int day, int serialNumber, int checksum, string expected)
         {
-            var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(year, month, day, serialNumber, checksum);
+            var personalIdentityNumber = new SwedishPersonalIdentityNumber(year, month, day, serialNumber, checksum);
             Assert.Equal(expected, personalIdentityNumber.ToLongString());
         }
     }

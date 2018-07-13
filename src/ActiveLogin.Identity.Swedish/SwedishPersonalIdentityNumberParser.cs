@@ -64,7 +64,7 @@ namespace ActiveLogin.Identity.Swedish
 
         private static int GetFullYear(int shortYear, int month, int day, string delimiter, DateTime pointInTime)
         {
-            var ageIsAbove100Years = delimiter == "+";
+            var ageIsAboive100Years = delimiter == "+";
             var currentCentury = (pointInTime.Year / 100) * 100;
             var fullYear = currentCentury + shortYear;
             var dateOfBirth = new DateTime(fullYear, month, day);
@@ -72,7 +72,7 @@ namespace ActiveLogin.Identity.Swedish
             {
                 dateOfBirth = dateOfBirth.AddYears(-100);
             }
-            if (ageIsAbove100Years)
+            if (ageIsAboive100Years)
             {
                 dateOfBirth = dateOfBirth.AddYears(-100);
             }
