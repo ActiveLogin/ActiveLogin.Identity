@@ -7,7 +7,7 @@ namespace ActiveLogin.Identity.Swedish.Test
     /// Tested with offical test Personal Identity Numbers from Skatteverket:
     /// https://skatteverket.entryscape.net/catalog/9/datasets/147
     /// </summary>
-    public class SwedishPersonalIdentityNumber_Constructor
+    public class SwedishPersonalIdentityNumber_Create
     {
         [Theory]
         [InlineData(-1, 01, 01, 239, 2)]
