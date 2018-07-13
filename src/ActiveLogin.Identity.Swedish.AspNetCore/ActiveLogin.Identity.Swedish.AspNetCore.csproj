@@ -3,16 +3,30 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>Convenient module that help you work with and handle validation of Swedish Personal Identity Number.</Description>
+    <LangVersion>latest</LangVersion>
+    <NeutralLanguage>en-US</NeutralLanguage>
+
+    <AssemblyName>ActiveLogin.Identity.Swedish.AspNetCore</AssemblyName>
+    <PackageId>ActiveLogin.Identity.Swedish.AspNetCore</PackageId>
+
+    <Description>Handles parsing and validation of Swedish identities such as Personal Identity Number (svenskt personnummer) in ASP.NET Core.</Description>
+    <PackageTags>aspnetcore;PersonalIdentityNumber;PIN;personnummer;Sweden;validation;validate;parse</PackageTags>
+
     <Authors>Peter Örneholm;Nikolay Krondev;Elin Ohlsson;Robert Folkesson;Jakob Ehn</Authors>
-    <RepositoryType>git</RepositoryType>
+    <Copyright>Copyright © ActiveLogin</Copyright>
+
     <PackageProjectUrl>https://github.com/ActiveLogin/ActiveLogin.Identity</PackageProjectUrl>
+
+    <PackageLicenseUrl>https://raw.githubusercontent.com/ActiveLogin/ActiveLogin.Identity/master/LICENSE</PackageLicenseUrl>
+    <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
+
+    <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/ActiveLogin/ActiveLogin.Identity.git</RepositoryUrl>
-    <PackageLicenseUrl>https://github.com/ActiveLogin/ActiveLogin.Identity/blob/master/LICENSE</PackageLicenseUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="ActiveLogin.Identity.Swedish" Version="0.1.19" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
   </ItemGroup>
-
 </Project>
