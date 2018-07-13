@@ -3,10 +3,10 @@ using Xunit;
 
 namespace ActiveLogin.Identity.Swedish.Test
 {
-    /// <summary>
+    /// <remarks>
     /// Tested with offical test Personal Identity Numbers from Skatteverket:
     /// https://skatteverket.entryscape.net/catalog/9/datasets/147
-    /// </summary>
+    /// </remarks>
     public class SwedishPersonalIdentityNumber_Parse
     {
         private const string InvalidSwedishPersonalIdentityNumberErrorMessage = "Invalid Swedish personal identity number.\r\nParameter name: personalIdentityNumber";
