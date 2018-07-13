@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Description>Convenient module that help you work with and handle validation of Swedish Personal Identity Number.</Description>
     <LangVersion>latest</LangVersion>
     <NeutralLanguage>en-US</NeutralLanguage>
 
