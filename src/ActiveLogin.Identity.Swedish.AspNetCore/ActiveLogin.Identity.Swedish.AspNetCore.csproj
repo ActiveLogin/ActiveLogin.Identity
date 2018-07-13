@@ -16,7 +16,7 @@
 
     <PackageProjectUrl>https://github.com/ActiveLogin/ActiveLogin.Identity</PackageProjectUrl>
 
-    <PackageLicenseUrl>https://raw.githubusercontent.com/ActiveLogin/ActiveLogin.Identity/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/ActiveLogin/ActiveLogin.Identity/master/LICENSE.md</PackageLicenseUrl>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
 
     <RepositoryType>git</RepositoryType>
