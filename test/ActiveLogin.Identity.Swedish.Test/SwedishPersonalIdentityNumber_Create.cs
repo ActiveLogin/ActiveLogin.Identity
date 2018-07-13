@@ -55,6 +55,15 @@ namespace ActiveLogin.Identity.Swedish.Test
         }
 
         [Theory]
+        [InlineData(2018, 01, 01, 239, 3)]
+        [InlineData(2018, 01, 01, 239, 4)]
+        public void Throws_When_Invalid_Checksum(int year, int month, int day, int serialNumber, int checksum)
+        {
+            var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.Create(year, month, day, serialNumber, checksum));
+            Assert.Equal("Invalid checksum.\r\nParameter name: checksum", ex.Message);
+        }
+
+        [Theory]
         [InlineData(1899, 09, 13, 980, 1)]
         [InlineData(1999, 08, 07, 239, 1)]
         [InlineData(2000, 01, 02, 239, 1)]

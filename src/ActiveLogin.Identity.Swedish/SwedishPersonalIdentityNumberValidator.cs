@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ActiveLogin.Identity.Swedish
 {
@@ -21,7 +23,7 @@ namespace ActiveLogin.Identity.Swedish
             SerialNumber = serialNumber;
             Checksum = checksum;
         }
-        
+
         public bool DayIsValidCoOrdinationNumber()
         {
             var daysWithoutCoOrdinationNumberDaysAdded = Day - CoOrdinationNumberDaysAdded;
@@ -52,6 +54,16 @@ namespace ActiveLogin.Identity.Swedish
         public bool SerialNumberIsValid()
         {
             return SerialNumber >= 1 && SerialNumber <= 999;
+        }
+
+        public bool ChecksumIsValid()
+        {
+            var twoDigitYear = Year % 100;
+            var personalIdentityNumber = $"{twoDigitYear:D2}{Month:D2}{Day:D2}{SerialNumber:D3}";
+
+            var calculatedChecksum = LuhnChecksum.GetChecksum(personalIdentityNumber);
+
+            return Checksum == calculatedChecksum;
         }
     }
 }
