@@ -122,14 +122,13 @@ namespace ActiveLogin.Identity.Swedish
         /// Converts the string representation of the personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent.
         /// </summary>
         /// <param name="personalIdentityNumber">A string representation of the personal identity number to parse.</param>
-        /// <param name="pointInTime">The date to decide wheter the person is older than 100 years. That decides the delimiter (- or +).</param>
-        public static SwedishPersonalIdentityNumber Parse(string personalIdentityNumber, DateTime pointInTime)
+        /// <param name="date">The date to decide wheter the person is older than 100 years. That decides the delimiter (- or +).</param>
+        public static SwedishPersonalIdentityNumber Parse(string personalIdentityNumber, DateTime date)
         {
             try
             {
-                var parser = new SwedishPersonalIdentityNumberParser(pointInTime);
-                var parsed = parser.Parse(personalIdentityNumber);
-                return new SwedishPersonalIdentityNumber(parsed.fullYear, parsed.month, parsed.day, parsed.serialNumber, parsed.checksum);
+                var parsed = SwedishPersonalIdentityNumberParser.Parse(personalIdentityNumber, date);
+                return new SwedishPersonalIdentityNumber(parsed.Year, parsed.Month, parsed.Day, parsed.SerialNumber, parsed.Checksum);
             }
             catch (ArgumentException)
             {
@@ -160,13 +159,13 @@ namespace ActiveLogin.Identity.Swedish
         /// Converts the string representation of the personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent  and returns a value that indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="personalIdentityNumber">A string representation of the personal identity number to parse.</param>
-        /// <param name="pointInTime">The date to decide wheter the person is older than 100 years. That decides the delimiter (- or +).</param>
+        /// <param name="date">The date to decide wheter the person is older than 100 years. That decides the delimiter (- or +).</param>
         /// <param name="result">If valid, an instance of <see cref="SwedishPersonalIdentityNumber"/></param>
-        public static bool TryParse(string personalIdentityNumber, DateTime pointInTime, out SwedishPersonalIdentityNumber result)
+        public static bool TryParse(string personalIdentityNumber, DateTime date, out SwedishPersonalIdentityNumber result)
         {
             try
             {
-                result = Parse(personalIdentityNumber, pointInTime);
+                result = Parse(personalIdentityNumber, date);
                 return true;
             }
             catch (Exception)
@@ -189,10 +188,10 @@ namespace ActiveLogin.Identity.Swedish
         /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent short string representation.
         /// Format is YYMMDDXSSSC, for example <example>990807-2391</example> or <example>120211+9986</example>.
         /// </summary>
-        /// <param name="pointInTime">The date to decide wheter the person is older than 100 years. That decides the delimiter (- or +).</param>
-        public string ToShortString(DateTime pointInTime)
+        /// <param name="date">The date to decide wheter the person is older than 100 years. That decides the delimiter (- or +).</param>
+        public string ToShortString(DateTime date)
         {
-            var age = GetAge(pointInTime);
+            var age = GetAge(date);
             var delimiter = age >= 100 ? '+' : '-';
             var twoDigitYear = Year % 100;
             return $"{twoDigitYear:D2}{Month:D2}{Day:D2}{delimiter}{SerialNumber:D3}{Checksum}";
@@ -227,15 +226,15 @@ namespace ActiveLogin.Identity.Swedish
         /// <summary>
         /// Get the age of the person.
         /// </summary>
-        /// <param name="pointInTime">The date when to calulate the age.</param>
+        /// <param name="date">The date when to calulate the age.</param>
         /// <returns></returns>
-        public int GetAge(DateTime pointInTime)
+        public int GetAge(DateTime date)
         {
             var dateOfBirth = DateOfBirth;
-            var age = pointInTime.Year - dateOfBirth.Year;
+            var age = date.Year - dateOfBirth.Year;
 
-            if (pointInTime.Month < dateOfBirth.Month ||
-               (pointInTime.Month == dateOfBirth.Month && pointInTime.Day < dateOfBirth.Day))
+            if (date.Month < dateOfBirth.Month ||
+               (date.Month == dateOfBirth.Month && date.Day < dateOfBirth.Day))
             {
                 age -= 1;
             }
