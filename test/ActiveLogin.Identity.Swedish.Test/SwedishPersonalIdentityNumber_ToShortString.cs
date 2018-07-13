@@ -3,10 +3,10 @@ using Xunit;
 
 namespace ActiveLogin.Identity.Swedish.Test
 {
-    /// <summary>
+    /// <remarks>
     /// Tested with offical test Personal Identity Numbers from Skatteverket:
     /// https://skatteverket.entryscape.net/catalog/9/datasets/147
-    /// </summary>
+    /// </remarks>
     public class SwedishPersonalIdentityNumber_ToShortString
     {
         private readonly DateTime _date_2018_07_15 = new DateTime(2018, 07, 15);
