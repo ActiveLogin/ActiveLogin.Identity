@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ActiveLogin.Identity.Swedish" Version="0.1.19" />
+    <PackageReference Include="ActiveLogin.Identity.Swedish" Version="0.1.45" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
   </ItemGroup>
 </Project>
