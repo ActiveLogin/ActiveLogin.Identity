@@ -40,11 +40,11 @@ namespace ActiveLogin.Identity.Swedish
         public DateTime DateOfBirth { get; }
 
         /// <summary>
-        /// Legal gender (juridiskt kön) in Sweden according to the last digit of the serial number in the personal identity number.
-        /// Odd number: Man
-        /// Even number: Woman
+        /// Gender (juridiskt kön) in Sweden according to the last digit of the serial number in the personal identity number.
+        /// Odd number: Male
+        /// Even number: Female
         /// </summary>
-        public SwedishLegalGender LegalGender { get; }
+        public SwedishGender Gender { get; }
 
         private SwedishPersonalIdentityNumber(int year, int month, int day, int serialNumber, int checksum)
         {
@@ -56,7 +56,7 @@ namespace ActiveLogin.Identity.Swedish
             Checksum = checksum;
 
             DateOfBirth = GetDateOfBirth(Year, Month, Day);
-            LegalGender = GetLegalGender(SerialNumber);
+            Gender = GetGender(SerialNumber);
         }
 
         /// <summary>
@@ -252,15 +252,15 @@ namespace ActiveLogin.Identity.Swedish
             return new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Utc);
         }
 
-        private static SwedishLegalGender GetLegalGender(int serialNumber)
+        private static SwedishGender GetGender(int serialNumber)
         {
             var isSerialNumberEven = serialNumber % 2 == 0;
             if (isSerialNumberEven)
             {
-                return SwedishLegalGender.Woman;
+                return SwedishGender.Female;
             }
 
-            return SwedishLegalGender.Man;
+            return SwedishGender.Male;
         }
     }
 }

@@ -1,23 +1,23 @@
 ﻿namespace ActiveLogin.Identity.Swedish
 {
     /// <summary>
-    /// Specifies possible legal genders (juridiskt kön) in sweden.
+    /// Specifies possible genders (juridiskt kön) in sweden.
     /// </summary>
-    public enum SwedishLegalGender
+    public enum SwedishGender
     {
         /// <summary>
         /// Unknown or other gender
         /// </summary>
-        Other,
+        Unknown,
 
         /// <summary>
-        /// Gender representing a woman
+        /// Gender representing a female
         /// </summary>
-        Woman,
+        Female,
 
         /// <summary>
-        /// Gender representing a man
+        /// Gender representing a male
         /// </summary>
-        Man
+        Male
     }
 }
