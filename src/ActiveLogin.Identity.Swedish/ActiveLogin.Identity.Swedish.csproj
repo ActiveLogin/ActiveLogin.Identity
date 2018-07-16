@@ -2,7 +2,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
-    <NeutralLanguage>en-US</NeutralLanguage>
+    <NeutralLanguage>en</NeutralLanguage>
+    <NoWarn>1701;1702;1591</NoWarn>
 
     <AssemblyName>ActiveLogin.Identity.Swedish</AssemblyName>
     <PackageId>ActiveLogin.Identity.Swedish</PackageId>
