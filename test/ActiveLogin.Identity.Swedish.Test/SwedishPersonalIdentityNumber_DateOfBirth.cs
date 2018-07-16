@@ -7,7 +7,7 @@ namespace ActiveLogin.Identity.Swedish.Test
     /// Tested with offical test Personal Identity Numbers from Skatteverket:
     /// https://skatteverket.entryscape.net/catalog/9/datasets/147
     /// </remarks>
-    public class SwedishPersonalIdentityNumber_DateOfBirth
+    public class SwedishPersonalIdentityNumber_Birthdate
     {
         [Theory]
         [InlineData(1899, 09, 13, 980, 1)]
@@ -15,8 +15,8 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Year_Equals_Year(int year, int month, int day, int serialNumber, int checksum)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(year, month, day, serialNumber, checksum);
-            var dateOfBirth = personalIdentityNumber.DateOfBirth;
-            Assert.Equal(year, dateOfBirth.Year);
+            var birthdate = personalIdentityNumber.Birthdate;
+            Assert.Equal(year, birthdate.Year);
         }
 
         [Theory]
@@ -25,8 +25,8 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Month_Equals_Month(int year, int month, int day, int serialNumber, int checksum)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(year, month, day, serialNumber, checksum);
-            var dateOfBirth = personalIdentityNumber.DateOfBirth;
-            Assert.Equal(month, dateOfBirth.Month);
+            var birthdate = personalIdentityNumber.Birthdate;
+            Assert.Equal(month, birthdate.Month);
         }
 
         [Theory]
@@ -35,8 +35,8 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Day_Equals_Day(int year, int month, int day, int serialNumber, int checksum)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(year, month, day, serialNumber, checksum);
-            var dateOfBirth = personalIdentityNumber.DateOfBirth;
-            Assert.Equal(day, dateOfBirth.Day);
+            var birthdate = personalIdentityNumber.Birthdate;
+            Assert.Equal(day, birthdate.Day);
         }
     }
 }
