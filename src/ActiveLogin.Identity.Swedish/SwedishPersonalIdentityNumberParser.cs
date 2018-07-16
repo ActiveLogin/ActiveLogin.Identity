@@ -102,19 +102,19 @@ namespace ActiveLogin.Identity.Swedish
             var currentCentury = (date.Year / 100) * 100;
             var fullYear = currentCentury + shortYear;
 
-            var birthdate = new DateTime(fullYear, month, day, 0, 0, 0, DateTimeKind.Utc);
-            if (birthdate > date)
+            var dateOfBirth = new DateTime(fullYear, month, day, 0, 0, 0, DateTimeKind.Utc);
+            if (dateOfBirth > date)
             {
-                birthdate = birthdate.AddYears(-100);
+                dateOfBirth = dateOfBirth.AddYears(-100);
             }
 
             var ageIsAbove100Years = delimiter == "+";
             if (ageIsAbove100Years)
             {
-                birthdate = birthdate.AddYears(-100);
+                dateOfBirth = dateOfBirth.AddYears(-100);
             }
 
-            return birthdate.Year;
+            return dateOfBirth.Year;
         }
 
         public class SwedishPersonalIdentityNumberParts

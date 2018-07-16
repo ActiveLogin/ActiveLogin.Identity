@@ -35,9 +35,9 @@ namespace ActiveLogin.Identity.Swedish
         public int Checksum { get; }
 
         /// <summary>
-        /// Birthdate for the person according to the personal identity number.
+        /// Date of birth for the person according to the personal identity number.
         /// </summary>
-        public DateTime Birthdate { get; }
+        public DateTime DateOfBirth { get; }
 
         /// <summary>
         /// Gender (juridiskt kön) in Sweden according to the last digit of the serial number in the personal identity number.
@@ -55,7 +55,7 @@ namespace ActiveLogin.Identity.Swedish
             SerialNumber = serialNumber;
             Checksum = checksum;
 
-            Birthdate = GetBirthdate(Year, Month, Day);
+            DateOfBirth = GetDateOfBirth(Year, Month, Day);
             Gender = GetGender(SerialNumber);
         }
 
@@ -230,11 +230,11 @@ namespace ActiveLogin.Identity.Swedish
         /// <returns></returns>
         public int GetAge(DateTime date)
         {
-            var birthdate = Birthdate;
-            var age = date.Year - birthdate.Year;
+            var dateOfBirth = DateOfBirth;
+            var age = date.Year - dateOfBirth.Year;
 
-            if (date.Month < birthdate.Month ||
-               (date.Month == birthdate.Month && date.Day < birthdate.Day))
+            if (date.Month < dateOfBirth.Month ||
+               (date.Month == dateOfBirth.Month && date.Day < dateOfBirth.Day))
             {
                 age -= 1;
             }
@@ -247,7 +247,7 @@ namespace ActiveLogin.Identity.Swedish
             return age;
         }
 
-        private static DateTime GetBirthdate(int year, int month, int day)
+        private static DateTime GetDateOfBirth(int year, int month, int day)
         {
             return new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Utc);
         }
