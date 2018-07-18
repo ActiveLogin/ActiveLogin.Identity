@@ -8,7 +8,7 @@
     <AssemblyName>ActiveLogin.Identity.Swedish.AspNetCore</AssemblyName>
     <PackageId>ActiveLogin.Identity.Swedish.AspNetCore</PackageId>
 
-    <VersionPrefix>0.2.0</VersionPrefix>
+    <VersionPrefix>0.3.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <FileVersion Condition="'$(BUILD_BUILDNUMBER)' != ''">$(VersionPrefix).$(BUILD_BUILDNUMBER)</FileVersion>
 
