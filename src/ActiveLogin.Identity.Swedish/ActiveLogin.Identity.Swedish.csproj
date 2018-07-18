@@ -10,6 +10,7 @@
 
     <VersionPrefix>0.2.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
+    <FileVersion Condition="'$(BUILD_BUILDNUMBER)' != ''">$(VersionPrefix).$(BUILD_BUILDNUMBER)</FileVersion>
 
     <Description>.NET classes that enables parsing and validation of Swedish identities such as Personal Identity Number (svenskt personnummer) in .NET.</Description>
     <PackageTags>PersonalIdentityNumber;PIN;personnummer;Sweden;validation;validate;parse</PackageTags>
