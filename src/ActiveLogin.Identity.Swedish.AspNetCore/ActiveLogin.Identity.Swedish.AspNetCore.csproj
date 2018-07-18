@@ -10,6 +10,7 @@
 
     <VersionPrefix>0.2.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
+    <FileVersion Condition="'$(BUILD_BUILDNUMBER)' != ''">$(VersionPrefix).$(BUILD_BUILDNUMBER)</FileVersion>
 
     <Description>Validation attributes that enables an application to validate Swedish identities such as Personal Identity Number (svenskt personnummer) in ASP.NET Core.</Description>
     <PackageTags>aspnetcore;PersonalIdentityNumber;PIN;personnummer;Sweden;validation;validate;parse</PackageTags>
