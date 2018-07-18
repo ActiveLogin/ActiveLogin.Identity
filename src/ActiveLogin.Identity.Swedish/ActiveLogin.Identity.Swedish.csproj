@@ -8,7 +8,7 @@
     <AssemblyName>ActiveLogin.Identity.Swedish</AssemblyName>
     <PackageId>ActiveLogin.Identity.Swedish</PackageId>
 
-    <VersionPrefix>0.3.0</VersionPrefix>
+    <VersionPrefix>0.3.1</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <FileVersion Condition="'$(BUILD_BUILDNUMBER)' != ''">$(VersionPrefix).$(BUILD_BUILDNUMBER)</FileVersion>
 
