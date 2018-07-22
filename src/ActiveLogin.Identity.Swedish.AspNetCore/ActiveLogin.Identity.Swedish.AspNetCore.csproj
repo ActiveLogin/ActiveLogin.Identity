@@ -19,6 +19,7 @@
     <Copyright>Copyright © ActiveLogin</Copyright>
 
     <PackageProjectUrl>https://github.com/ActiveLogin/ActiveLogin.Identity</PackageProjectUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/ActiveLogin/ActiveLogin.Identity/master/docs/images/active-login-logo-fingerprint-blue-256x256.png</PackageIconUrl>
 
     <PackageLicenseUrl>https://raw.githubusercontent.com/ActiveLogin/ActiveLogin.Identity/master/LICENSE.md</PackageLicenseUrl>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
