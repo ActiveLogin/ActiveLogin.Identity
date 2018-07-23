@@ -13,7 +13,7 @@ ActiveLogin.Identity provides parsing and validation of Swedish identities such 
 
 ### 1. Install the NuGet package
 
-ActiveLogin.Identity is distributed as [packages on NuGet](https://www.nuget.org/profiles/ActiveLogin), install using the tool of your choise.
+ActiveLogin.Identity is distributed as [packages on NuGet](https://www.nuget.org/profiles/ActiveLogin), install using the tool of your choice.
 
 For example using .NET CLI:
 ```powershell
