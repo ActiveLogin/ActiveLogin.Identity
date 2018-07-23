@@ -69,8 +69,10 @@ public class SampleDataModel
 ### 3. Browse tests and samples
 
 For more usecases, samples and inspiraiton; feel free to browse our unit tests and samples:
+
 * [ConsoleSample](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/samples/ConsoleSample)
 * [ActiveLogin.Identity.Swedish.Test](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/test/ActiveLogin.Identity.Swedish.Test)
+* [ActiveLogin.Identity.Swedish.AspNetCore.Test](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/test/ActiveLogin.Identity.Swedish.AspNetCore.Test)
 
 ## ActiveLogin
 
