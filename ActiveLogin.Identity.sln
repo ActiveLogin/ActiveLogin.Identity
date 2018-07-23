@@ -26,6 +26,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{812B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleSample", "samples\ConsoleSample\ConsoleSample.csproj", "{644D6E68-CEF5-4BB4-BC41-5455A541C77D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{A83D638A-F764-43E3-BA85-A4428045E460}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{64C47C88-4403-41A6-B8A3-AC12C1DA8206}"
+	ProjectSection(SolutionItems) = preProject
+		docs\images\active-login-logo-fingerprint-blue-256x256.png = docs\images\active-login-logo-fingerprint-blue-256x256.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +69,7 @@ Global
 		{1DED8621-13A5-4F96-99EB-BA7E99575FE0} = {9A0CF459-87CC-448D-B49D-EFC3D6482AA6}
 		{B00193B1-7657-45C5-92BF-178BEE31D5C6} = {12A0FDF2-523E-42C7-81FE-4FDCA5E66A69}
 		{644D6E68-CEF5-4BB4-BC41-5455A541C77D} = {812BD112-1B02-4012-9B4D-61E5EAE23044}
+		{64C47C88-4403-41A6-B8A3-AC12C1DA8206} = {A83D638A-F764-43E3-BA85-A4428045E460}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2076F58C-968B-489D-94CA-B3729F5DE10D}
