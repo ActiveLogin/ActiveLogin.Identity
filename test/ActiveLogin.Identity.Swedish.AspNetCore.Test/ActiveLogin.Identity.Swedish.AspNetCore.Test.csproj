@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\ActiveLogin.Identity.Swedish.AspNetCore\ActiveLogin.Identity.Swedish.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\ActiveLogin.Identity.Swedish.AspNetCore\ActiveLogin.Identity.Swedish.AspNetCore.csproj" />
   </ItemGroup>
 
 </Project>

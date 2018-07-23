@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using ActiveLogin.Identity.Swedish.AspNetCore.Validation;
 using System.ComponentModel.DataAnnotations;
+using ActiveLogin.Identity.Swedish.AspNetCore.Validation;
 using Xunit;
 
-namespace ActiveLogin.Identity.Swedish.AspNetCore.Test
+namespace ActiveLogin.Identity.Swedish.AspNetCore.Test.Validation
 {
     /// <remarks>
     /// Tested with offical test Personal Identity Numbers from Skatteverket:

@@ -20,11 +20,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution files", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ActiveLogin.Identity.Swedish.AspNetCore.Test", "ActiveLogin.Identity.Swedish.AspNetCore.Test\ActiveLogin.Identity.Swedish.AspNetCore.Test.csproj", "{B00193B1-7657-45C5-92BF-178BEE31D5C6}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{812BD112-1B02-4012-9B4D-61E5EAE23044}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleSample", "samples\ConsoleSample\ConsoleSample.csproj", "{644D6E68-CEF5-4BB4-BC41-5455A541C77D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleSample", "samples\ConsoleSample\ConsoleSample.csproj", "{644D6E68-CEF5-4BB4-BC41-5455A541C77D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{A83D638A-F764-43E3-BA85-A4428045E460}"
 EndProject
@@ -32,6 +30,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{64C47C
 	ProjectSection(SolutionItems) = preProject
 		docs\images\active-login-logo-fingerprint-blue-256x256.png = docs\images\active-login-logo-fingerprint-blue-256x256.png
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ActiveLogin.Identity.Swedish.AspNetCore.Test", "test\ActiveLogin.Identity.Swedish.AspNetCore.Test\ActiveLogin.Identity.Swedish.AspNetCore.Test.csproj", "{A414F554-17C9-47F2-BE7B-70FEA9385529}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,14 +51,14 @@ Global
 		{1DED8621-13A5-4F96-99EB-BA7E99575FE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1DED8621-13A5-4F96-99EB-BA7E99575FE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1DED8621-13A5-4F96-99EB-BA7E99575FE0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B00193B1-7657-45C5-92BF-178BEE31D5C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B00193B1-7657-45C5-92BF-178BEE31D5C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B00193B1-7657-45C5-92BF-178BEE31D5C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B00193B1-7657-45C5-92BF-178BEE31D5C6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{644D6E68-CEF5-4BB4-BC41-5455A541C77D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{644D6E68-CEF5-4BB4-BC41-5455A541C77D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{644D6E68-CEF5-4BB4-BC41-5455A541C77D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{644D6E68-CEF5-4BB4-BC41-5455A541C77D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A414F554-17C9-47F2-BE7B-70FEA9385529}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A414F554-17C9-47F2-BE7B-70FEA9385529}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A414F554-17C9-47F2-BE7B-70FEA9385529}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A414F554-17C9-47F2-BE7B-70FEA9385529}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,9 +67,9 @@ Global
 		{1C2949CB-4995-467F-A58C-61357E698256} = {9A0CF459-87CC-448D-B49D-EFC3D6482AA6}
 		{066DB539-8441-49BE-A831-191ABF84CF32} = {12A0FDF2-523E-42C7-81FE-4FDCA5E66A69}
 		{1DED8621-13A5-4F96-99EB-BA7E99575FE0} = {9A0CF459-87CC-448D-B49D-EFC3D6482AA6}
-		{B00193B1-7657-45C5-92BF-178BEE31D5C6} = {12A0FDF2-523E-42C7-81FE-4FDCA5E66A69}
 		{644D6E68-CEF5-4BB4-BC41-5455A541C77D} = {812BD112-1B02-4012-9B4D-61E5EAE23044}
 		{64C47C88-4403-41A6-B8A3-AC12C1DA8206} = {A83D638A-F764-43E3-BA85-A4428045E460}
+		{A414F554-17C9-47F2-BE7B-70FEA9385529} = {12A0FDF2-523E-42C7-81FE-4FDCA5E66A69}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2076F58C-968B-489D-94CA-B3729F5DE10D}
