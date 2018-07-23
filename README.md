@@ -68,7 +68,7 @@ If used to validate input in an ASP.NET Core MVC project, the `SwedishPersonalId
 public class SampleDataModel
 {
     [SwedishPersonalIdentityNumber]
-    public string SwedishPersonalIdentityNumber { get; }
+    public string SwedishPersonalIdentityNumber { get; set; }
 }
 ```
 
