@@ -6,8 +6,8 @@ ActiveLogin.Identity provides parsing and validation of Swedish identities such 
 
 | Package | Description | NuGet | Build (VSTS) |
 | ------- | ----------- | ----- | ------------ |
-| ActiveLogin.Identity.Swedish | .NET classes handling Personal Identity Number | [![NuGet](https://img.shields.io/nuget/v/ActiveLogin.Identity.Swedish.svg)](https://www.nuget.org/packages/ActiveLogin.Identity.Swedish/) | [![VSTS Build](https://activesolution.visualstudio.com/131274d9-4174-4035-a0e3-f6e5e9444d9f/_apis/build/status/154)](https://activesolution.visualstudio.com/ActiveLogin/_build/index?definitionId=154) |
-| ActiveLogin.Identity.Swedish.AspNetCore | Validation attributes for ASP.NET Core. | [![NuGet](https://img.shields.io/nuget/v/ActiveLogin.Identity.Swedish.AspNetCore.svg)](https://www.nuget.org/packages/ActiveLogin.Identity.Swedish.AspNetCore/) | [![VSTS Build](https://activesolution.visualstudio.com/131274d9-4174-4035-a0e3-f6e5e9444d9f/_apis/build/status/154)](https://activesolution.visualstudio.com/ActiveLogin/_build/index?definitionId=154) |
+| ActiveLogin.Identity.Swedish | .NET classes handling Personal Identity Number | [![NuGet](https://img.shields.io/nuget/v/ActiveLogin.Identity.Swedish.svg)](https://www.nuget.org/packages/ActiveLogin.Identity.Swedish/) | [![VSTS Build](https://activesolution.visualstudio.com/_apis/public/build/definitions/131274d9-4174-4035-a0e3-f6e5e9444d9f/154/badge)](https://activesolution.visualstudio.com/ActiveLogin/_build/index?definitionId=154) |
+| ActiveLogin.Identity.Swedish.AspNetCore | Validation attributes for ASP.NET Core. | [![NuGet](https://img.shields.io/nuget/v/ActiveLogin.Identity.Swedish.AspNetCore.svg)](https://www.nuget.org/packages/ActiveLogin.Identity.Swedish.AspNetCore/) | [![VSTS Build](https://activesolution.visualstudio.com/_apis/public/build/definitions/131274d9-4174-4035-a0e3-f6e5e9444d9f/154/badge)](https://activesolution.visualstudio.com/ActiveLogin/_build/index?definitionId=154) |
 
 ## Getting started
 
@@ -15,7 +15,7 @@ ActiveLogin.Identity provides parsing and validation of Swedish identities such 
 
 ActiveLogin.Identity is distributed as [packages on NuGet](https://www.nuget.org/profiles/ActiveLogin), install using the tool of your choise.
 
-For example, using .NET CLI:
+For example using .NET CLI:
 ```powershell
 dotnet add package ActiveLogin.Identity.Swedish
 ```
@@ -46,7 +46,7 @@ else
 
 The code above would output (as of 2018-07-23):
 
-```console
+```text
 SwedishPersonalIdentityNumber
  .ToString(): 990807-2391
  .ToShortString(): 990807-2391
