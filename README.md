@@ -68,11 +68,29 @@ public class SampleDataModel
 
 ### 3. Browse tests and samples
 
-For more usecases, samples and inspiraiton; feel free to browse our unit tests and samples:
+For more usecases, samples and inspiration; feel free to browse our unit tests and samples:
 
 * [ConsoleSample](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/samples/ConsoleSample)
 * [ActiveLogin.Identity.Swedish.Test](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/test/ActiveLogin.Identity.Swedish.Test)
 * [ActiveLogin.Identity.Swedish.AspNetCore.Test](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/test/ActiveLogin.Identity.Swedish.AspNetCore.Test)
+
+## FAQ
+
+### What definition of Swedish Personal Identity are the implementations based on?
+
+The implementation is based on the defitions as described here:
+* https://www.skatteverket.se/privat/folkbokforing/personnummerochsamordningsnummer.4.3810a01c150939e893f18c29.html
+* https://www.skatteverket.se/servicelankar/otherlanguages/inenglish/individualsandemployees/livinginsweden/personalidentitynumberandcoordinationnumber.4.2cf1b5cd163796a5c8b4295.html
+* https://en.wikipedia.org/wiki/Personal_identity_number_(Sweden)
+* https://sv.wikipedia.org/wiki/Personnummer_i_Sverige
+
+### What data are you using for tests and samples?
+
+To comply with GDPR and not no expose any real PINs, we are using the official test data for Swedish Personal Identity Numbers provided by Skatteverket at: https://skatteverket.entryscape.net/catalog/9/datasets/147
+
+### Why is there an overload to pass a date to Parse and ToString()?
+
+Some forms of a Swedish Personal Identity Number depends of the age of the person it represents. The "-" will be replaced with a "+" once the person is 100 years old or older. Therefore an overload exists to define at what point in the the data should be represented. Useful for parsing old data or printing data fore the future.
 
 ## ActiveLogin
 
