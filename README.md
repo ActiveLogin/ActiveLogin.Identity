@@ -4,7 +4,7 @@ ActiveLogin.Identity provides parsing and validation of Swedish identities such 
 
 ## Continuous integration & Packages overview
 
-| Package | Description | NuGet | Build (VSTS) |
+| Project | Description | NuGet | Build (VSTS) |
 | ------- | ----------- | ----- | ------------ |
 | [ActiveLogin.Identity.Swedish](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/src/ActiveLogin.Identity.Swedish) | .NET classes handling Personal Identity Number | [![NuGet](https://img.shields.io/nuget/v/ActiveLogin.Identity.Swedish.svg)](https://www.nuget.org/packages/ActiveLogin.Identity.Swedish/) | [![VSTS Build](https://activesolution.visualstudio.com/_apis/public/build/definitions/131274d9-4174-4035-a0e3-f6e5e9444d9f/154/badge)](https://activesolution.visualstudio.com/ActiveLogin/_build/index?definitionId=154) |
 | [ActiveLogin.Identity.Swedish.AspNetCore](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/src/ActiveLogin.Identity.Swedish.AspNetCore) | Validation attributes for ASP.NET Core. | [![NuGet](https://img.shields.io/nuget/v/ActiveLogin.Identity.Swedish.AspNetCore.svg)](https://www.nuget.org/packages/ActiveLogin.Identity.Swedish.AspNetCore/) | [![VSTS Build](https://activesolution.visualstudio.com/_apis/public/build/definitions/131274d9-4174-4035-a0e3-f6e5e9444d9f/154/badge)](https://activesolution.visualstudio.com/ActiveLogin/_build/index?definitionId=154) |
@@ -85,14 +85,15 @@ For more usecases, samples and inspiration; feel free to browse our unit tests a
 ### What definition of Swedish Personal Identity are the implementations based on?
 
 The implementation is based on the defitions as described here:
-* https://www.skatteverket.se/privat/folkbokforing/personnummerochsamordningsnummer.4.3810a01c150939e893f18c29.html
-* https://www.skatteverket.se/servicelankar/otherlanguages/inenglish/individualsandemployees/livinginsweden/personalidentitynumberandcoordinationnumber.4.2cf1b5cd163796a5c8b4295.html
-* https://en.wikipedia.org/wiki/Personal_identity_number_(Sweden)
-* https://sv.wikipedia.org/wiki/Personnummer_i_Sverige
+
+* [Skatteverket (Swedish)](https://www.skatteverket.se/privat/folkbokforing/personnummerochsamordningsnummer.4.3810a01c150939e893f18c29.html)
+* [Skatteverket (English)](https://www.skatteverket.se/servicelankar/otherlanguages/inenglish/individualsandemployees/livinginsweden/personalidentitynumberandcoordinationnumber.4.2cf1b5cd163796a5c8b4295.html)
+* [Wikipedia (English)](https://en.wikipedia.org/wiki/Personal_identity_number_(Sweden))
+* [Wikipedia (Swedish)](https://sv.wikipedia.org/wiki/Personnummer_i_Sverige)
 
 ### What data are you using for tests and samples?
 
-To comply with GDPR and not no expose any real PINs, we are using the official test data for Swedish Personal Identity Numbers provided by Skatteverket at: https://skatteverket.entryscape.net/catalog/9/datasets/147
+To comply with GDPR and not no expose any real PINs, we are using the official test data for Swedish Personal Identity Numbers [provided by Skatteverket](https://skatteverket.entryscape.net/catalog/9/datasets/147).
 
 ### Why is there an overload to pass a date to Parse and ToString()?
 
