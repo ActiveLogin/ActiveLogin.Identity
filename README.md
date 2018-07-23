@@ -84,10 +84,10 @@ For more usecases, samples and inspiration; feel free to browse our unit tests a
 
 ### What definition of Swedish Personal Identity are the implementations based on?
 
-The implementation is based on the defitions as described here:
+The implementation is based on the definitions as described here:
 
-* [Skatteverket (Swedish)](https://www.skatteverket.se/privat/folkbokforing/personnummerochsamordningsnummer.4.3810a01c150939e893f18c29.html)
 * [Skatteverket (English)](https://www.skatteverket.se/servicelankar/otherlanguages/inenglish/individualsandemployees/livinginsweden/personalidentitynumberandcoordinationnumber.4.2cf1b5cd163796a5c8b4295.html)
+* [Skatteverket (Swedish)](https://www.skatteverket.se/privat/folkbokforing/personnummerochsamordningsnummer.4.3810a01c150939e893f18c29.html)
 * [Wikipedia (English)](https://en.wikipedia.org/wiki/Personal_identity_number_(Sweden))
 * [Wikipedia (Swedish)](https://sv.wikipedia.org/wiki/Personnummer_i_Sverige)
 
