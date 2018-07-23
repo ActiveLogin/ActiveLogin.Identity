@@ -20,6 +20,12 @@ For example using .NET CLI:
 dotnet add package ActiveLogin.Identity.Swedish
 ```
 
+or
+
+```powershell
+dotnet add package ActiveLogin.Identity.Swedish.AspNetCore
+```
+
 ### 2. Use the classes in your project
 
 `SwedishPersonalIdentityNumber` provides parsing methods such as `SwedishPersonalIdentityNumber.Parse()` and `SwedishPersonalIdentityNumber.TryParse()` that can be used like this:
