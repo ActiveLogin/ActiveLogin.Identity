@@ -4,7 +4,7 @@ using System.Linq;
 namespace ActiveLogin.Identity.Swedish
 {
     /// <summary>
-    /// Implementation of algorithm descirbed in https://en.wikipedia.org/wiki/Luhn_algorithm
+    /// Implementation of algorithm described in https://en.wikipedia.org/wiki/Luhn_algorithm
     /// </summary>
     internal class LuhnChecksum
     {
