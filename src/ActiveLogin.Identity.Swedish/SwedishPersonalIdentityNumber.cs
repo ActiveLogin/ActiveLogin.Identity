@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ActiveLogin.Identity.Swedish
 {
@@ -7,7 +8,7 @@ namespace ActiveLogin.Identity.Swedish
     /// https://en.wikipedia.org/wiki/Personal_identity_number_(Sweden)
     /// https://sv.wikipedia.org/wiki/Personnummer_i_Sverige
     /// </summary>
-    public class SwedishPersonalIdentityNumber
+    public class SwedishPersonalIdentityNumber : IEquatable<SwedishPersonalIdentityNumber>
     {
         /// <summary>
         /// The year for date of birth.
@@ -261,6 +262,40 @@ namespace ActiveLogin.Identity.Swedish
             }
 
             return SwedishGender.Male;
+        }
+
+        /// <summary>Returns a value indicating whether this instance is equal to a specified object.</summary>
+        /// <param name="value">The object to compare to this instance.</param>
+        /// <returns>true if <paramref name="value">value</paramref> is an instance of <see cref="T:System.DateTime"></see> and equals the value of this instance; otherwise, false.</returns>
+        public override bool Equals(object value)
+        {
+            return Equals(value as SwedishPersonalIdentityNumber);
+        }
+
+        /// <summary>Returns a value indicating whether the value of this instance is equal to the value of the specified <see cref="SwedishPersonalIdentityNumber"></see> instance.</summary>
+        /// <param name="value">The object to compare to this instance.</param>
+        /// <returns>true if the <paramref name="value">value</paramref> parameter equals the value of this instance; otherwise, false.</returns>
+        public bool Equals(SwedishPersonalIdentityNumber value)
+        {
+            return value != null &&
+                   ToLongString() == value.ToLongString();
+        }
+
+        /// <summary>Returns the hash code for this instance.</summary>
+        /// <returns>A 32-bit signed integer hash code.</returns>
+        public override int GetHashCode()
+        {
+            return ToLongString().GetHashCode();
+        }
+
+        public static bool operator ==(SwedishPersonalIdentityNumber number1, SwedishPersonalIdentityNumber number2)
+        {
+            return EqualityComparer<SwedishPersonalIdentityNumber>.Default.Equals(number1, number2);
+        }
+
+        public static bool operator !=(SwedishPersonalIdentityNumber number1, SwedishPersonalIdentityNumber number2)
+        {
+            return !(number1 == number2);
         }
     }
 }
