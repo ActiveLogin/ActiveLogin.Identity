@@ -82,7 +82,7 @@ For more usecases, samples and inspiration; feel free to browse our unit tests a
 
 ## FAQ
 
-### What definition of Swedish Personal Identity are the implementations based on?
+### What definition of Swedish Personal Identity Number are the implementations based on?
 
 The implementation is based on the definitions as described here:
 
@@ -90,6 +90,12 @@ The implementation is based on the definitions as described here:
 * [Skatteverket (Swedish)](https://www.skatteverket.se/privat/folkbokforing/personnummerochsamordningsnummer.4.3810a01c150939e893f18c29.html)
 * [Wikipedia (English)](https://en.wikipedia.org/wiki/Personal_identity_number_(Sweden))
 * [Wikipedia (Swedish)](https://sv.wikipedia.org/wiki/Personnummer_i_Sverige)
+
+### Why are you calling it "Swedish Personal Identity Number" and not Social Security Number?
+
+The Swedish word "personnummer" is translted into ["personal identity number" by Skatteverket](https://www.skatteverket.se/servicelankar/otherlanguages/inenglish/individualsandemployees/livinginsweden/personalidentitynumberandcoordinationnumber.4.2cf1b5cd163796a5c8b4295.html) and that's the translation we decided on using as it's used in official documents.
+
+Unforentunately the term "social security number" or SSN is often used even for a swedish personal identity number, even though that is misleading as a [SSN is something used in the United States](https://en.wikipedia.org/wiki/Social_Security_number) and should not be mixed up with a PIN.
 
 ### What data are you using for tests and samples?
 
