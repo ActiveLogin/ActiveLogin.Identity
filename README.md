@@ -4,7 +4,7 @@ ActiveLogin.Identity provides parsing and validation of Swedish identities such 
 
 ## Continuous integration & Packages overview
 
-| Project | Description | NuGet | Build (VSTS) |
+| Project | Description | NuGet | Build (Azure DevOps) |
 | ------- | ----------- | ----- | ------------ |
 | [ActiveLogin.Identity.Swedish](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/src/ActiveLogin.Identity.Swedish) | .NET classes handling Personal Identity Number | [![NuGet](https://img.shields.io/nuget/v/ActiveLogin.Identity.Swedish.svg)](https://www.nuget.org/packages/ActiveLogin.Identity.Swedish/) | [![Build status](https://dev.azure.com/activesolution/ActiveLogin/_apis/build/status/ActiveLogin.Identity)](https://dev.azure.com/activesolution/ActiveLogin/_build/latest?definitionId=154) |
 | [ActiveLogin.Identity.Swedish.AspNetCore](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/src/ActiveLogin.Identity.Swedish.AspNetCore) | Validation attributes for ASP.NET Core. | [![NuGet](https://img.shields.io/nuget/v/ActiveLogin.Identity.Swedish.AspNetCore.svg)](https://www.nuget.org/packages/ActiveLogin.Identity.Swedish.AspNetCore/) | [![Build status](https://dev.azure.com/activesolution/ActiveLogin/_apis/build/status/ActiveLogin.Identity)](https://dev.azure.com/activesolution/ActiveLogin/_build/latest?definitionId=154) |
