@@ -8,7 +8,7 @@ namespace ActiveLogin.Identity.Swedish
     /// https://en.wikipedia.org/wiki/Personal_identity_number_(Sweden)
     /// https://sv.wikipedia.org/wiki/Personnummer_i_Sverige
     /// </summary>
-    public class SwedishPersonalIdentityNumber : IEquatable<SwedishPersonalIdentityNumber>
+    public class SwedishPersonalIdentityNumber : IEquatable<SwedishPersonalIdentityNumbers>
     {
         /// <summary>
         /// The year for date of birth.
