@@ -13,7 +13,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         private readonly DateTime _date_2018_07_15 = new DateTime(2018, 07, 15);
 
         [Theory]
-        [InlineData("990913+9801", 1899)]
+        [InlineData("990913+9801", 1999)]
         [InlineData("120211+9986", 1912)]
         public void Parses_Year_From_Short_String_When_Plus_Is_Delimiter(string personalIdentityNumberString, int expectedYear)
         {
@@ -97,7 +97,7 @@ namespace ActiveLogin.Identity.Swedish.Test
 
         [Theory]
         [InlineData("990913 9801")]
-        [InlineData("990913—9801")]
+        [InlineData("990913â€”9801")]
         [InlineData("990913_9801")]
         [InlineData("990913.9801")]
         public void Throws_When_Invalid_Delimiter_From_Short_String(string personalIdentityNumberString)
@@ -201,7 +201,7 @@ namespace ActiveLogin.Identity.Swedish.Test
 
         [Theory]
         [InlineData("18990913 9801")]
-        [InlineData("990913—9801")]
+        [InlineData("990913â€”9801")]
         [InlineData("990913_9801")]
         [InlineData("990913.9801")]
         public void Throws_When_Invalid_Delimiter_From_Long_String(string personalIdentityNumberString)
