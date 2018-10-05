@@ -3,7 +3,7 @@
     /// <summary>
     /// Specifies possible genders (juridiskt kön) in sweden.
     /// </summary>
-    public enum SwedishGender
+    public enum Gender
     {
         /// <summary>
         /// Unknown or other gender
