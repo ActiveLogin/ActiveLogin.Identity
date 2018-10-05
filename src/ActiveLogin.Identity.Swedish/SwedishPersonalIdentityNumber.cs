@@ -45,7 +45,7 @@ namespace ActiveLogin.Identity.Swedish
         /// Odd number: Male
         /// Even number: Female
         /// </summary>
-        public SwedishGender Gender { get; }
+        public Gender Gender { get; }
 
         private SwedishPersonalIdentityNumber(int year, int month, int day, int serialNumber, int checksum)
         {
@@ -253,15 +253,15 @@ namespace ActiveLogin.Identity.Swedish
             return new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Utc);
         }
 
-        private static SwedishGender GetGender(int serialNumber)
+        private static Gender GetGender(int serialNumber)
         {
             var isSerialNumberEven = serialNumber % 2 == 0;
             if (isSerialNumberEven)
             {
-                return SwedishGender.Female;
+                return Gender.Female;
             }
 
-            return SwedishGender.Male;
+            return Gender.Male;
         }
 
         /// <summary>Returns a value indicating whether this instance is equal to a specified object.</summary>
