@@ -9,7 +9,7 @@ namespace ActiveLogin.Identity.Swedish.Test
     /// </remarks>
     public class SwedishPersonalIdentityNumber_Parse
     {
-        private const string InvalidSwedishPersonalIdentityNumberErrorMessage = "Invalid Swedish personal identity number.\r\nParameter name: personalIdentityNumber";
+        private const string InvalidSwedishPersonalIdentityNumberErrorMessage = "Invalid Swedish personal identity number.";
         private readonly DateTime _date_2018_07_15 = new DateTime(2018, 07, 15);
 
         [Theory]
@@ -103,7 +103,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Throws_When_Invalid_Delimiter_From_Short_String(string personalIdentityNumberString)
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString, _date_2018_07_15));
-            Assert.Equal(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
+            Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
         }
 
 
@@ -196,7 +196,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Throws_When_Plus_Delimiter_From_Long_String(string personalIdentityNumberString)
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString, _date_2018_07_15));
-            Assert.Equal(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
+            Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
         }
 
         [Theory]
@@ -207,7 +207,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Throws_When_Invalid_Delimiter_From_Long_String(string personalIdentityNumberString)
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString, _date_2018_07_15));
-            Assert.Equal(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
+            Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
         }
     }
 }
