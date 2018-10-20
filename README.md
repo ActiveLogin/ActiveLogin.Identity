@@ -66,7 +66,7 @@ SwedishPersonalIdentityNumber
 
 #### Hints
 
-Some data, such as DateOfBirth, Age and Gen der can't be garanteed to reflect the truth due to lmitied amount of personal identity numbers per day.
+Some data, such as DateOfBirth, Age and Gender can't be garanteed to reflect the truth due to lmitied amount of personal identity numbers per day.
 Therefore they are exposed as extension methods and are suffixed eith `Hint`no reflect this.
 
 #### ASP.NET Core MVC
