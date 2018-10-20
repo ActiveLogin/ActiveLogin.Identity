@@ -62,10 +62,10 @@ namespace ConsoleSample
             WriteKeyValueInfo("   .SerialNumber", personalIdentityNumber.SerialNumber.ToString());
             WriteKeyValueInfo("   .Checksum", personalIdentityNumber.Checksum.ToString());
 
-            WriteKeyValueInfo("   .DateOfBirth", personalIdentityNumber.DateOfBirth.ToShortDateString());
-            WriteKeyValueInfo("   .GetAge()", personalIdentityNumber.GetAge().ToString());
+            WriteKeyValueInfo("   .GetDateOfBirthHint()", personalIdentityNumber.GetDateOfBirthHint().ToShortDateString());
+            WriteKeyValueInfo("   .GetAgeHint()", personalIdentityNumber.GetAgeHint().ToString());
 
-            WriteKeyValueInfo("   .Gender", personalIdentityNumber.Gender.ToString());
+            WriteKeyValueInfo("   .GetGenderHint()", personalIdentityNumber.GetGenderHint().ToString());
         }
 
         private static void WriteHeader(string header)

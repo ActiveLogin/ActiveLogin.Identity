@@ -6,7 +6,7 @@ namespace ActiveLogin.Identity.Swedish.Test
     /// Tested with offical test Personal Identity Numbers from Skatteverket:
     /// https://skatteverket.entryscape.net/catalog/9/datasets/147
     /// </remarks>
-    public class SwedishPersonalIdentityNumber_Gender
+    public class SwedishPersonalIdentityNumberHintExtensions_GetGenderHint
     {
         [Theory]
         [InlineData(1899, 09, 13, 980, 1)]

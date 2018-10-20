@@ -41,10 +41,10 @@ if (SwedishPersonalIdentityNumber.TryParse(rawPersonalIdentityNumber, out var pe
     Console.WriteLine(" .ToShortString(): {0}", personalIdentityNumber.ToShortString());
     Console.WriteLine(" .ToLongString(): {0}", personalIdentityNumber.ToLongString());
 
-    Console.WriteLine(" .DateOfBirth: {0}", personalIdentityNumber.DateOfBirth.ToShortDateString());
-    Console.WriteLine(" .GetAge(): {0}", personalIdentityNumber.GetAge().ToString());
+    Console.WriteLine(" .GetDateOfBirthHint(): {0}", personalIdentityNumber.DateOfBirth.ToShortDateString());
+    Console.WriteLine(" .GetAgeHint(): {0}", personalIdentityNumber.GetAge().ToString());
 
-    Console.WriteLine(" .Gender: {0}", personalIdentityNumber.Gender.ToString());
+    Console.WriteLine(" .GetGenderHint(): {0}", personalIdentityNumber.Gender.ToString());
 }
 else
 {
@@ -59,10 +59,17 @@ SwedishPersonalIdentityNumber
  .ToString(): 990807-2391
  .ToShortString(): 990807-2391
  .ToLongString(): 199908072391
- .DateOfBirth: 1999-08-07
- .GetAge(): 18
- .Gender: Male
+ .GetDateOfBirthHint(): 1999-08-07
+ .GetAgeHint(): 18
+ .GetGenderHint(): Male
 ```
+
+#### Hints
+
+Some data, such as DateOfBirth, Age and Gen der can't be garanteed to reflect the truth due to lmitied amount of personal identity numbers per day.
+Therefore they are exposed as extension methods and are suffixed eith `Hint`no reflect this.
+
+#### ASP.NET Core MVC
 
 If used to validate input in an ASP.NET Core MVC project, the `SwedishPersonalIdentityNumberAttribute` can be used  like this:
 

@@ -35,11 +35,6 @@ namespace ActiveLogin.Identity.Swedish
         /// </summary>
         public int Checksum { get; }
 
-        /// <summary>
-        /// Date of birth for the person according to the personal identity number.
-        /// </summary>
-        public DateTime DateOfBirth { get; }
-
         private SwedishPersonalIdentityNumber(int year, int month, int day, int serialNumber, int checksum)
         {
             Year = year;
@@ -48,8 +43,6 @@ namespace ActiveLogin.Identity.Swedish
 
             SerialNumber = serialNumber;
             Checksum = checksum;
-
-            DateOfBirth = GetDateOfBirth(Year, Month, Day);
         }
 
         /// <summary>
@@ -184,7 +177,8 @@ namespace ActiveLogin.Identity.Swedish
         /// <param name="date">The date to decide wheter the person is older than 100 years. That decides the delimiter (- or +).</param>
         public string ToShortString(DateTime date)
         {
-            var age = GetAge(date);
+            var dateOfBirth = SwedishPersonalIdentityNumberDateCalculations.GetDateOfBirth(Year, Month, Day);
+            var age = SwedishPersonalIdentityNumberDateCalculations.GetAge(dateOfBirth, date);
             var delimiter = age >= 100 ? '+' : '-';
             var twoDigitYear = Year % 100;
             return $"{twoDigitYear:D2}{Month:D2}{Day:D2}{delimiter}{SerialNumber:D3}{Checksum}";
@@ -206,43 +200,6 @@ namespace ActiveLogin.Identity.Swedish
         public override string ToString()
         {
             return ToShortString();
-        }
-
-        /// <summary>
-        /// Get the age of the person.
-        /// </summary>
-        public int GetAge()
-        {
-            return GetAge(DateTime.UtcNow);
-        }
-
-        /// <summary>
-        /// Get the age of the person.
-        /// </summary>
-        /// <param name="date">The date when to calulate the age.</param>
-        /// <returns></returns>
-        public int GetAge(DateTime date)
-        {
-            var dateOfBirth = DateOfBirth;
-            var age = date.Year - dateOfBirth.Year;
-
-            if (date.Month < dateOfBirth.Month ||
-               (date.Month == dateOfBirth.Month && date.Day < dateOfBirth.Day))
-            {
-                age -= 1;
-            }
-
-            if (age < 0)
-            {
-                throw new Exception("The person is not yet born.");
-            }
-
-            return age;
-        }
-
-        private static DateTime GetDateOfBirth(int year, int month, int day)
-        {
-            return new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Utc);
         }
 
         /// <summary>Returns a value indicating whether this instance is equal to a specified object.</summary>
