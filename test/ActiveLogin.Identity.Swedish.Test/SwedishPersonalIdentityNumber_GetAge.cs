@@ -37,7 +37,7 @@ namespace ActiveLogin.Identity.Swedish.Test
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(year, month, day, serialNumber, checksum);
             var ex = Assert.Throws<Exception>(() => personalIdentityNumber.GetAge(_date_2000_04_14));
 
-            Assert.Equal("The person is not yet born.", ex.Message);
+            Assert.Contains("The person is not yet born.", ex.Message);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Throws_When_Invalid_Year(int year, int month, int day, int serialNumber, int checksum)
         {
             var ex = Assert.Throws<ArgumentOutOfRangeException>(() => SwedishPersonalIdentityNumber.Create(year, month, day, serialNumber, checksum));
-            Assert.Equal($"Invalid year.\r\nParameter name: year\r\nActual value was {year}.", ex.Message);
+            Assert.Contains("Invalid year.", ex.Message);
         }
 
         [Theory]
@@ -24,7 +24,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Throws_When_Invalid_Month(int year, int month, int day, int serialNumber, int checksum)
         {
             var ex = Assert.Throws<ArgumentOutOfRangeException>(() => SwedishPersonalIdentityNumber.Create(year, month, day, serialNumber, checksum));
-            Assert.Equal($"Invalid month. Must be in the range 1 to 12.\r\nParameter name: month\r\nActual value was {month}.", ex.Message);
+            Assert.Contains("Invalid month.", ex.Message);
         }
 
         [Theory]
@@ -34,7 +34,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Throws_When_Invalid_Day(int year, int month, int day, int serialNumber, int checksum)
         {
             var ex = Assert.Throws<ArgumentOutOfRangeException>(() => SwedishPersonalIdentityNumber.Create(year, month, day, serialNumber, checksum));
-            Assert.Equal($"Invalid day of month.\r\nParameter name: day\r\nActual value was {day}.", ex.Message);
+            Assert.Contains("Invalid day of month.", ex.Message);
         }
 
         [Theory]
@@ -42,7 +42,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Throws_When_Possible_CoOrdinationNumber(int year, int month, int day, int serialNumber, int checksum)
         {
             var ex = Assert.Throws<ArgumentOutOfRangeException>(() => SwedishPersonalIdentityNumber.Create(year, month, day, serialNumber, checksum));
-            Assert.Equal($"Invalid day of month. It might be a valid co-ordination number.\r\nParameter name: day\r\nActual value was {day}.", ex.Message);
+            Assert.Contains("Invalid day of month.", ex.Message);
         }
 
         [Theory]
@@ -51,7 +51,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Throws_When_Invalid_SerialNumber(int year, int month, int day, int serialNumber, int checksum)
         {
             var ex = Assert.Throws<ArgumentOutOfRangeException>(() => SwedishPersonalIdentityNumber.Create(year, month, day, serialNumber, checksum));
-            Assert.Equal($"Invalid serial number. Must be in the range 0 to 999.\r\nParameter name: serialNumber\r\nActual value was {serialNumber}.", ex.Message);
+            Assert.Contains("Invalid serial number.", ex.Message);
         }
 
         [Theory]
@@ -60,7 +60,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Throws_When_Invalid_Checksum(int year, int month, int day, int serialNumber, int checksum)
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.Create(year, month, day, serialNumber, checksum));
-            Assert.Equal("Invalid checksum.\r\nParameter name: checksum", ex.Message);
+            Assert.Contains("Invalid checksum.", ex.Message);
         }
 
         [Theory]
