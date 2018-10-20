@@ -40,13 +40,6 @@ namespace ActiveLogin.Identity.Swedish
         /// </summary>
         public DateTime DateOfBirth { get; }
 
-        /// <summary>
-        /// Gender (juridiskt kön) in Sweden according to the last digit of the serial number in the personal identity number.
-        /// Odd number: Male
-        /// Even number: Female
-        /// </summary>
-        public Gender Gender { get; }
-
         private SwedishPersonalIdentityNumber(int year, int month, int day, int serialNumber, int checksum)
         {
             Year = year;
@@ -57,7 +50,6 @@ namespace ActiveLogin.Identity.Swedish
             Checksum = checksum;
 
             DateOfBirth = GetDateOfBirth(Year, Month, Day);
-            Gender = GetGender(SerialNumber);
         }
 
         /// <summary>
@@ -251,17 +243,6 @@ namespace ActiveLogin.Identity.Swedish
         private static DateTime GetDateOfBirth(int year, int month, int day)
         {
             return new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Utc);
-        }
-
-        private static Gender GetGender(int serialNumber)
-        {
-            var isSerialNumberEven = serialNumber % 2 == 0;
-            if (isSerialNumberEven)
-            {
-                return Gender.Female;
-            }
-
-            return Gender.Male;
         }
 
         /// <summary>Returns a value indicating whether this instance is equal to a specified object.</summary>
