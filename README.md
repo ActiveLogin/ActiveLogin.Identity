@@ -41,10 +41,10 @@ if (SwedishPersonalIdentityNumber.TryParse(rawPersonalIdentityNumber, out var pe
     Console.WriteLine(" .ToShortString(): {0}", personalIdentityNumber.ToShortString());
     Console.WriteLine(" .ToLongString(): {0}", personalIdentityNumber.ToLongString());
 
-    Console.WriteLine(" .GetDateOfBirthHint(): {0}", personalIdentityNumber.DateOfBirth.ToShortDateString());
-    Console.WriteLine(" .GetAgeHint(): {0}", personalIdentityNumber.GetAge().ToString());
+    Console.WriteLine(" .GetDateOfBirthHint(): {0}", personalIdentityNumber.GetDateOfBirthHint().ToShortDateString());
+    Console.WriteLine(" .GetAgeHint(): {0}", personalIdentityNumber.GetAgeHint().ToString());
 
-    Console.WriteLine(" .GetGenderHint(): {0}", personalIdentityNumber.Gender.ToString());
+    Console.WriteLine(" .GetGenderHint(): {0}", personalIdentityNumber.GetGenderHint().ToString());
 }
 else
 {
