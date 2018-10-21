@@ -6,7 +6,7 @@ namespace ActiveLogin.Identity.Swedish.Test
     /// Tested with offical test Personal Identity Numbers from Skatteverket:
     /// https://skatteverket.entryscape.net/catalog/9/datasets/147
     /// </remarks>
-    public class SwedishPersonalIdentityNumber_Gender
+    public class SwedishPersonalIdentityNumberHintExtensions_GetGenderHint
     {
         [Theory]
         [InlineData(1899, 09, 13, 980, 1)]
@@ -15,7 +15,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void When_Last_Digit_In_SerialNumber_Is_Even_It_Is_A_Woman(int year, int month, int day, int serialNumber, int checksum)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(year, month, day, serialNumber, checksum);
-            Assert.Equal(Gender.Female, personalIdentityNumber.Gender);
+            Assert.Equal(Gender.Female, personalIdentityNumber.GetGenderHint());
         }
 
         [Theory]
@@ -24,7 +24,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void When_Last_Digit_In_SerialNumber_Is_Odd_It_Is_A_Man(int year, int month, int day, int serialNumber, int checksum)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(year, month, day, serialNumber, checksum);
-            Assert.Equal(Gender.Male, personalIdentityNumber.Gender);
+            Assert.Equal(Gender.Male, personalIdentityNumber.GetGenderHint());
         }
     }
 }
