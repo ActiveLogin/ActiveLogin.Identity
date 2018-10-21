@@ -18,7 +18,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Parses_Year_From_Short_String_When_Plus_Is_Delimiter(string personalIdentityNumberString, int expectedYear)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString, _date_2018_07_15);
-            Assert.Equal(personalIdentityNumber.Year, expectedYear);
+            Assert.Equal(expectedYear, personalIdentityNumber.Year);
         }
 
         [Theory]
@@ -27,7 +27,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Parses_Year_From_Short_String_When_Dash_Is_Delimiter(string personalIdentityNumberString, int expectedYear)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString, _date_2018_07_15);
-            Assert.Equal(personalIdentityNumber.Year, expectedYear);
+            Assert.Equal(expectedYear, personalIdentityNumber.Year);
         }
 
         [Theory]
@@ -38,7 +38,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Parses_Year_From_Short_String(string personalIdentityNumberString, int expectedYear)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
-            Assert.Equal(personalIdentityNumber.Year, expectedYear);
+            Assert.Equal(expectedYear, personalIdentityNumber.Year);
         }
 
         [Theory]
@@ -49,7 +49,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Parses_Month_From_Short_String(string personalIdentityNumberString, int expectedMonth)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
-            Assert.Equal(personalIdentityNumber.Month, expectedMonth);
+            Assert.Equal(expectedMonth, personalIdentityNumber.Month);
         }
 
         [Theory]
@@ -60,7 +60,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Parses_Day_From_Short_String(string personalIdentityNumberString, int expectedDay)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
-            Assert.Equal(personalIdentityNumber.Day, expectedDay);
+            Assert.Equal(expectedDay, personalIdentityNumber.Day);
         }
 
         [Theory]
@@ -71,7 +71,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Parses_SerialNumber_From_Short_String(string personalIdentityNumberString, int expectedSerialNumber)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
-            Assert.Equal(personalIdentityNumber.SerialNumber, expectedSerialNumber);
+            Assert.Equal(expectedSerialNumber, personalIdentityNumber.SerialNumber);
         }
 
         [Theory]
@@ -82,7 +82,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Parses_Checksum_From_Short_String(string personalIdentityNumberString, int expectedChecksum)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
-            Assert.Equal(personalIdentityNumber.Checksum, expectedChecksum);
+            Assert.Equal(expectedChecksum, personalIdentityNumber.Checksum);
         }
 
         [Theory]
@@ -114,7 +114,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Parses_Year_From_Long_String_When_Plus_Is_Delimiter(string personalIdentityNumberString, int expectedYear)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString, _date_2018_07_15);
-            Assert.Equal(personalIdentityNumber.Year, expectedYear);
+            Assert.Equal(expectedYear, personalIdentityNumber.Year);
         }
 
         [Theory]
@@ -123,7 +123,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Parses_Year_From_Long_String_When_Dash_Is_Delimiter(string personalIdentityNumberString, int expectedYear)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString, _date_2018_07_15);
-            Assert.Equal(personalIdentityNumber.Year, expectedYear);
+            Assert.Equal(expectedYear, personalIdentityNumber.Year);
         }
 
         [Theory]
@@ -134,7 +134,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Parses_Year_From_Long_String(string personalIdentityNumberString, int expectedYear)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
-            Assert.Equal(personalIdentityNumber.Year, expectedYear);
+            Assert.Equal(expectedYear, personalIdentityNumber.Year);
         }
 
         [Theory]
@@ -145,7 +145,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Parses_Month_From_Long_String(string personalIdentityNumberString, int expectedMonth)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
-            Assert.Equal(personalIdentityNumber.Month, expectedMonth);
+            Assert.Equal(expectedMonth, personalIdentityNumber.Month);
         }
 
         [Theory]
@@ -156,7 +156,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Parses_Day_From_Long_String(string personalIdentityNumberString, int expectedDay)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
-            Assert.Equal(personalIdentityNumber.Day, expectedDay);
+            Assert.Equal(expectedDay, personalIdentityNumber.Day);
         }
 
         [Theory]
@@ -167,7 +167,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Parses_SerialNumber_From_Long_String(string personalIdentityNumberString, int expectedSerialNumber)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
-            Assert.Equal(personalIdentityNumber.SerialNumber, expectedSerialNumber);
+            Assert.Equal(expectedSerialNumber, personalIdentityNumber.SerialNumber);
         }
 
         [Theory]
@@ -178,7 +178,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Parses_Checksum_From_Long_String(string personalIdentityNumberString, int expectedChecksum)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
-            Assert.Equal(personalIdentityNumber.Checksum, expectedChecksum);
+            Assert.Equal(expectedChecksum, personalIdentityNumber.Checksum);
         }
 
         [Theory]
