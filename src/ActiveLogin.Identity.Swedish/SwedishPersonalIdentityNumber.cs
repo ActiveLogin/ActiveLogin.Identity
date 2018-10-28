@@ -26,22 +26,22 @@ namespace ActiveLogin.Identity.Swedish
         public int Day { get; }
 
         /// <summary>
-        /// A serial number to distinguish people born on the same day. 
+        /// A birth number (födelsenummer) to distinguish people born on the same day.
         /// </summary>
-        public int SerialNumber { get; }
+        public int BirthNumber { get; }
 
         /// <summary>
-        /// A checksum (last digit in personal identity number) used for validation.
+        /// A checksum (kontrollsiffra) used for validation. Last digit in the PIN.
         /// </summary>
         public int Checksum { get; }
 
-        private SwedishPersonalIdentityNumber(int year, int month, int day, int serialNumber, int checksum)
+        private SwedishPersonalIdentityNumber(int year, int month, int day, int birthNumber, int checksum)
         {
             Year = year;
             Month = month;
             Day = day;
 
-            SerialNumber = serialNumber;
+            BirthNumber = birthNumber;
             Checksum = checksum;
         }
 
@@ -51,19 +51,19 @@ namespace ActiveLogin.Identity.Swedish
         /// <param name="year">The year part.</param>
         /// <param name="month">The month part.</param>
         /// <param name="day">The day part.</param>
-        /// <param name="serialNumber">The serial number part.</param>
+        /// <param name="birthNumber">The birth number part.</param>
         /// <param name="checksum">The checksum part.</param>
         /// <returns>An instance of <see cref="SwedishPersonalIdentityNumber"/> if all the paramaters are valid by themselfes and in combination.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when any of the arguments are invalid.</exception>
-        public static SwedishPersonalIdentityNumber Create(int year, int month, int day, int serialNumber, int checksum)
+        public static SwedishPersonalIdentityNumber Create(int year, int month, int day, int birthNumber, int checksum)
         {
-            EnsureIsValid(year, month, day, serialNumber, checksum);
-            return new SwedishPersonalIdentityNumber(year, month, day, serialNumber, checksum);
+            EnsureIsValid(year, month, day, birthNumber, checksum);
+            return new SwedishPersonalIdentityNumber(year, month, day, birthNumber, checksum);
         }
 
-        private static void EnsureIsValid(int year, int month, int day, int serialNumber, int checksum)
+        private static void EnsureIsValid(int year, int month, int day, int birthNumber, int checksum)
         {
-            var validator = new SwedishPersonalIdentityNumberValidator(year, month, day, serialNumber, checksum);
+            var validator = new SwedishPersonalIdentityNumberValidator(year, month, day, birthNumber, checksum);
 
             if (!validator.YearIsValid())
             {
@@ -85,9 +85,9 @@ namespace ActiveLogin.Identity.Swedish
                 throw new ArgumentOutOfRangeException(nameof(day), day, "Invalid day of month.");
             }
 
-            if (!validator.SerialNumberIsValid())
+            if (!validator.BirthNumberIsValid())
             {
-                throw new ArgumentOutOfRangeException(nameof(serialNumber), serialNumber, "Invalid serial number. Must be in the range 0 to 999.");
+                throw new ArgumentOutOfRangeException(nameof(birthNumber), birthNumber, "Invalid birth number. Must be in the range 0 to 999.");
             }
 
             if (!validator.ChecksumIsValid())
@@ -114,7 +114,7 @@ namespace ActiveLogin.Identity.Swedish
             try
             {
                 var parsed = SwedishPersonalIdentityNumberParser.Parse(personalIdentityNumber, date);
-                return new SwedishPersonalIdentityNumber(parsed.Year, parsed.Month, parsed.Day, parsed.SerialNumber, parsed.Checksum);
+                return new SwedishPersonalIdentityNumber(parsed.Year, parsed.Month, parsed.Day, parsed.BirthNumber, parsed.Checksum);
             }
             catch (ArgumentException)
             {
@@ -181,7 +181,7 @@ namespace ActiveLogin.Identity.Swedish
             var age = SwedishPersonalIdentityNumberDateCalculations.GetAge(dateOfBirth, date);
             var delimiter = age >= 100 ? '+' : '-';
             var twoDigitYear = Year % 100;
-            return $"{twoDigitYear:D2}{Month:D2}{Day:D2}{delimiter}{SerialNumber:D3}{Checksum}";
+            return $"{twoDigitYear:D2}{Month:D2}{Day:D2}{delimiter}{BirthNumber:D3}{Checksum}";
         }
 
         /// <summary>
@@ -190,7 +190,7 @@ namespace ActiveLogin.Identity.Swedish
         /// </summary>
         public string ToLongString()
         {
-            return $"{Year:D4}{Month:D2}{Day:D2}{SerialNumber:D3}{Checksum}";
+            return $"{Year:D4}{Month:D2}{Day:D2}{BirthNumber:D3}{Checksum}";
         }
 
         /// <summary>

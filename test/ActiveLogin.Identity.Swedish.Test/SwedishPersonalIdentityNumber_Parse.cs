@@ -68,10 +68,10 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData("120211+9986", 998)]
         [InlineData("990807-2391", 239)]
         [InlineData("180101-2392", 239)]
-        public void Parses_SerialNumber_From_Short_String(string personalIdentityNumberString, int expectedSerialNumber)
+        public void Parses_BirthNumber_From_Short_String(string personalIdentityNumberString, int expectedBirthNumber)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
-            Assert.Equal(expectedSerialNumber, personalIdentityNumber.SerialNumber);
+            Assert.Equal(expectedBirthNumber, personalIdentityNumber.BirthNumber);
         }
 
         [Theory]
@@ -164,10 +164,10 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData("191202119986", 998)]
         [InlineData("199908072391", 239)]
         [InlineData("201801012392", 239)]
-        public void Parses_SerialNumber_From_Long_String(string personalIdentityNumberString, int expectedSerialNumber)
+        public void Parses_BirthNumber_From_Long_String(string personalIdentityNumberString, int expectedBirthNumber)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
-            Assert.Equal(expectedSerialNumber, personalIdentityNumber.SerialNumber);
+            Assert.Equal(expectedBirthNumber, personalIdentityNumber.BirthNumber);
         }
 
         [Theory]

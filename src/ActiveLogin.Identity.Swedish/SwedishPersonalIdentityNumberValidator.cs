@@ -11,16 +11,16 @@ namespace ActiveLogin.Identity.Swedish
         private int Year { get; }
         private int Month { get; }
         private int Day { get; }
-        private int SerialNumber { get; }
+        private int BirthNumber { get; }
         private int Checksum { get; }
 
-        public SwedishPersonalIdentityNumberValidator(int year, int month, int day, int serialNumber, int checksum)
+        public SwedishPersonalIdentityNumberValidator(int year, int month, int day, int birthNumber, int checksum)
         {
             Year = year;
             Month = month;
             Day = day;
 
-            SerialNumber = serialNumber;
+            BirthNumber = birthNumber;
             Checksum = checksum;
         }
 
@@ -51,15 +51,15 @@ namespace ActiveLogin.Identity.Swedish
             return day >= 1 && day <= daysInMonth;
         }
 
-        public bool SerialNumberIsValid()
+        public bool BirthNumberIsValid()
         {
-            return SerialNumber >= 1 && SerialNumber <= 999;
+            return BirthNumber >= 1 && BirthNumber <= 999;
         }
 
         public bool ChecksumIsValid()
         {
             var twoDigitYear = Year % 100;
-            var personalIdentityNumber = $"{twoDigitYear:D2}{Month:D2}{Day:D2}{SerialNumber:D3}";
+            var personalIdentityNumber = $"{twoDigitYear:D2}{Month:D2}{Day:D2}{BirthNumber:D3}";
 
             var calculatedChecksum = LuhnChecksum.GetChecksum(personalIdentityNumber);
 
