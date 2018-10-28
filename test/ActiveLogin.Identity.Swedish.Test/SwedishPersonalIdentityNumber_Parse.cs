@@ -11,13 +11,23 @@ namespace ActiveLogin.Identity.Swedish.Test
     {
         private const string InvalidSwedishPersonalIdentityNumberErrorMessage = "Invalid Swedish personal identity number.";
         private readonly DateTime _date_2018_07_15 = new DateTime(2018, 07, 15);
+        private readonly DateTime _date_2012_01_01 = new DateTime(2012, 01, 01);
 
         [Theory]
+        [InlineData("900101+9802", 1890)]
         [InlineData("990913+9801", 1899)]
         [InlineData("120211+9986", 1912)]
         public void Parses_Year_From_Short_String_When_Plus_Is_Delimiter(string personalIdentityNumberString, int expectedYear)
         {
-            var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString, _date_2018_07_15);
+            var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString, _date_2012_01_01);
+            Assert.Equal(expectedYear, personalIdentityNumber.Year);
+        }
+
+        [Theory]
+        [InlineData("900101+9802", 1890)]
+        public void Parses_Year_From_Short_String_When_Year_Is_Exact_100_Years(string personalIdentityNumberString, int expectedYear)
+        {
+            var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString, new DateTime(1990, 01, 01));
             Assert.Equal(expectedYear, personalIdentityNumber.Year);
         }
 
