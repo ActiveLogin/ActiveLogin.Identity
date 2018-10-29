@@ -10,14 +10,24 @@ namespace ActiveLogin.Identity.Swedish.Test
     public class SwedishPersonalIdentityNumber_To10DigitString
     {
         private readonly DateTime _date_2018_07_15 = new DateTime(2018, 07, 15);
+        private readonly DateTime _date_2012_01_01 = new DateTime(2012, 01, 01);
 
         [Theory]
+        [InlineData(1890, 01, 01, 980, 2, "900101+9802")]
         [InlineData(1899, 09, 13, 980, 1, "990913+9801")]
         [InlineData(1912, 02, 11, 998, 6, "120211+9986")]
-        public void When_Older_Than_100_Years_Uses_Plus_As_Delimiter(int year, int month, int day, int birthNumber, int checksum, string expected)
+        public void The_Year_You_Turn_100_Years_Uses_Plus_As_Delimiter(int year, int month, int day, int birthNumber, int checksum, string expected)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(year, month, day, birthNumber, checksum);
-            Assert.Equal(expected, personalIdentityNumber.To10DigitString(_date_2018_07_15));
+            Assert.Equal(expected, personalIdentityNumber.ToShortString(_date_2012_01_01));
+        }
+
+        [Theory]
+        [InlineData(1890, 01, 01, 980, 2, "900101+9802")]
+        public void The_Year_You_Turn_100_Years_Uses_Plus_As_Delimiter_Also_Exact_100_Years(int year, int month, int day, int birthNumber, int checksum, string expected)
+        {
+            var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(year, month, day, birthNumber, checksum);
+            Assert.Equal(expected, personalIdentityNumber.To10DigitString(new DateTime(1990, 01, 01)));
         }
 
         [Theory]
