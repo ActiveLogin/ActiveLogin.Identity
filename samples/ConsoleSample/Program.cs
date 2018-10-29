@@ -59,7 +59,7 @@ namespace ConsoleSample
             WriteKeyValueInfo("   .Year", personalIdentityNumber.Year.ToString());
             WriteKeyValueInfo("   .Month", personalIdentityNumber.Month.ToString());
             WriteKeyValueInfo("   .Day", personalIdentityNumber.Day.ToString());
-            WriteKeyValueInfo("   .SerialNumber", personalIdentityNumber.SerialNumber.ToString());
+            WriteKeyValueInfo("   .BirthNumber", personalIdentityNumber.BirthNumber.ToString());
             WriteKeyValueInfo("   .Checksum", personalIdentityNumber.Checksum.ToString());
 
             WriteKeyValueInfo("   .GetDateOfBirthHint()", personalIdentityNumber.GetDateOfBirthHint().ToShortDateString());

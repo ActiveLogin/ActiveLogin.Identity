@@ -32,7 +32,7 @@ namespace ActiveLogin.Identity.Swedish
                             @"(?<month>[0-9]{2})" +
                             @"(?<day>[0-9]{2})" +
                             @"(?<delimiter>[-+]?)" +
-                            @"(?<serialNumber>[0-9]{3})" +
+                            @"(?<birthNumber>[0-9]{3})" +
                             @"(?<checksum>[0-9]{1})" +
                             @"$");
 
@@ -47,7 +47,7 @@ namespace ActiveLogin.Identity.Swedish
             var delimiter = GetStringValue(match, "delimiter");
             var fullYear = GetFullYear(partsFromMatch.Year, partsFromMatch.Month, partsFromMatch.Day, delimiter, date);
         
-            parts = new SwedishPersonalIdentityNumberParts(fullYear, partsFromMatch.Month, partsFromMatch.Day, partsFromMatch.SerialNumber, partsFromMatch.Checksum);
+            parts = new SwedishPersonalIdentityNumberParts(fullYear, partsFromMatch.Month, partsFromMatch.Day, partsFromMatch.BirthNumber, partsFromMatch.Checksum);
             return true;
         }
 
@@ -61,7 +61,7 @@ namespace ActiveLogin.Identity.Swedish
                                     @"(?<month>[0-9]{2})" +
                                     @"(?<day>[0-9]{2})" +
                                     @"(?<delimiter>[-]?)" +
-                                    @"(?<serialNumber>[0-9]{3})" +
+                                    @"(?<birthNumber>[0-9]{3})" +
                                     @"(?<checksum>[0-9]{1})" +
                                     @"$");
 
@@ -81,10 +81,10 @@ namespace ActiveLogin.Identity.Swedish
             var year = GetIntValue(match, "year");
             var month = GetIntValue(match, "month");
             var day = GetIntValue(match, "day");
-            var serialNumber = GetIntValue(match, "serialNumber");
+            var birthNumber = GetIntValue(match, "birthNumber");
             var checksum = GetIntValue(match, "checksum");
 
-            return new SwedishPersonalIdentityNumberParts(year, month, day, serialNumber, checksum);
+            return new SwedishPersonalIdentityNumberParts(year, month, day, birthNumber, checksum);
         }
 
         private static int GetIntValue(Match longPatternMatch, string groupName)
@@ -119,19 +119,19 @@ namespace ActiveLogin.Identity.Swedish
 
         public class SwedishPersonalIdentityNumberParts
         {
-            public SwedishPersonalIdentityNumberParts(int year, int month, int day, int serialNumber, int checksum)
+            public SwedishPersonalIdentityNumberParts(int year, int month, int day, int birthNumber, int checksum)
             {
                 Year = year;
                 Month = month;
                 Day = day;
-                SerialNumber = serialNumber;
+                BirthNumber = birthNumber;
                 Checksum = checksum;
             }
 
             public int Year { get; }
             public int Month { get; }
             public int Day { get; }
-            public int SerialNumber { get; }
+            public int BirthNumber { get; }
             public int Checksum { get; }
         }
     }
