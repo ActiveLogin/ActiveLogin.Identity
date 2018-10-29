@@ -53,8 +53,8 @@ namespace ConsoleSample
         {
             Console.WriteLine("SwedishPersonalIdentityNumber");
             WriteKeyValueInfo("   .ToString()", personalIdentityNumber.ToString());
-            WriteKeyValueInfo("   .ToShortString()", personalIdentityNumber.ToShortString());
-            WriteKeyValueInfo("   .ToLongString()", personalIdentityNumber.ToLongString());
+            WriteKeyValueInfo("   .To10DigitString()", personalIdentityNumber.To10DigitString());
+            WriteKeyValueInfo("   .To12DigitString()", personalIdentityNumber.To12DigitString());
 
             WriteKeyValueInfo("   .Year", personalIdentityNumber.Year.ToString());
             WriteKeyValueInfo("   .Month", personalIdentityNumber.Month.ToString());

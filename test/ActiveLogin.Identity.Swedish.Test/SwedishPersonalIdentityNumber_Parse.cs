@@ -102,7 +102,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Strips_Leading_And_Trailing_Whitespace_From_Short_String(string personalIdentityNumberString, string expectedPersonalIdentityNumberString)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString, _date_2018_07_15);
-            Assert.Equal(expectedPersonalIdentityNumberString, personalIdentityNumber.ToShortString(_date_2018_07_15));
+            Assert.Equal(expectedPersonalIdentityNumberString, personalIdentityNumber.To10DigitString(_date_2018_07_15));
         }
 
         [Theory]
@@ -198,7 +198,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Strips_Leading_And_Trailing_Whitespace_From_Long_String(string personalIdentityNumberString, string expectedPersonalIdentityNumberString)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString, _date_2018_07_15);
-            Assert.Equal(expectedPersonalIdentityNumberString, personalIdentityNumber.ToLongString());
+            Assert.Equal(expectedPersonalIdentityNumberString, personalIdentityNumber.To12DigitString());
         }
 
         [Theory]
