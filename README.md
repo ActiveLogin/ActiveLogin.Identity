@@ -95,10 +95,11 @@ For more usecases, samples and inspiration; feel free to browse our unit tests a
 
 The implementation is based on the definitions as described here:
 
+* [Folkbokföringslagen (FOL 18 §)](https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18)
 * [Skatteverket (English)](https://www.skatteverket.se/servicelankar/otherlanguages/inenglish/individualsandemployees/livinginsweden/personalidentitynumberandcoordinationnumber.4.2cf1b5cd163796a5c8b4295.html)
 * [Skatteverket (Swedish)](https://www.skatteverket.se/privat/folkbokforing/personnummerochsamordningsnummer.4.3810a01c150939e893f18c29.html)
-* [Wikipedia (English)](https://en.wikipedia.org/wiki/Personal_identity_number_(Sweden))
-* [Wikipedia (Swedish)](https://sv.wikipedia.org/wiki/Personnummer_i_Sverige)
+
+Worth noticing is that the date part is not guaranteed to be the exact date you were born, but can be changed for another date within the same month.
 
 ### Why are you calling it "Swedish Personal Identity Number" and not Social Security Number?
 
@@ -112,7 +113,7 @@ To comply with GDPR and not no expose any real PINs, we are using the official t
 
 ### Why is there an overload to pass a date to Parse and ToString()?
 
-Some forms of a Swedish Personal Identity Number depends of the age of the person it represents. The "-" will be replaced with a "+" once the person is 100 years old or older. Therefore an overload exists to define at what point in the the data should be represented. Useful for parsing old data or printing data fore the future.
+Some forms of a Swedish Personal Identity Number depends of the age of the person it represents. The "-" will be replaced with a "+" the year a person is 100 years old or older. Therefore an overload exists to define at what point in the the data should be represented. Useful for parsing old data or printing data fore the future.
 
 ## ActiveLogin
 
