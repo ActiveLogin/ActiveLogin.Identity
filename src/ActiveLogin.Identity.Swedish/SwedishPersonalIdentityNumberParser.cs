@@ -103,8 +103,7 @@ namespace ActiveLogin.Identity.Swedish
             var fullYear = currentCentury + shortYear;
 
             var dateOfBirth = new DateTime(fullYear, month, day, 0, 0, 0, DateTimeKind.Utc);
-            var firstDayOfYearInDateOfBirth = new DateTime(dateOfBirth.Year, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            if (firstDayOfYearInDateOfBirth > date)
+            if (dateOfBirth.Year > date.Year)
             {
                 dateOfBirth = dateOfBirth.AddYears(-100);
             }

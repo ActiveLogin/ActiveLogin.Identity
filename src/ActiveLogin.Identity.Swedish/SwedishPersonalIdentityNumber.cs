@@ -177,17 +177,10 @@ namespace ActiveLogin.Identity.Swedish
         /// <param name="date">The date to decide whether the person is has turned / will turn 100 years old that year. That decides the delimiter (- or +).</param>
         public string ToShortString(DateTime date)
         {
-            var dateOfBirth = SwedishPersonalIdentityNumberDateCalculations.GetDateOfBirth(Year, Month, Day);
-            var firstDayOfYearInDateOfBirth = GetFirstDayOfYear(dateOfBirth);
-            var age = SwedishPersonalIdentityNumberDateCalculations.GetAge(firstDayOfYearInDateOfBirth, date);
-            var delimiter = age >= 100 ? '+' : '-';
+            var years = date.Year - Year;
+            var delimiter = years >= 100 ? '+' : '-';
             var twoDigitYear = Year % 100;
             return $"{twoDigitYear:D2}{Month:D2}{Day:D2}{delimiter}{SerialNumber:D3}{Checksum}";
-        }
-
-        private DateTime GetFirstDayOfYear(DateTime date)
-        {
-            return new DateTime(date.Year, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         }
 
         /// <summary>
