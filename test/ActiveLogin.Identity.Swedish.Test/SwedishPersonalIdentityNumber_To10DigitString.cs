@@ -7,7 +7,7 @@ namespace ActiveLogin.Identity.Swedish.Test
     /// Tested with offical test Personal Identity Numbers from Skatteverket:
     /// https://skatteverket.entryscape.net/catalog/9/datasets/147
     /// </remarks>
-    public class SwedishPersonalIdentityNumber_ToShortString
+    public class SwedishPersonalIdentityNumber_To10DigitString
     {
         private readonly DateTime _date_2018_07_15 = new DateTime(2018, 07, 15);
 
@@ -17,7 +17,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void When_Older_Than_100_Years_Uses_Plus_As_Delimiter(int year, int month, int day, int birthNumber, int checksum, string expected)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(year, month, day, birthNumber, checksum);
-            Assert.Equal(expected, personalIdentityNumber.ToShortString(_date_2018_07_15));
+            Assert.Equal(expected, personalIdentityNumber.To10DigitString(_date_2018_07_15));
         }
 
         [Theory]
@@ -26,7 +26,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void When_Younger_Than_100_Years_Uses_Dash_As_Delimiter(int year, int month, int day, int birthNumber, int checksum, string expected)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(year, month, day, birthNumber, checksum);
-            Assert.Equal(expected, personalIdentityNumber.ToShortString(_date_2018_07_15));
+            Assert.Equal(expected, personalIdentityNumber.To10DigitString(_date_2018_07_15));
         }
 
         [Theory]
@@ -36,7 +36,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void When_Date_Parts_Has_Leading_Zeroes_String_Has_Leading_Zeroes(int year, int month, int day, int birthNumber, int checksum, string expected)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(year, month, day, birthNumber, checksum);
-            Assert.Equal(expected, personalIdentityNumber.ToShortString(_date_2018_07_15));
+            Assert.Equal(expected, personalIdentityNumber.To10DigitString(_date_2018_07_15));
         }
 
         [Theory]
@@ -44,7 +44,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void When_birthNumber_Has_Leading_Zeroes_String_Has_Leading_Zeroes(int year, int month, int day, int birthNumber, int checksum, string expected)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(year, month, day, birthNumber, checksum);
-            Assert.Equal(expected, personalIdentityNumber.ToShortString(_date_2018_07_15));
+            Assert.Equal(expected, personalIdentityNumber.To10DigitString(_date_2018_07_15));
         }
     }
 }

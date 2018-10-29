@@ -38,8 +38,8 @@ if (SwedishPersonalIdentityNumber.TryParse(rawPersonalIdentityNumber, out var pe
 {
     Console.WriteLine("SwedishPersonalIdentityNumber");
     Console.WriteLine(" .ToString(): {0}", personalIdentityNumber.ToString());
-    Console.WriteLine(" .ToShortString(): {0}", personalIdentityNumber.ToShortString());
-    Console.WriteLine(" .ToLongString(): {0}", personalIdentityNumber.ToLongString());
+    Console.WriteLine(" .To10DigitString(): {0}", personalIdentityNumber.To10DigitString());
+    Console.WriteLine(" .To12DigitString(): {0}", personalIdentityNumber.To12DigitString());
 
     Console.WriteLine(" .GetDateOfBirthHint(): {0}", personalIdentityNumber.GetDateOfBirthHint().ToShortDateString());
     Console.WriteLine(" .GetAgeHint(): {0}", personalIdentityNumber.GetAgeHint().ToString());
@@ -56,9 +56,9 @@ The code above would output (as of 2018-07-23):
 
 ```text
 SwedishPersonalIdentityNumber
- .ToString(): 990807-2391
- .ToShortString(): 990807-2391
- .ToLongString(): 199908072391
+ .ToString(): 199908072391
+ .To10DigitString(): 990807-2391
+ .To12DigitString(): 199908072391
  .GetDateOfBirthHint(): 1999-08-07
  .GetAgeHint(): 18
  .GetGenderHint(): Male

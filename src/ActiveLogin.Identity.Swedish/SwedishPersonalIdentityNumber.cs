@@ -165,17 +165,17 @@ namespace ActiveLogin.Identity.Swedish
         /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent short string representation.
         /// Format is YYMMDDXSSSC, for example <example>990807-2391</example> or <example>120211+9986</example>.
         /// </summary>
-        public string ToShortString()
+        public string To10DigitString()
         {
-            return ToShortString(DateTime.UtcNow);
+            return To10DigitString(DateTime.UtcNow);
         }
 
         /// <summary>
-        /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent short string representation.
+        /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars.
         /// Format is YYMMDDXSSSC, for example <example>990807-2391</example> or <example>120211+9986</example>.
         /// </summary>
         /// <param name="date">The date to decide whether the person is older than 100 years. That decides the delimiter (- or +).</param>
-        public string ToShortString(DateTime date)
+        public string To10DigitString(DateTime date)
         {
             var dateOfBirth = SwedishPersonalIdentityNumberDateCalculations.GetDateOfBirth(Year, Month, Day);
             var age = SwedishPersonalIdentityNumberDateCalculations.GetAge(dateOfBirth, date);
@@ -185,21 +185,21 @@ namespace ActiveLogin.Identity.Swedish
         }
 
         /// <summary>
-        /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent long string representation.
+        /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent 12 digit string representation.
         /// Format is YYYYMMDDSSSC, for example <example>19908072391</example> or <example>191202119986</example>.
         /// </summary>
-        public string ToLongString()
+        public string To12DigitString()
         {
             return $"{Year:D4}{Month:D2}{Day:D2}{BirthNumber:D3}{Checksum}";
         }
 
         /// <summary>
-        /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent short string representation.
-        /// Format is YYMMDDXSSSC, for example <example>990807-2391</example> or <example>120211+9986</example>.
+        /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent 12 digit string representation.
+        /// Format is YYYYMMDDSSSC, for example <example>19908072391</example> or <example>191202119986</example>.
         /// </summary>
         public override string ToString()
         {
-            return ToShortString();
+            return To12DigitString();
         }
 
         /// <summary>Returns a value indicating whether this instance is equal to a specified object.</summary>
@@ -216,14 +216,14 @@ namespace ActiveLogin.Identity.Swedish
         public bool Equals(SwedishPersonalIdentityNumber value)
         {
             return value != null &&
-                   ToLongString() == value.ToLongString();
+                   To12DigitString() == value.To12DigitString();
         }
 
         /// <summary>Returns the hash code for this instance.</summary>
         /// <returns>A 32-bit signed integer hash code.</returns>
         public override int GetHashCode()
         {
-            return ToLongString().GetHashCode();
+            return To12DigitString().GetHashCode();
         }
 
         public static bool operator ==(SwedishPersonalIdentityNumber number1, SwedishPersonalIdentityNumber number2)
