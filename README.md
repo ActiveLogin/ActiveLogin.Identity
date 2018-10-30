@@ -15,17 +15,18 @@ ActiveLogin.Identity provides parsing and validation of Swedish identities such 
 
 ### 1. Install the NuGet package
 
-ActiveLogin.Identity is distributed as [packages on NuGet](https://www.nuget.org/profiles/ActiveLogin), install using the tool of your choice.
+ActiveLogin.Identity is distributed as [packages on NuGet](https://www.nuget.org/profiles/ActiveLogin), install using the tool of your choice, for example _dotnet cli_:
 
-For example using .NET CLI:
+Note: The packages relfecting the documentation are currently in alpha, so make sure to search for the pre release packages.
+
 ```powershell
-dotnet add package ActiveLogin.Identity.Swedish
+dotnet add package ActiveLogin.Identity.Swedish -Version 1.0.0-alpha-2
 ```
 
 or
 
 ```powershell
-dotnet add package ActiveLogin.Identity.Swedish.AspNetCore
+dotnet add package ActiveLogin.Identity.Swedish.AspNetCore -Version 1.0.0-alpha-2
 ```
 
 ### 2. Use the classes in your project
