@@ -108,12 +108,12 @@ namespace ActiveLogin.Identity.Swedish
         /// Converts the string representation of the personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent.
         /// </summary>
         /// <param name="personalIdentityNumber">A string representation of the personal identity number to parse.</param>
-        /// <param name="date">The date to decide whether the person is has turned / will turn 100 years old that year. That decides the delimiter (- or +).</param>
-        public static SwedishPersonalIdentityNumber Parse(string personalIdentityNumber, DateTime date)
+        /// <param name="currentYear">The date to decide whether the person is has turned / will turn 100 years old that year. That decides the delimiter (- or +).</param>
+        public static SwedishPersonalIdentityNumber Parse(string personalIdentityNumber, DateTime currentYear)
         {
             try
             {
-                var parsed = SwedishPersonalIdentityNumberParser.Parse(personalIdentityNumber, date);
+                var parsed = SwedishPersonalIdentityNumberParser.Parse(personalIdentityNumber, currentYear);
                 return new SwedishPersonalIdentityNumber(parsed.Year, parsed.Month, parsed.Day, parsed.BirthNumber, parsed.Checksum);
             }
             catch (ArgumentException)
@@ -145,13 +145,13 @@ namespace ActiveLogin.Identity.Swedish
         /// Converts the string representation of the personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent  and returns a value that indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="personalIdentityNumber">A string representation of the personal identity number to parse.</param>
-        /// <param name="date">The date to decide whether the person is has turned / will turn 100 years old that year. That decides the delimiter (- or +).</param>
+        /// <param name="currentYear">The date to decide whether the person is has turned / will turn 100 years old that year. That decides the delimiter (- or +).</param>
         /// <param name="result">If valid, an instance of <see cref="SwedishPersonalIdentityNumber"/></param>
-        public static bool TryParse(string personalIdentityNumber, DateTime date, out SwedishPersonalIdentityNumber result)
+        public static bool TryParse(string personalIdentityNumber, DateTime currentYear, out SwedishPersonalIdentityNumber result)
         {
             try
             {
-                result = Parse(personalIdentityNumber, date);
+                result = Parse(personalIdentityNumber, currentYear);
                 return true;
             }
             catch (Exception)
@@ -174,11 +174,11 @@ namespace ActiveLogin.Identity.Swedish
         /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars.
         /// Format is YYMMDDXSSSC, for example <example>990807-2391</example> or <example>120211+9986</example>.
         /// </summary>
-        /// <param name="date">The date to decide whether the person is has turned / will turn 100 years old that year. That decides the delimiter (- or +).</param>
+        /// <param name="currentYear">The date to decide whether the person is has turned / will turn 100 years old that year. That decides the delimiter (- or +).</param>
 
-        public string To10DigitString(DateTime date)
+        public string To10DigitString(DateTime currentYear)
         {
-            var years = date.Year - Year;
+            var years = currentYear.Year - Year;
             var delimiter = years >= 100 ? '+' : '-';
             var twoDigitYear = Year % 100;
             return $"{twoDigitYear:D2}{Month:D2}{Day:D2}{delimiter}{BirthNumber:D3}{Checksum}";
