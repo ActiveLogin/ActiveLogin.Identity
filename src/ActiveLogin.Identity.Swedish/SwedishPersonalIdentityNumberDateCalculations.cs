@@ -10,7 +10,10 @@ namespace ActiveLogin.Identity.Swedish
         {
             var age = date.Year - dateOfBirth.Year;
 
-            if (date.DayOfYear < dateOfBirth.DayOfYear) age -= 1;
+            if (date.DayOfYear < dateOfBirth.DayOfYear)
+            {
+                age -= 1;
+            } 
 
             if (age < 0)
             {
