@@ -48,7 +48,7 @@ namespace ActiveLogin.Identity.Swedish
         /// Not always the actual date of birth due to lmitied amount of personal identity numbers per day.
         /// </summary>
         /// <param name="personalIdentityNumber"></param>
-        /// <param name="date">The date when to calulate the age.</param>
+        /// <param name="date">The date when to calculate the age.</param>
         /// <returns></returns>
         public static int GetAgeHint(this SwedishPersonalIdentityNumber personalIdentityNumber, DateTime date)
         {
