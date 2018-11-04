@@ -56,5 +56,21 @@ namespace ActiveLogin.Identity.Swedish.Test
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(year, month, day, birthNumber, checksum);
             Assert.Equal(expected, personalIdentityNumber.To10DigitString(_date_2018_07_15));
         }
+
+        [Fact]
+        public void NumberString_Will_Use_Different_Delimiter_When_Executed_On_Or_After_Person_Turns_100()
+        {
+            var pin = SwedishPersonalIdentityNumber.Create(1912, 02, 11, 998, 6);
+
+            var stringBeforeTurning100 = pin.To10DigitString(new DateTime(2011, 1, 1));
+            var stringOnYearTurning100 = pin.To10DigitString(new DateTime(2012, 1, 1));
+            var stringAfterTurning100 = pin.To10DigitString(new DateTime(2013, 1, 1));
+
+            var withHyphen = "120211-9986";
+            var withPlus = "120211+9986";
+            Assert.Equal(withHyphen, stringBeforeTurning100);
+            Assert.Equal(withPlus, stringOnYearTurning100);
+            Assert.Equal(withPlus, stringAfterTurning100);
+        }
     }
 }
