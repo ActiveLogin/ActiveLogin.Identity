@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ActiveLogin.Identity.Swedish\ActiveLogin.Identity.Swedish.csproj" />
+    <ProjectReference Include="..\..\src\FSharp.ActiveLogin.Identity.Swedish\FSharp.ActiveLogin.Identity.Swedish.fsproj" />
   </ItemGroup>
 
 </Project>

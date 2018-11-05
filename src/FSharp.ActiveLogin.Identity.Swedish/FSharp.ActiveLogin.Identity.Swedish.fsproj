@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="ResultBuilder.fs" />
+    <Compile Include="Gender.fs" />
+    <Compile Include="Types.fs" />
+    <Compile Include="Parse.fs" />
+    <Compile Include="SwedishPersonalIdentityNumber.fs" />
+    <Compile Include="SwedishPersonalIdentityNumberCSharp.fs" />
+  </ItemGroup>
+
+</Project>
