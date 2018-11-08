@@ -98,3 +98,10 @@ type SwedishPersonalIdentityNumber =
       BirthNumber: BirthNumber
       Checksum: Checksum }
       override this.ToString() = sprintf "%A" this
+
+type SwedishPersonalIdentityNumberValues = 
+    { Year: int
+      Month: int
+      Day: int
+      BirthNumber: int
+      Checksum: int }

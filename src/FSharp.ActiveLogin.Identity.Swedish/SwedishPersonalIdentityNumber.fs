@@ -1,13 +1,13 @@
 module FSharp.ActiveLogin.Identity.Swedish.SwedishPersonalIdentityNumber
 open System
 
-let create year month day birthNumber checksum =
+let create (values: SwedishPersonalIdentityNumberValues) =
     result {
-        let! y = year |> Year.create
-        let! m = month |> Month.create
-        let! d = day |> Day.create y m
-        let! s = birthNumber |> BirthNumber.create
-        let! c = checksum |> Checksum.create y m d s
+        let! y = values.Year |> Year.create
+        let! m = values.Month |> Month.create
+        let! d = values.Day |> Day.create y m
+        let! s = values.BirthNumber |> BirthNumber.create
+        let! c = values.Checksum |> Checksum.create y m d s
 
         return  
             { SwedishPersonalIdentityNumber.Year = y
@@ -17,14 +17,8 @@ let create year month day birthNumber checksum =
               Checksum = c }
     } 
 
-type private IdentityNumberValues = 
-    { Year: int
-      Month: int
-      Day: int
-      BirthNumber: int
-      Checksum: int }
-let private extractValues (pin:SwedishPersonalIdentityNumber) =
-    { IdentityNumberValues.Year = pin.Year |> Year.value
+let private extractValues (pin:SwedishPersonalIdentityNumber) : SwedishPersonalIdentityNumberValues =
+    { Year = pin.Year |> Year.value
       Month = pin.Month |> Month.value
       Day = pin.Day |> Day.value
       BirthNumber = pin.BirthNumber |> BirthNumber.value
@@ -59,8 +53,8 @@ let parse currentYear str =
     let fromNumberParts currentYear parsed =
         match parsed.FullYear, parsed.ShortYear, parsed.Month, parsed.Day, parsed.Delimiter, parsed.BirthNumber, parsed.Checksum with
         | Some fullYear, None, month, day, None, birthNumber, checksum ->
-            create fullYear month day birthNumber checksum
-        | None, Some shortYear, month, day, delimiter, birthNumber, checkSum ->
+            create { Year = fullYear; Month = month; Day = day; BirthNumber = birthNumber; Checksum = checksum }
+        | None, Some shortYear, month, day, delimiter, birthNumber, checksum ->
             let getCentury (year: int) = (year / 100) * 100
             let currentYear = Year.value currentYear
             let currentCentury = getCentury currentYear
@@ -72,7 +66,7 @@ let parse currentYear str =
                 | Some Hyphen | None -> fullYearGuess - 100
                 | Some Plus when shortYear <= lastDigitsCurrentYear -> fullYearGuess - 100
                 | Some Plus -> fullYearGuess - 200
-            create fullYear month day birthNumber checkSum
+            create { Year = fullYear; Month = month; Day = day; BirthNumber = birthNumber; Checksum = checksum }
         | _ -> ParsingError |> Error
 
     match str with

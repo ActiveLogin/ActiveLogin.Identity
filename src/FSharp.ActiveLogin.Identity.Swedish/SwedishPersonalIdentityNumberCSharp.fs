@@ -45,7 +45,7 @@ type SwedishPersonalIdentityNumber (pin: Types.SwedishPersonalIdentityNumber) =
     /// <returns>An instance of <see cref="SwedishPersonalIdentityNumber"/> if all the paramaters are valid by themselfes and in combination.</returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when any of the arguments are invalid.</exception>
     static member Create(year, month, day, birthNumber, checksum) =
-        SwedishPersonalIdentityNumber.create year month day birthNumber checksum 
+        SwedishPersonalIdentityNumber.create { Year = year; Month = month; Day = day; BirthNumber = birthNumber; Checksum = checksum } 
         |> tryGetResult
         |> SwedishPersonalIdentityNumber
 
