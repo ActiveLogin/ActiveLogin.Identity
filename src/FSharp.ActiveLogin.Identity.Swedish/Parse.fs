@@ -27,16 +27,16 @@ let private buildNumberParts (gs: GroupCollection) =
         |> function
         | Some v when v = "+" -> Some Plus
         | Some v when v = "-" -> Some Hyphen
-        | Some _ -> failwith "Invalid delimiter"
+        | Some _ -> invalidArg "gs" "Invalid delimiter"
         | None -> None
 
     { FullYear = asInt "fullYear" gs
       ShortYear = asInt "shortYear" gs
-      Month = match asInt "month" gs with Some m -> m | None -> failwith "Invalid month"
-      Day = match asInt "day" gs with Some m -> m | None -> failwith "Invalid day"
+      Month = match asInt "month" gs with Some m -> m | None -> invalidArg "gs" "Invalid month"
+      Day = match asInt "day" gs with Some m -> m | None -> invalidArg "g" "Invalid day"
       Delimiter = asDelimiter gs
-      BirthNumber = match asInt "birthNumber" gs with Some m -> m | None -> failwith "Invalid birth number"
-      Checksum = match asInt "checksum" gs with Some m -> m | None -> failwith "Invalid checksum" }
+      BirthNumber = match asInt "birthNumber" gs with Some m -> m | None -> invalidArg "gs" "Invalid birth number"
+      Checksum = match asInt "checksum" gs with Some m -> m | None -> invalidArg "gs" "Invalid checksum" }
 
 let (|SwedishIdentityNumber|_|) (input:string) =
     let matchRegex pattern input =
