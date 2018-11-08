@@ -61,8 +61,10 @@ let parse currentYear str =
         | Some fullYear, None, month, day, None, birthNumber, checksum ->
             create fullYear month day birthNumber checksum
         | None, Some shortYear, month, day, delimiter, birthNumber, checkSum ->
+            let getCentury (year: int) = (year / 100) * 100
             let currentYear = Year.value currentYear
-            let fullYearGuess = (currentYear / 100) * 100 + shortYear
+            let currentCentury = getCentury currentYear
+            let fullYearGuess = currentCentury + shortYear
             let lastDigitsCurrentYear = currentYear % 100
             let fullYear =
                 match delimiter with
