@@ -6,9 +6,9 @@
     public enum Gender
     {
         /// <summary>
-        /// Unknown or other gender
+        /// Other gender
         /// </summary>
-        Unknown,
+        NonBinary,
 
         /// <summary>
         /// Gender representing a female
