@@ -17,7 +17,7 @@ namespace ActiveLogin.Identity.Swedish
 
             if (age < 0)
             {
-                throw new Exception("The person is not yet born.");
+                throw new ArgumentException("The person is not yet born.");
             }
 
             return age;

@@ -35,7 +35,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void When_Not_Yet_Born_Throws_Exception(int year, int month, int day, int birthNumber, int checksum)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(year, month, day, birthNumber, checksum);
-            var ex = Assert.Throws<Exception>(() => personalIdentityNumber.GetAgeHint(_date_2000_04_14));
+            var ex = Assert.Throws<ArgumentException>(() => personalIdentityNumber.GetAgeHint(_date_2000_04_14));
 
             Assert.Contains("The person is not yet born.", ex.Message);
         }
