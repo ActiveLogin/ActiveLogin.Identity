@@ -29,7 +29,7 @@ let to10DigitString currentYear (pin:SwedishPersonalIdentityNumber) =
     let vs = extractValues pin
     sprintf "%02i%02i%02i%s%03i%1i" (vs.Year % 100) vs.Month vs.Day delimiter vs.BirthNumber vs.Checksum
 
-let to12DigitString  pid =
+let to12DigitString pid =
     let vs = extractValues pid
     sprintf "%02i%02i%02i%03i%1i" vs.Year vs.Month vs.Day vs.BirthNumber vs.Checksum
 

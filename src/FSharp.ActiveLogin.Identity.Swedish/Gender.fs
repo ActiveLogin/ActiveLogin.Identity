@@ -5,9 +5,9 @@ namespace ActiveLogin.Identity.Swedish
 /// </summary>
 type Gender = 
     /// <summary>
-    /// Unknown or other gender
+    /// Other gender
     /// </summary>
-    | Unknown = 0
+    | NonBinary = 0
 
     /// <summary>
     /// Gender representing a female
