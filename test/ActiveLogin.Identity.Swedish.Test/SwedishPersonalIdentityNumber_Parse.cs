@@ -219,5 +219,21 @@ namespace ActiveLogin.Identity.Swedish.Test
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString, _date_2018_07_15));
             Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
         }
+
+        [Fact]
+        public void Same_Number_Will_Use_Different_Delimiter_When_Parsed_On_Or_After_Person_Turns_100()
+        {
+            var withHyphen = "120211-9986";
+            var withPlus = "120211+9986";
+
+            var pinBeforeTurning100 = SwedishPersonalIdentityNumber.Parse(withHyphen, new DateTime(2011, 1, 1));
+            var pinOnYearTurning100 = SwedishPersonalIdentityNumber.Parse(withPlus, new DateTime(2012, 1, 1));
+            var pinAfterTurning100 = SwedishPersonalIdentityNumber.Parse(withPlus, new DateTime(2013, 1, 1));
+
+            var expected = SwedishPersonalIdentityNumber.Create(1912, 02, 11, 998, 6);
+            Assert.Equal(expected, pinBeforeTurning100);
+            Assert.Equal(expected, pinOnYearTurning100);
+            Assert.Equal(expected, pinAfterTurning100);
+        }
     }
 }
