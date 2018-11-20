@@ -157,7 +157,7 @@ namespace ActiveLogin.Identity.Swedish
         /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
         /// </param>
         /// <param name="result">If valid, an instance of <see cref="SwedishPersonalIdentityNumber"/></param>
-        public static bool TryParse(string personalIdentityNumber, int parseYear, out SwedishPersonalIdentityNumber result)
+        public static bool TryParseInSpecificYear(string personalIdentityNumber, int parseYear, out SwedishPersonalIdentityNumber result)
         {
             try
             {
