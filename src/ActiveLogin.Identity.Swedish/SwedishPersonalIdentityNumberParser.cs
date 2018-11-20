@@ -5,11 +5,11 @@ namespace ActiveLogin.Identity.Swedish
 {
     internal static class SwedishPersonalIdentityNumberParser
     {
-        public static SwedishPersonalIdentityNumberParts Parse(string personalIdentityNumber, DateTime currentYear)
+        public static SwedishPersonalIdentityNumberParts Parse(string personalIdentityNumber, int parseYear)
         {
             var trimmedPersonalIdentityNumber = personalIdentityNumber.Trim();
 
-            if (TryParseShortPattern(trimmedPersonalIdentityNumber, currentYear, out var parsedShort))
+            if (TryParseShortPattern(trimmedPersonalIdentityNumber, parseYear, out var parsedShort))
             {
                 return parsedShort;
             }
@@ -25,7 +25,7 @@ namespace ActiveLogin.Identity.Swedish
         /// <summary>
         /// YYYYMMDDSSSC, YYYYMMDD-SSSC or YYYYMMDD+SSSC
         /// </summary>
-        private static bool TryParseShortPattern(string personalIdentityNumber, DateTime currentYear, out SwedishPersonalIdentityNumberParts parts)
+        private static bool TryParseShortPattern(string personalIdentityNumber, int parseYear, out SwedishPersonalIdentityNumberParts parts)
         {
             var pattern = new Regex(@"^" +
                             @"(?<year>[0-9]{2})" +
@@ -45,7 +45,7 @@ namespace ActiveLogin.Identity.Swedish
 
             var partsFromMatch = GetPartsFromMatch(match);
             var delimiter = GetStringValue(match, "delimiter");
-            var fullYear = GetFullYear(partsFromMatch.Year, partsFromMatch.Month, partsFromMatch.Day, delimiter, currentYear);
+            var fullYear = GetFullYear(partsFromMatch.Year, partsFromMatch.Month, partsFromMatch.Day, delimiter, parseYear);
         
             parts = new SwedishPersonalIdentityNumberParts(fullYear, partsFromMatch.Month, partsFromMatch.Day, partsFromMatch.BirthNumber, partsFromMatch.Checksum);
             return true;
@@ -97,13 +97,13 @@ namespace ActiveLogin.Identity.Swedish
             return longPatternMatch.Groups[groupName].Value;
         }
 
-        private static int GetFullYear(int shortYear, int month, int day, string delimiter, DateTime currentYear)
+        private static int GetFullYear(int shortYear, int month, int day, string delimiter, int parseYear)
         {
-            var currentCentury = (currentYear.Year / 100) * 100;
+            var currentCentury = (parseYear / 100) * 100;
             var fullYear = currentCentury + shortYear;
 
             var dateOfBirth = new DateTime(fullYear, month, day, 0, 0, 0, DateTimeKind.Utc);
-            if (dateOfBirth.Year > currentYear.Year)
+            if (dateOfBirth.Year > parseYear)
             {
                 dateOfBirth = dateOfBirth.AddYears(-100);
             }

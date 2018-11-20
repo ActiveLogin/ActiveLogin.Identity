@@ -101,24 +101,24 @@ namespace ActiveLogin.Identity.Swedish
         /// </summary>
         public static SwedishPersonalIdentityNumber Parse(string personalIdentityNumber)
         {
-            return ParseInSpecificYear(personalIdentityNumber, DateTime.UtcNow);
+            return ParseInSpecificYear(personalIdentityNumber, DateTime.UtcNow.Year);
         }
 
         /// <summary>
         /// Converts the string representation of the personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent.
         /// </summary>
         /// <param name="personalIdentityNumber">A string representation of the personal identity number to parse.</param>
-        /// <param name="currentYear">
+        /// <param name="parseYear">
         /// The specific year to use when checking if the person has turned / will turn 100 years old.
         /// That information changes the delimiter (- or +).
         ///
         /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
         /// </param>
-        public static SwedishPersonalIdentityNumber ParseInSpecificYear(string personalIdentityNumber, DateTime currentYear)
+        public static SwedishPersonalIdentityNumber ParseInSpecificYear(string personalIdentityNumber, int parseYear)
         {
             try
             {
-                var parsed = SwedishPersonalIdentityNumberParser.Parse(personalIdentityNumber, currentYear);
+                var parsed = SwedishPersonalIdentityNumberParser.Parse(personalIdentityNumber, parseYear);
                 return new SwedishPersonalIdentityNumber(parsed.Year, parsed.Month, parsed.Day, parsed.BirthNumber, parsed.Checksum);
             }
             catch (ArgumentException)
@@ -150,18 +150,18 @@ namespace ActiveLogin.Identity.Swedish
         /// Converts the string representation of the personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent  and returns a value that indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="personalIdentityNumber">A string representation of the personal identity number to parse.</param>
-        /// <param name="currentYear">
+        /// <param name="parseYear">
         /// The specific year to use when checking if the person has turned / will turn 100 years old.
         /// That information changes the delimiter (- or +).
         ///
         /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
         /// </param>
         /// <param name="result">If valid, an instance of <see cref="SwedishPersonalIdentityNumber"/></param>
-        public static bool TryParse(string personalIdentityNumber, DateTime currentYear, out SwedishPersonalIdentityNumber result)
+        public static bool TryParse(string personalIdentityNumber, int parseYear, out SwedishPersonalIdentityNumber result)
         {
             try
             {
-                result = ParseInSpecificYear(personalIdentityNumber, currentYear);
+                result = ParseInSpecificYear(personalIdentityNumber, parseYear);
                 return true;
             }
             catch (Exception)
@@ -177,22 +177,22 @@ namespace ActiveLogin.Identity.Swedish
         /// </summary>
         public string To10DigitString()
         {
-            return To10DigitStringInSpecificYear(DateTime.UtcNow);
+            return To10DigitStringInSpecificYear(DateTime.UtcNow.Year);
         }
 
         /// <summary>
         /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars.
         /// Format is YYMMDDXSSSC, for example <example>990807-2391</example> or <example>120211+9986</example>.
         /// </summary>
-        /// <param name="currentYear">
+        /// <param name="serializationYear">
         /// The specific year to use when checking if the person has turned / will turn 100 years old.
         /// That information changes the delimiter (- or +).
         ///
         /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
         /// </param>
-        public string To10DigitStringInSpecificYear(DateTime currentYear)
+        public string To10DigitStringInSpecificYear(int serializationYear)
         {
-            var years = currentYear.Year - Year;
+            var years = serializationYear - Year;
             var delimiter = years >= 100 ? '+' : '-';
             var twoDigitYear = Year % 100;
             return $"{twoDigitYear:D2}{Month:D2}{Day:D2}{delimiter}{BirthNumber:D3}{Checksum}";
