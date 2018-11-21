@@ -112,9 +112,11 @@ Unforentunately the term "social security number" or SSN is often used even for 
 
 To comply with GDPR and not no expose any real PINs, we are using the official test data for Swedish Personal Identity Numbers [provided by Skatteverket](https://skatteverket.entryscape.net/catalog/9/datasets/147).
 
-### Why is there an overload to pass a date to Parse and ToString()?
+### When should I use `.To10DigitStringInSpecificYear(...)`, `.ParseInSpecificYear(...)` or `.TryParseInSpecificYear(...)`?
 
-Some forms of a Swedish Personal Identity Number depends of the age of the person it represents. The "-" will be replaced with a "+" the year a person is 100 years old or older. Therefore an overload exists to define at what point in the the data should be represented. Useful for parsing old data or printing data fore the future.
+Some forms of a Swedish Personal Identity Number depends of the age of the person it represents.
+The "-" will be replaced with a "+" on January 1st the year a person turns 100 years old. Therefore these methods exists to define at what year the the data should be represented or parsed.
+Useful for parsing old data or printing data for the future.
 
 ## Active Login
 
