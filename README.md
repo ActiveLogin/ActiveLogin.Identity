@@ -115,8 +115,8 @@ To comply with GDPR and not no expose any real PINs, we are using the official t
 ### When should I use `.To10DigitStringInSpecificYear(...)`, `.ParseInSpecificYear(...)` or `.TryParseInSpecificYear(...)`?
 
 Some forms of a Swedish Personal Identity Number depends of the age of the person it represents.
-The "-" will be replaced with a "+" the year a person is 100 years old or older. Therefore these methods exists to define at what year the the data should be represented or parsed.
-Useful for parsing old data or printing data fore the future.
+The "-" will be replaced with a "+" on January 1st the year a person turns 100 years old. Therefore these methods exists to define at what year the the data should be represented or parsed.
+Useful for parsing old data or printing data for the future.
 
 ## Active Login
 
