@@ -1,7 +1,7 @@
-﻿module FSharp.ConsoleSample
+﻿module ConsoleSample.FSharp
 
 open System
-open FSharp.ActiveLogin.Identity.Swedish
+open ActiveLogin.Identity.Swedish.FSharp
 
 let sampleStrings =
     [ "990913+9801"

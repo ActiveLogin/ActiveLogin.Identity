@@ -1,5 +1,5 @@
 [<AutoOpen>]
-module FSharp.ActiveLogin.Identity.Swedish.Types
+module ActiveLogin.Identity.Swedish.FSharp.Types
 
 open System
 

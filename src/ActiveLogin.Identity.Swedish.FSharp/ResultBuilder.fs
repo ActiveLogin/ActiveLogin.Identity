@@ -1,4 +1,4 @@
-namespace FSharp.ActiveLogin.Identity.Swedish
+namespace ActiveLogin.Identity.Swedish.FSharp
 type ResultBuilder() =
     member __.Return x = Ok x
     member __.Zero() = Ok ()

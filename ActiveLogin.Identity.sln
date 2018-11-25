@@ -35,11 +35,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{64C47C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ActiveLogin.Identity.Swedish.AspNetCore.Test", "test\ActiveLogin.Identity.Swedish.AspNetCore.Test\ActiveLogin.Identity.Swedish.AspNetCore.Test.csproj", "{A414F554-17C9-47F2-BE7B-70FEA9385529}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharp.ActiveLogin.Identity.Swedish", "src\FSharp.ActiveLogin.Identity.Swedish\FSharp.ActiveLogin.Identity.Swedish.fsproj", "{03FBA6FB-5291-4E2C-AEBE-F83E49B395B8}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ActiveLogin.Identity.Swedish.FSharp", "src\ActiveLogin.Identity.Swedish.FSharp\ActiveLogin.Identity.Swedish.FSharp.fsproj", "{03FBA6FB-5291-4E2C-AEBE-F83E49B395B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FSharp.ActiveLogin.Identity.Swedish.Test", "test\FSharp.ActiveLogin.Identity.Swedish.Test\FSharp.ActiveLogin.Identity.Swedish.Test.csproj", "{8C674C7E-BEAA-42C9-8470-E75DFE33A7E3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActiveLogin.Identity.Swedish.FSharp.Test", "test\ActiveLogin.Identity.Swedish.FSharp.Test\ActiveLogin.Identity.Swedish.FSharp.Test.csproj", "{8C674C7E-BEAA-42C9-8470-E75DFE33A7E3}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharp.ConsoleSample", "samples\FSharp.ConsoleSample\FSharp.ConsoleSample.fsproj", "{19725E99-986D-4B5E-89A6-CB7B0E6415F6}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ConsoleSample.FSharp", "samples\ConsoleSample.FSharp\ConsoleSample.FSharp.fsproj", "{19725E99-986D-4B5E-89A6-CB7B0E6415F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

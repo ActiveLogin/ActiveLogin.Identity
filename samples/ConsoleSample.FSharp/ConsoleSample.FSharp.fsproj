@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\FSharp.ActiveLogin.Identity.Swedish\FSharp.ActiveLogin.Identity.Swedish.fsproj" />
+    <ProjectReference Include="..\..\src\ActiveLogin.Identity.Swedish.FSharp\ActiveLogin.Identity.Swedish.FSharp.fsproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-module internal FSharp.ActiveLogin.Identity.Swedish.Parse
+module internal ActiveLogin.Identity.Swedish.FSharp.Parse
 
 open System
 open System.Text.RegularExpressions

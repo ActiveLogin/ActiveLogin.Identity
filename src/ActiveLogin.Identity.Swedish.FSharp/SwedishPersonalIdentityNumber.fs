@@ -1,4 +1,4 @@
-module FSharp.ActiveLogin.Identity.Swedish.SwedishPersonalIdentityNumber
+module ActiveLogin.Identity.Swedish.FSharp.SwedishPersonalIdentityNumber
 open System
 
 let create (values: SwedishPersonalIdentityNumberValues) =
