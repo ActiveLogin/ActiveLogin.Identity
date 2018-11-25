@@ -13,7 +13,11 @@
 
     <VersionPrefix>1.0.0</VersionPrefix>
     <VersionSuffix>alpha-3</VersionSuffix>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
     <FileVersion Condition="'$(BUILD_BUILDNUMBER)' != ''">$(VersionPrefix).$(BUILD_BUILDNUMBER)</FileVersion>
+
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>StrongNameKey.snk</AssemblyOriginatorKeyFile>
 
     <Description>.NET classes that enables parsing and validation of Swedish identities such as Personal Identity Number (svenskt personnummer) in .NET.</Description>
     <PackageTags>PersonalIdentityNumber;PIN;personnummer;Sweden;validation;validate;parse</PackageTags>
