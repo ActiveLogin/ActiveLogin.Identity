@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ActiveLogin.Identity.Swedish\ActiveLogin.Identity.Swedish.csproj" />
+    <ProjectReference Include="..\..\src\ActiveLogin.Identity.Swedish.FSharp\ActiveLogin.Identity.Swedish.FSharp.fsproj" />
   </ItemGroup>
 
 </Project>
