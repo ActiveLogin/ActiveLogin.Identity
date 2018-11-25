@@ -24,10 +24,14 @@ let private extractValues (pin:SwedishPersonalIdentityNumber) : SwedishPersonalI
       BirthNumber = pin.BirthNumber |> BirthNumber.value
       Checksum = pin.Checksum |> Checksum.value }
 
-let to10DigitString currentYear (pin:SwedishPersonalIdentityNumber) =
-    let delimiter = if (currentYear |> Year.value) - (pin.Year |> Year.value) >= 100 then "+" else "-"
+let to10DigitStringInSpecificYear serializationYear (pin:SwedishPersonalIdentityNumber) =
+    let delimiter = if (serializationYear |> Year.value) - (pin.Year |> Year.value) >= 100 then "+" else "-"
     let vs = extractValues pin
     sprintf "%02i%02i%02i%s%03i%1i" (vs.Year % 100) vs.Month vs.Day delimiter vs.BirthNumber vs.Checksum
+
+let to10DigitString (pin:SwedishPersonalIdentityNumber) =
+    let year = DateTime.UtcNow.Year |> Year.create |> function | Ok y -> y | Error e -> invalidArg "year" "DateTime.Year wasn't a year"
+    to10DigitStringInSpecificYear year pin
 
 let to12DigitString pid =
     let vs = extractValues pid
@@ -49,29 +53,35 @@ let tryGetResult (pin:Result<SwedishPersonalIdentityNumber,Error>) =
     | Error e -> handleError e
 
 open Parse
-let parse currentYear str = 
-    let fromNumberParts currentYear parsed =
+let parseInSpecificYear parseYear str = 
+    let fromNumberParts parseYear parsed =
         match parsed.FullYear, parsed.ShortYear, parsed.Month, parsed.Day, parsed.Delimiter, parsed.BirthNumber, parsed.Checksum with
         | Some fullYear, None, month, day, None, birthNumber, checksum ->
             create { Year = fullYear; Month = month; Day = day; BirthNumber = birthNumber; Checksum = checksum }
         | None, Some shortYear, month, day, delimiter, birthNumber, checksum ->
             let getCentury (year: int) = (year / 100) * 100
-            let currentYear = Year.value currentYear
-            let currentCentury = getCentury currentYear
-            let fullYearGuess = currentCentury + shortYear
-            let lastDigitsCurrentYear = currentYear % 100
+            let parseYear = Year.value parseYear
+            let parseCentury = getCentury parseYear
+            let fullYearGuess = parseCentury + shortYear
+            let lastDigitsParseYear = parseYear % 100
             let fullYear =
                 match delimiter with
-                | Some Hyphen | None when shortYear <= lastDigitsCurrentYear -> fullYearGuess
+                | Some Hyphen | None when shortYear <= lastDigitsParseYear -> fullYearGuess
                 | Some Hyphen | None -> fullYearGuess - 100
-                | Some Plus when shortYear <= lastDigitsCurrentYear -> fullYearGuess - 100
+                | Some Plus when shortYear <= lastDigitsParseYear -> fullYearGuess - 100
                 | Some Plus -> fullYearGuess - 200
             create { Year = fullYear; Month = month; Day = day; BirthNumber = birthNumber; Checksum = checksum }
         | _ -> ParsingError |> Error
 
     match str with
-    | SwedishIdentityNumber parts -> fromNumberParts currentYear parts
+    | SwedishIdentityNumber parts -> fromNumberParts parseYear parts
     | _ -> ParsingError |> Error
+
+let parse str = 
+    result {
+        let! year = DateTime.UtcNow.Year |> Year.create
+        return! parseInSpecificYear year str
+    }
 
 module Hints =
     open ActiveLogin.Identity.Swedish
@@ -83,6 +93,8 @@ module Hints =
         let dateOfBirth = getDateOfBirthHint pin
         let age = date.Year - dateOfBirth.Year
         if date.DayOfYear < dateOfBirth.DayOfYear then age - 1 else age
+
+    let getAgeHint pin = getAgeHintOnDate DateTime.UtcNow pin
 
     let getGenderHint (pin:SwedishPersonalIdentityNumber) =
         let isBirthNumberEven = (pin.BirthNumber |> BirthNumber.value) % 2 = 0

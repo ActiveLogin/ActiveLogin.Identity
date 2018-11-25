@@ -4,7 +4,6 @@ open ActiveLogin.Identity.Swedish.FSharp
 open SwedishPersonalIdentityNumber
 open System.Runtime.InteropServices //for OutAttribute
 
-
 /// <summary>
 /// Represents a Swedish Personal Identity Number (Svenskt Personnummer).
 /// https://en.wikipedia.org/wiki/Personal_identity_number_(Sweden)
@@ -50,7 +49,7 @@ type SwedishPersonalIdentityNumber (pin: Types.SwedishPersonalIdentityNumber) =
     /// <returns>An instance of <see cref="SwedishPersonalIdentityNumber"/> if all the paramaters are valid by themselfes and in combination.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when any of the arguments are invalid.</exception>
     static member Create(year, month, day, birthNumber, checksum) =
-        SwedishPersonalIdentityNumber.create { Year = year; Month = month; Day = day; BirthNumber = birthNumber; Checksum = checksum } 
+        create { Year = year; Month = month; Day = day; BirthNumber = birthNumber; Checksum = checksum } 
         |> tryGetResult
         |> SwedishPersonalIdentityNumber
 
@@ -65,17 +64,15 @@ type SwedishPersonalIdentityNumber (pin: Types.SwedishPersonalIdentityNumber) =
     /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
     /// </param>
     static member ParseInSpecificYear((personalIdentityNumber:string), parseYear: int) =
-        match parseYear |> Year.create with
-        | Error _ -> raise (new ArgumentOutOfRangeException("year", parseYear, "Invalid year."))
-        | Ok currentYear ->
-            SwedishPersonalIdentityNumber.parse currentYear personalIdentityNumber
-            |> tryGetResult
-            |> SwedishPersonalIdentityNumber
+        result {
+            let! year = parseYear |> Year.create
+            return! parseInSpecificYear year personalIdentityNumber
+        } |> tryGetResult |> SwedishPersonalIdentityNumber
 
     /// <summary>
     /// Converts the string representation of the personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent.
     /// </summary>
-    static member Parse(personalIdentityNumber) = SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumber, DateTime.UtcNow.Year)
+    static member Parse(personalIdentityNumber) = parse personalIdentityNumber |> tryGetResult |> SwedishPersonalIdentityNumber
 
     /// <summary>
     /// Converts the string representation of the personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent  and returns a value that indicates whether the conversion succeeded.
@@ -87,24 +84,30 @@ type SwedishPersonalIdentityNumber (pin: Types.SwedishPersonalIdentityNumber) =
     ///
     /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
     /// </param>
-    /// <param name="result">If valid, an instance of <see cref="SwedishPersonalIdentityNumber"/></param>
-    static member TryParseInSpecificYear((personalIdentityNumber:string), (parseYear:int), [<Out>] result : SwedishPersonalIdentityNumber byref) =
-        match parseYear |> Year.create with
-        | Error _ -> raise (new ArgumentOutOfRangeException("year", parseYear, "Invalid year."))
-        | Ok currentYear ->
-            match SwedishPersonalIdentityNumber.parse currentYear personalIdentityNumber with
-            | Ok pin -> 
-                result <- (pin |> SwedishPersonalIdentityNumber)
-                true
-            | Error _ -> false
+    /// <param name="parseResult">If valid, an instance of <see cref="SwedishPersonalIdentityNumber"/></param>
+    static member TryParseInSpecificYear((personalIdentityNumber:string), (parseYear:int), [<Out>] parseResult : SwedishPersonalIdentityNumber byref) =
+        let pin = result {
+            let! year = parseYear |> Year.create
+            return! parseInSpecificYear year personalIdentityNumber
+        }
+        match pin with
+        | Error _ -> false
+        | Ok pin -> 
+            parseResult <- (pin |> SwedishPersonalIdentityNumber)
+            true
 
     /// <summary>
     /// Converts the string representation of the personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent  and returns a value that indicates whether the conversion succeeded.
     /// </summary>
     /// <param name="personalIdentityNumber">A string representation of the personal identity number to parse.</param>
-    /// <param name="result">If valid, an instance of <see cref="SwedishPersonalIdentityNumber"/></param>
-    static member TryParse((personalIdentityNumber:string), [<Out>] result : SwedishPersonalIdentityNumber byref) = 
-        SwedishPersonalIdentityNumber.TryParseInSpecificYear(personalIdentityNumber, DateTime.UtcNow.Year, &result)
+    /// <param name="parseResult">If valid, an instance of <see cref="SwedishPersonalIdentityNumber"/></param>
+    static member TryParse((personalIdentityNumber:string), [<Out>] parseResult : SwedishPersonalIdentityNumber byref) = 
+        let pin = parse personalIdentityNumber
+        match pin with
+        | Error _ -> false
+        | Ok pin -> 
+            parseResult <- (pin |> SwedishPersonalIdentityNumber)
+            true
     
     /// <summary>
     /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars.
@@ -120,13 +123,13 @@ type SwedishPersonalIdentityNumber (pin: Types.SwedishPersonalIdentityNumber) =
         match serializationYear |> Year.create with
         | Error _ -> raise (new ArgumentOutOfRangeException("year", serializationYear, "Invalid year."))
         | Ok year ->
-            to10DigitString year identityNumber
+            to10DigitStringInSpecificYear year identityNumber
 
     /// <summary>
     /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent short string representation.
     /// Format is YYMMDDXSSSC, for example <example>990807-2391</example> or <example>120211+9986</example>.
     /// </summary>
-    member __.To10DigitString() = __.To10DigitStringInSpecificYear(DateTime.UtcNow.Year)
+    member __.To10DigitString() = to10DigitString identityNumber
 
 
 
@@ -197,7 +200,7 @@ type SwedishPersonalIdentityNumberHintExtensions() =
     /// </summary>
     [<Extension>]
     static member GetAgeHint(pin:SwedishPersonalIdentityNumber) = 
-        Hints.getAgeHintOnDate DateTime.UtcNow pin.IdentityNumber
+        Hints.getAgeHint pin.IdentityNumber
         |> function
         | i when i < 0 -> invalidArg "pin" "The person is not yet born."
         | i -> i

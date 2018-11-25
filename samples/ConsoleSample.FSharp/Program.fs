@@ -12,12 +12,10 @@ let sampleStrings =
       "ABC" ]
 
 let parseAndPrintPersonalIdentityNumber str =
-    let currentYear = match DateTime.UtcNow.Year |> Year.create with | Ok year -> year | Error e -> invalidArg "str" "Invalid year"
-    let parse = SwedishPersonalIdentityNumber.parse currentYear
     let printHeader str = str |> printfn "Input: %s\n----------------------"
     let print10DigitString pin = 
         pin 
-        |> SwedishPersonalIdentityNumber.to10DigitString currentYear 
+        |> SwedishPersonalIdentityNumber.to10DigitString 
         |> printfn "SwedishPersonalIdentityNumber.to10DigitString: %s" 
     let print12DigitString pin =
         pin 
@@ -35,7 +33,7 @@ let parseAndPrintPersonalIdentityNumber str =
         gender.ToString() |> printfn "SwedishPersonalIdentityNumber.Hints.getGenderHint: %s"
 
     printHeader str
-    match parse str with
+    match SwedishPersonalIdentityNumber.parse str with
     | Ok pin ->
         printfn "SwedishPersonalIdentityNumber:"
         printfn "%A" pin
