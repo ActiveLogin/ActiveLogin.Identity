@@ -131,8 +131,6 @@ type SwedishPersonalIdentityNumber (pin: Types.SwedishPersonalIdentityNumber) =
     /// </summary>
     member __.To10DigitString() = to10DigitString identityNumber
 
-
-
     /// <summary>
     /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent 12 digit string representation.
     /// Format is YYYYMMDDSSSC, for example <example>19908072391</example> or <example>191202119986</example>.
