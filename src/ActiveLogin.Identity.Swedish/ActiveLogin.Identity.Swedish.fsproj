@@ -55,6 +55,8 @@
     <Compile Include="SwedishPersonalIdentityNumberCSharp.fs" />
   </ItemGroup>
 
-  <ItemGroup />
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="4.5.4" />
+  </ItemGroup>
 
 </Project>
