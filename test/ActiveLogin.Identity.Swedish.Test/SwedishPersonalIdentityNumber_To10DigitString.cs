@@ -1,4 +1,3 @@
-using System;
 using Xunit;
 
 namespace ActiveLogin.Identity.Swedish.Test
@@ -68,6 +67,20 @@ namespace ActiveLogin.Identity.Swedish.Test
             Assert.Equal(withHyphen, stringBeforeTurning100);
             Assert.Equal(withPlus, stringOnYearTurning100);
             Assert.Equal(withPlus, stringAfterTurning100);
+        }
+
+        [Fact]
+        public void Serializes_Beginning_Zeroes()
+        {
+            var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(2000, 1, 1, 238, 4);
+            Assert.Equal("000101-2384", personalIdentityNumber.To10DigitString());
+        }
+
+        [Fact]
+        public void Serializes_Ending_Zeroes()
+        {
+            var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(2017, 1, 22, 238, 0);
+            Assert.Equal("170122-2380", personalIdentityNumber.To10DigitString());
         }
     }
 }

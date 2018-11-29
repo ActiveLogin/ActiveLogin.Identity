@@ -233,5 +233,19 @@ namespace ActiveLogin.Identity.Swedish.Test
             Assert.Equal(expected, pinOnYearTurning100);
             Assert.Equal(expected, pinAfterTurning100);
         }
+
+        [Fact]
+        public void Parses_When_Begins_With_Zero()
+        {
+            var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse("000101-2384");
+            Assert.Equal(SwedishPersonalIdentityNumber.Create(2000, 1, 1, 238, 4), personalIdentityNumber);
+        }
+
+        [Fact]
+        public void Parses_When_Ends_With_Zero()
+        {
+            var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse("170122-2380");
+            Assert.Equal(SwedishPersonalIdentityNumber.Create(2017, 1, 22, 238, 0), personalIdentityNumber);
+        }
     }
 }
