@@ -13,7 +13,7 @@
     <PackageId>ActiveLogin.Identity.Swedish</PackageId>
 
     <VersionPrefix>1.0.0</VersionPrefix>
-    <VersionSuffix>alpha-3</VersionSuffix>
+    <VersionSuffix>beta-1</VersionSuffix>
     <AssemblyVersion>1.0.0</AssemblyVersion>
     <FileVersion Condition="'$(BUILD_BUILDNUMBER)' != ''">$(VersionPrefix).$(BUILD_BUILDNUMBER)</FileVersion>
 
@@ -46,6 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="StrongNameKey.snk" />
     <Compile Include="ResultBuilder.fs" />
     <Compile Include="Gender.fs" />
     <Compile Include="Types.fs" />
@@ -53,5 +54,7 @@
     <Compile Include="SwedishPersonalIdentityNumber.fs" />
     <Compile Include="SwedishPersonalIdentityNumberCSharp.fs" />
   </ItemGroup>
+
+  <ItemGroup />
 
 </Project>
