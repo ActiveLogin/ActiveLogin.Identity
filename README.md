@@ -29,7 +29,7 @@ or
 dotnet add package ActiveLogin.Identity.Swedish.AspNetCore -Version 1.0.0-alpha-2
 ```
 
-### 2. Use the classes in your project
+### 2. Use the library in your C# project
 
 `SwedishPersonalIdentityNumber` provides parsing methods such as `SwedishPersonalIdentityNumber.Parse()` and `SwedishPersonalIdentityNumber.TryParse()` that can be used like this:
 
@@ -82,11 +82,47 @@ public class SampleDataModel
 }
 ```
 
-### 3. Browse tests and samples
+### 3. Use the library in your F# project
+
+`open ActiveLogin.Swedish.Identity.FSharp`
+
+The `SwedishPersonalIdentityNumber`-module provides functions for parsing, creating and converting a `SwedishPersonalIdentityNumber` to its 10- or 12-digit string representation.
+
+```fsharp
+"990807-2391" 
+|> SwedishPersonalIdentityNumber.parse 
+|> function 
+| Ok pin -> 
+    printfn "%A" pin
+    pin |> SwedishPersonalIdentityNumber.to10DigitString |> printfn "to10DigitString: %s"
+    pin |> SwedishPersonalIdentityNumber.to12DigitString |> printfn "to12DigitString: %s"
+    pin |> SwedishPersonalIdentityNumber.Hints.getDateOfBirthHint |> (fun date -> date.ToShortDateString() |> printfn "getDateOfBirthHint: %s")
+    pin |> SwedishPersonalIdentityNumber.Hints.getAgeHint |> printfn "getAgeHint: %i"
+    pin |> SwedishPersonalIdentityNumber.Hints.getGenderHint |> printfn "getGenderHint: %A"
+| Error e -> printfn "Not a valid Swedish personal identity number. Error %A" e 
+```
+
+The code above would output (as of 2018-07-23):
+
+```text
+{Year = Year 1999;
+ Month = Month 8;
+ Day = Day 7;
+ BirthNumber = BirthNumber 239;
+ Checksum = Checksum 1;}
+to10DigitString: 990807-2391
+to12DigitString: 199908072391
+getDateOfBirthHint: 1999-08-07
+getAgeHint: 18
+getGenderHint: Male
+```
+
+### 4. Browse tests and samples
 
 For more usecases, samples and inspiration; feel free to browse our unit tests and samples:
 
-* [ConsoleSample](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/samples/ConsoleSample)
+* [C# ConsoleSample](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/samples/ConsoleSample)
+* [F# ConsoleSample](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/samples/ConsoleSample.FSharp)
 * [ActiveLogin.Identity.Swedish.Test](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/test/ActiveLogin.Identity.Swedish.Test)
 * [ActiveLogin.Identity.Swedish.AspNetCore.Test](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/test/ActiveLogin.Identity.Swedish.AspNetCore.Test)
 

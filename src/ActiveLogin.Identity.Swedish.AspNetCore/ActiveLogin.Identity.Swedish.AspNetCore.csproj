@@ -48,6 +48,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ActiveLogin.Identity.Swedish\ActiveLogin.Identity.Swedish.csproj" />
+    <ProjectReference Include="..\ActiveLogin.Identity.Swedish.FSharp\ActiveLogin.Identity.Swedish.FSharp.fsproj" />
   </ItemGroup>
 </Project>
