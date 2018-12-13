@@ -26,5 +26,13 @@ namespace ActiveLogin.Identity.Swedish.Test
             Assert.True(isValid);
             Assert.Equal(SwedishPersonalIdentityNumber.Create(2000, 01, 01, 238, 4), personalIdentityNumber);
         }
+
+        [Fact]
+        public void TryParse_Returns_False_When_Valid_CoordinationNumber()
+        {
+            var isValid = SwedishPersonalIdentityNumber.TryParse("170182-2387", out SwedishPersonalIdentityNumber result);
+
+            Assert.False(isValid);
+        }
     }
 }
