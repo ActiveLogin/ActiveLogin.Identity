@@ -20,13 +20,13 @@ ActiveLogin.Identity is distributed as [packages on NuGet](https://www.nuget.org
 _Note:_ The packages relfecting the documentation are currently in alpha, so make sure to search for the pre release packages.
 
 ```powershell
-dotnet add package ActiveLogin.Identity.Swedish -Version 1.0.0-alpha-2
+dotnet add package ActiveLogin.Identity.Swedish -Version 1.0.0-rc-1
 ```
 
 or
 
 ```powershell
-dotnet add package ActiveLogin.Identity.Swedish.AspNetCore -Version 1.0.0-alpha-2
+dotnet add package ActiveLogin.Identity.Swedish.AspNetCore -Version 1.0.0-rc-1
 ```
 
 ### 2. Use the library in your C# project
