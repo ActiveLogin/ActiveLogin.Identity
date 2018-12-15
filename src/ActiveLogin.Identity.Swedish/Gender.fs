@@ -1,7 +1,7 @@
 namespace ActiveLogin.Identity.Swedish
 
 /// <summary>
-/// Specifies possible genders (juridiskt kön) in sweden.
+/// Specifies possible genders in Sweden. 
 /// </summary>
 type Gender = 
     /// <summary>
