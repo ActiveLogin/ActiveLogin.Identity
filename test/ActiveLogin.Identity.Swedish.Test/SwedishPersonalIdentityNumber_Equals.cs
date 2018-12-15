@@ -1,4 +1,4 @@
-using Xunit;
+    using Xunit;
 
 namespace ActiveLogin.Identity.Swedish.Test
 {
@@ -14,6 +14,17 @@ namespace ActiveLogin.Identity.Swedish.Test
             var personalIdentityNumberString = "199908072391";
             var personalIdentityNumber1 = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
             var personalIdentityNumber2 = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
+            var equals = personalIdentityNumber1.Equals(personalIdentityNumber2);
+
+            Assert.True(equals);
+        }
+
+        [Fact]
+        public void Two_Identical_PIN_When_One_Is_Object_Are_Equal_Using_Method()
+        {
+            var personalIdentityNumberString = "199908072391";
+            var personalIdentityNumber1 = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
+            var personalIdentityNumber2 = (object)SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
             var equals = personalIdentityNumber1.Equals(personalIdentityNumber2);
 
             Assert.True(equals);
@@ -36,6 +47,24 @@ namespace ActiveLogin.Identity.Swedish.Test
             var personalIdentityNumber1 = SwedishPersonalIdentityNumber.Parse("199908072391");
             var personalIdentityNumber2 = SwedishPersonalIdentityNumber.Parse("191202119986");
             var equals = personalIdentityNumber1.Equals(personalIdentityNumber2);
+
+            Assert.False(equals);
+        }
+
+        [Fact]
+        public void A_PIN_Is_Not_Equal_Null_Using_Method()
+        {
+            var personalIdentityNumber1 = SwedishPersonalIdentityNumber.Parse("199908072391");
+            var equals = personalIdentityNumber1.Equals((SwedishPersonalIdentityNumber)null);
+
+            Assert.False(equals);
+        }
+
+        [Fact]
+        public void A_PIN_Is_Not_Equal_Object_Null_Using_Method()
+        {
+            var personalIdentityNumber1 = SwedishPersonalIdentityNumber.Parse("199908072391");
+            var equals = personalIdentityNumber1.Equals((object)null);
 
             Assert.False(equals);
         }
