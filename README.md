@@ -2,6 +2,15 @@
 
 ActiveLogin.Identity provides parsing and validation of Swedish identities such as Personal Identity Number (svenskt personnummer). Built on NET Standard and packaged as NuGet-packages they are easy to install and use on multiple platforms.
 
+## Features
+- :id: .NET parser for Swedish Personal Identity Number (Svenskt personnummer)
+- :penguin: Cross platform: Targets .NET Standard 2.0 and .NET Framework 4.6.1
+- :heavy_check_mark: Strong named
+- :lock: GDPR Compliant
+- :calendar: Extracts metadata such as date of birth and gender
+- :large_blue_diamond: Written in F# and C# and works great with VB.NET as well
+- :white_check_mark: Well tested
+
 ## Continuous integration & Packages overview
 
  [![Build status](https://dev.azure.com/activesolution/ActiveLogin/_apis/build/status/ActiveLogin.Identity)](https://dev.azure.com/activesolution/ActiveLogin/_build/latest?definitionId=154)
