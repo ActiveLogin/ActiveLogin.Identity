@@ -15,7 +15,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData("900101+9802", 1890)]
         [InlineData("990913+9801", 1899)]
         [InlineData("120211+9986", 1912)]
-        public void Parses_Year_From_Short_String_When_Plus_Is_Delimiter(string personalIdentityNumberString, int expectedYear)
+        public void Parses_Year_From_10_Digit_String_When_Plus_Is_Delimiter(string personalIdentityNumberString, int expectedYear)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2012);
             Assert.Equal(expectedYear, personalIdentityNumber.Year);
@@ -23,7 +23,7 @@ namespace ActiveLogin.Identity.Swedish.Test
 
         [Theory]
         [InlineData("900101+9802", 1890)]
-        public void Parses_Year_From_Short_String_When_Year_Is_Exact_100_Years(string personalIdentityNumberString, int expectedYear)
+        public void Parses_Year_From_10_Digit_String_When_Year_Is_Exact_100_Years(string personalIdentityNumberString, int expectedYear)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 1990);
             Assert.Equal(expectedYear, personalIdentityNumber.Year);
@@ -32,7 +32,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [Theory]
         [InlineData("990807-2391", 1999)]
         [InlineData("180101-2392", 2018)]
-        public void Parses_Year_From_Short_String_When_Dash_Is_Delimiter(string personalIdentityNumberString, int expectedYear)
+        public void Parses_Year_From_10_Digit_String_When_Dash_Is_Delimiter(string personalIdentityNumberString, int expectedYear)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018);
             Assert.Equal(expectedYear, personalIdentityNumber.Year);
@@ -43,7 +43,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData("120211+9986", 1912)]
         [InlineData("990807-2391", 1999)]
         [InlineData("180101-2392", 2018)]
-        public void Parses_Year_From_Short_String(string personalIdentityNumberString, int expectedYear)
+        public void Parses_Year_From_10_Digit_String(string personalIdentityNumberString, int expectedYear)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
             Assert.Equal(expectedYear, personalIdentityNumber.Year);
@@ -54,7 +54,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData("120211+9986", 02)]
         [InlineData("990807-2391", 08)]
         [InlineData("180101-2392", 01)]
-        public void Parses_Month_From_Short_String(string personalIdentityNumberString, int expectedMonth)
+        public void Parses_Month_From_10_Digit_String(string personalIdentityNumberString, int expectedMonth)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
             Assert.Equal(expectedMonth, personalIdentityNumber.Month);
@@ -65,7 +65,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData("120211+9986", 11)]
         [InlineData("990807-2391", 07)]
         [InlineData("180101-2392", 01)]
-        public void Parses_Day_From_Short_String(string personalIdentityNumberString, int expectedDay)
+        public void Parses_Day_From_10_Digit_String(string personalIdentityNumberString, int expectedDay)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
             Assert.Equal(expectedDay, personalIdentityNumber.Day);
@@ -76,7 +76,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData("120211+9986", 998)]
         [InlineData("990807-2391", 239)]
         [InlineData("180101-2392", 239)]
-        public void Parses_BirthNumber_From_Short_String(string personalIdentityNumberString, int expectedBirthNumber)
+        public void Parses_BirthNumber_From_10_Digit_String(string personalIdentityNumberString, int expectedBirthNumber)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
             Assert.Equal(expectedBirthNumber, personalIdentityNumber.BirthNumber);
@@ -87,7 +87,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData("120211+9986", 6)]
         [InlineData("990807-2391", 1)]
         [InlineData("180101-2392", 2)]
-        public void Parses_Checksum_From_Short_String(string personalIdentityNumberString, int expectedChecksum)
+        public void Parses_Checksum_From_10_Digit_String(string personalIdentityNumberString, int expectedChecksum)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
             Assert.Equal(expectedChecksum, personalIdentityNumber.Checksum);
@@ -97,7 +97,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData(" 990913+9801 ", "990913+9801")]
         [InlineData(" 990807-2391", "990807-2391")]
         [InlineData("180101-2392 ", "180101-2392")]
-        public void Strips_Leading_And_Trailing_Whitespace_From_Short_String(string personalIdentityNumberString, string expectedPersonalIdentityNumberString)
+        public void Strips_Leading_And_Trailing_Whitespace_From_10_Digit_String(string personalIdentityNumberString, string expectedPersonalIdentityNumberString)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018);
             Assert.Equal(expectedPersonalIdentityNumberString, personalIdentityNumber.To10DigitStringInSpecificYear(2018));
@@ -107,7 +107,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData("990913—9801")]
         [InlineData("990913_9801")]
         [InlineData("990913.9801")]
-        public void Throws_When_Invalid_Delimiter_From_Short_String(string personalIdentityNumberString)
+        public void Throws_When_Invalid_Delimiter_From_10_Digit_String(string personalIdentityNumberString)
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018));
             Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
@@ -116,7 +116,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [Theory]
         [InlineData("189909139801", 1899)]
         [InlineData("191202119986", 1912)]
-        public void Parses_Year_From_Long_String_When_Plus_Is_Delimiter(string personalIdentityNumberString, int expectedYear)
+        public void Parses_Year_From_12_Digit_String_When_Plus_Is_Delimiter(string personalIdentityNumberString, int expectedYear)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018);
             Assert.Equal(expectedYear, personalIdentityNumber.Year);
@@ -125,7 +125,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [Theory]
         [InlineData("199908072391", 1999)]
         [InlineData("201801012392", 2018)]
-        public void Parses_Year_From_Long_String_When_Dash_Is_Delimiter(string personalIdentityNumberString, int expectedYear)
+        public void Parses_Year_From_12_Digit_String_When_Dash_Is_Delimiter(string personalIdentityNumberString, int expectedYear)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018);
             Assert.Equal(expectedYear, personalIdentityNumber.Year);
@@ -136,7 +136,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData("191202119986", 1912)]
         [InlineData("199908072391", 1999)]
         [InlineData("201801012392", 2018)]
-        public void Parses_Year_From_Long_String(string personalIdentityNumberString, int expectedYear)
+        public void Parses_Year_From_12_Digit_String(string personalIdentityNumberString, int expectedYear)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
             Assert.Equal(expectedYear, personalIdentityNumber.Year);
@@ -147,7 +147,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData("191202119986", 02)]
         [InlineData("199908072391", 08)]
         [InlineData("201801012392", 01)]
-        public void Parses_Month_From_Long_String(string personalIdentityNumberString, int expectedMonth)
+        public void Parses_Month_From_12_Digit_String(string personalIdentityNumberString, int expectedMonth)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
             Assert.Equal(expectedMonth, personalIdentityNumber.Month);
@@ -158,7 +158,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData("191202119986", 11)]
         [InlineData("199908072391", 07)]
         [InlineData("201801012392", 01)]
-        public void Parses_Day_From_Long_String(string personalIdentityNumberString, int expectedDay)
+        public void Parses_Day_From_12_Digit_String(string personalIdentityNumberString, int expectedDay)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
             Assert.Equal(expectedDay, personalIdentityNumber.Day);
@@ -169,7 +169,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData("191202119986", 998)]
         [InlineData("199908072391", 239)]
         [InlineData("201801012392", 239)]
-        public void Parses_BirthNumber_From_Long_String(string personalIdentityNumberString, int expectedBirthNumber)
+        public void Parses_BirthNumber_From_12_Digit_String(string personalIdentityNumberString, int expectedBirthNumber)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
             Assert.Equal(expectedBirthNumber, personalIdentityNumber.BirthNumber);
@@ -180,7 +180,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData("191202119986", 6)]
         [InlineData("199908072391", 1)]
         [InlineData("201801012392", 2)]
-        public void Parses_Checksum_From_Long_String(string personalIdentityNumberString, int expectedChecksum)
+        public void Parses_Checksum_From_12_Digit_String(string personalIdentityNumberString, int expectedChecksum)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
             Assert.Equal(expectedChecksum, personalIdentityNumber.Checksum);
@@ -190,7 +190,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData(" 189909139801 ", "189909139801")]
         [InlineData(" 191202119986", "191202119986")]
         [InlineData("199908072391 ", "199908072391")]
-        public void Strips_Leading_And_Trailing_Whitespace_From_Long_String(string personalIdentityNumberString, string expectedPersonalIdentityNumberString)
+        public void Strips_Leading_And_Trailing_Whitespace_From_12_Digit_String(string personalIdentityNumberString, string expectedPersonalIdentityNumberString)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018);
             Assert.Equal(expectedPersonalIdentityNumberString, personalIdentityNumber.To12DigitString());
@@ -200,7 +200,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData("18990913-9801", "189909139801")]
         [InlineData("19120211-9986", "191202119986")]
         [InlineData("19990807-2391", "199908072391")]
-        public void Parses_When_Hyphen_Delimiter_From_Long_String(string personalIdentityNumberString, string expectedPersonalIdentityNumberString)
+        public void Parses_When_Hyphen_Delimiter_From_12_Digit_String(string personalIdentityNumberString, string expectedPersonalIdentityNumberString)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018);
             Assert.Equal(expectedPersonalIdentityNumberString, personalIdentityNumber.To12DigitString());
@@ -210,7 +210,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData("18990913 9801", "189909139801")]
         [InlineData("19120211 9986", "191202119986")]
         [InlineData("19990807 2391", "199908072391")]
-        public void Parses_When_Whitespace_Delimiter_From_Long_String(string personalIdentityNumberString, string expectedPersonalIdentityNumberString)
+        public void Parses_When_Whitespace_Delimiter_From_12_Digit_String(string personalIdentityNumberString, string expectedPersonalIdentityNumberString)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018);
             Assert.Equal(expectedPersonalIdentityNumberString, personalIdentityNumber.To12DigitString());
@@ -219,7 +219,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [Theory]
         [InlineData("180101 2392", "201801012392")]
         [InlineData("990807 2391", "199908072391")]
-        public void Parses_When_Whitespace_Delimiter_From_Short_String(string personalIdentityNumberString, string expectedPersonalIdentityNumberString)
+        public void Parses_When_Whitespace_Delimiter_From_10_Digit_String(string personalIdentityNumberString, string expectedPersonalIdentityNumberString)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018);
             Assert.Equal(expectedPersonalIdentityNumberString, personalIdentityNumber.To12DigitString());
@@ -227,7 +227,7 @@ namespace ActiveLogin.Identity.Swedish.Test
 
         [Theory]
         [InlineData("18990913+9801")]
-        public void Throws_When_Plus_Delimiter_From_Long_String(string personalIdentityNumberString)
+        public void Throws_When_Plus_Delimiter_From_12_Digit_String(string personalIdentityNumberString)
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018));
             Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
@@ -237,7 +237,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData("990913—9801")]
         [InlineData("990913_9801")]
         [InlineData("990913.9801")]
-        public void Throws_When_Invalid_Delimiter_From_Long_String(string personalIdentityNumberString)
+        public void Throws_When_Invalid_Delimiter_From_12_Digit_String(string personalIdentityNumberString)
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018));
             Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
