@@ -1,7 +1,8 @@
 namespace ActiveLogin.Identity.Swedish
-open System
+
 open ActiveLogin.Identity.Swedish.FSharp
 open SwedishPersonalIdentityNumber
+open System
 open System.Runtime.InteropServices //for OutAttribute
 
 /// <summary>
@@ -9,7 +10,7 @@ open System.Runtime.InteropServices //for OutAttribute
 /// https://en.wikipedia.org/wiki/Personal_identity_number_(Sweden)
 /// https://sv.wikipedia.org/wiki/Personnummer_i_Sverige
 /// </summary>
-type SwedishPersonalIdentityNumber (pin: Types.SwedishPersonalIdentityNumber) =
+type SwedishPersonalIdentityNumber(pin : Types.SwedishPersonalIdentityNumber) =
     let identityNumber = pin
     member internal __.IdentityNumber = identityNumber
 
@@ -47,9 +48,13 @@ type SwedishPersonalIdentityNumber (pin: Types.SwedishPersonalIdentityNumber) =
     /// <param name="birthNumber">The birth number part.</param>
     /// <param name="checksum">The checksum part.</param>
     /// <returns>An instance of <see cref="SwedishPersonalIdentityNumber"/> if all the paramaters are valid by themselfes and in combination.</returns>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when any of the arguments are invalid.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when any of the arguments are invalid.</exception>
     static member Create(year, month, day, birthNumber, checksum) =
-        create { Year = year; Month = month; Day = day; BirthNumber = birthNumber; Checksum = checksum } 
+        create { Year = year
+                 Month = month
+                 Day = day
+                 BirthNumber = birthNumber
+                 Checksum = checksum }
         |> tryGetResult
         |> SwedishPersonalIdentityNumber
 
@@ -63,16 +68,19 @@ type SwedishPersonalIdentityNumber (pin: Types.SwedishPersonalIdentityNumber) =
     ///
     /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
     /// </param>
-    static member ParseInSpecificYear((personalIdentityNumber:string), parseYear: int) =
-        result {
-            let! year = parseYear |> Year.create
-            return! parseInSpecificYear year personalIdentityNumber
-        } |> tryGetResult |> SwedishPersonalIdentityNumber
+    static member ParseInSpecificYear((personalIdentityNumber : string), parseYear : int) =
+        result { let! year = parseYear |> Year.create
+                 return! parseInSpecificYear year personalIdentityNumber }
+        |> tryGetResult
+        |> SwedishPersonalIdentityNumber
 
     /// <summary>
     /// Converts the string representation of the personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent.
     /// </summary>
-    static member Parse(personalIdentityNumber) = parse personalIdentityNumber |> tryGetResult |> SwedishPersonalIdentityNumber
+    static member Parse(personalIdentityNumber) =
+        parse personalIdentityNumber
+        |> tryGetResult
+        |> SwedishPersonalIdentityNumber
 
     /// <summary>
     /// Converts the string representation of the personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent  and returns a value that indicates whether the conversion succeeded.
@@ -85,14 +93,13 @@ type SwedishPersonalIdentityNumber (pin: Types.SwedishPersonalIdentityNumber) =
     /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
     /// </param>
     /// <param name="parseResult">If valid, an instance of <see cref="SwedishPersonalIdentityNumber"/></param>
-    static member TryParseInSpecificYear((personalIdentityNumber:string), (parseYear:int), [<Out>] parseResult : SwedishPersonalIdentityNumber byref) =
-        let pin = result {
-            let! year = parseYear |> Year.create
-            return! parseInSpecificYear year personalIdentityNumber
-        }
+    static member TryParseInSpecificYear((personalIdentityNumber : string), (parseYear : int),
+                                         [<Out>] parseResult : SwedishPersonalIdentityNumber byref) =
+        let pin = result { let! year = parseYear |> Year.create
+                           return! parseInSpecificYear year personalIdentityNumber }
         match pin with
         | Error _ -> false
-        | Ok pin -> 
+        | Ok pin ->
             parseResult <- (pin |> SwedishPersonalIdentityNumber)
             true
 
@@ -101,14 +108,14 @@ type SwedishPersonalIdentityNumber (pin: Types.SwedishPersonalIdentityNumber) =
     /// </summary>
     /// <param name="personalIdentityNumber">A string representation of the personal identity number to parse.</param>
     /// <param name="parseResult">If valid, an instance of <see cref="SwedishPersonalIdentityNumber"/></param>
-    static member TryParse((personalIdentityNumber:string), [<Out>] parseResult : SwedishPersonalIdentityNumber byref) = 
+    static member TryParse((personalIdentityNumber : string), [<Out>] parseResult : SwedishPersonalIdentityNumber byref) =
         let pin = parse personalIdentityNumber
         match pin with
         | Error _ -> false
-        | Ok pin -> 
+        | Ok pin ->
             parseResult <- (pin |> SwedishPersonalIdentityNumber)
             true
-    
+
     /// <summary>
     /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars.
     /// Format is YYMMDDXSSSC, for example <example>990807-2391</example> or <example>120211+9986</example>.
@@ -119,11 +126,10 @@ type SwedishPersonalIdentityNumber (pin: Types.SwedishPersonalIdentityNumber) =
     ///
     /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
     /// </param>
-    member __.To10DigitStringInSpecificYear(serializationYear: int) =
+    member __.To10DigitStringInSpecificYear(serializationYear : int) =
         match serializationYear |> Year.create with
         | Error _ -> raise (new ArgumentOutOfRangeException("year", serializationYear, "Invalid year."))
-        | Ok year ->
-            to10DigitStringInSpecificYear year identityNumber
+        | Ok year -> to10DigitStringInSpecificYear year identityNumber
 
     /// <summary>
     /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent short string representation.
@@ -146,7 +152,7 @@ type SwedishPersonalIdentityNumber (pin: Types.SwedishPersonalIdentityNumber) =
     /// <summary>Returns a value indicating whether this instance is equal to a specified object.</summary>
     /// <param name="value">The object to compare to this instance.</param>
     /// <returns>true if <paramref name="value">value</paramref> is an instance of <see cref="SwedishPersonalIdentityNumber"></see> and equals the value of this instance; otherwise, false.</returns>
-    override __.Equals(b) = 
+    override __.Equals(b) =
         match b with
         | :? SwedishPersonalIdentityNumber as pin -> identityNumber = pin.IdentityNumber
         | _ -> false
@@ -158,17 +164,17 @@ type SwedishPersonalIdentityNumber (pin: Types.SwedishPersonalIdentityNumber) =
     static member op_Equality (left: SwedishPersonalIdentityNumber, right: SwedishPersonalIdentityNumber) =
         left.IdentityNumber = right.IdentityNumber
 
-
 open System.Runtime.CompilerServices
 
 [<Extension>]
 type SwedishPersonalIdentityNumberHintExtensions() =
+
     /// <summary>
     /// Date of birth for the person according to the personal identity number.
     /// Not always the actual date of birth due to lmitied amount of personal identity numbers per day.
     /// </summary>
     [<Extension>]
-    static member GetDateOfBirthHint(pin:SwedishPersonalIdentityNumber) = Hints.getDateOfBirthHint pin.IdentityNumber
+    static member GetDateOfBirthHint(pin : SwedishPersonalIdentityNumber) = Hints.getDateOfBirthHint pin.IdentityNumber
 
     /// <summary>
     /// Gender (juridiskt kön) in Sweden according to the last digit of the birth number in the personal identity number.
@@ -176,7 +182,7 @@ type SwedishPersonalIdentityNumberHintExtensions() =
     /// Even number: Female
     /// </summary>
     [<Extension>]
-    static member GetGenderHint(pin:SwedishPersonalIdentityNumber) = Hints.getGenderHint pin.IdentityNumber
+    static member GetGenderHint(pin : SwedishPersonalIdentityNumber) = Hints.getGenderHint pin.IdentityNumber
 
     /// <summary>
     /// Get the age of the person according to the date in the personal identity number.
@@ -186,7 +192,7 @@ type SwedishPersonalIdentityNumberHintExtensions() =
     /// <param name="date">The date when to calculate the age.</param>
     /// <returns></returns>
     [<Extension>]
-    static member GetAgeHint(pin:SwedishPersonalIdentityNumber, date:DateTime) = 
+    static member GetAgeHint(pin : SwedishPersonalIdentityNumber, date : DateTime) =
         Hints.getAgeHintOnDate date pin.IdentityNumber
         |> function
         | i when i < 0 -> invalidArg "pin" "The person is not yet born."
@@ -197,7 +203,7 @@ type SwedishPersonalIdentityNumberHintExtensions() =
     /// Not always the actual date of birth due to lmitied amount of personal identity numbers per day.
     /// </summary>
     [<Extension>]
-    static member GetAgeHint(pin:SwedishPersonalIdentityNumber) = 
+    static member GetAgeHint(pin : SwedishPersonalIdentityNumber) =
         Hints.getAgeHint pin.IdentityNumber
         |> function
         | i when i < 0 -> invalidArg "pin" "The person is not yet born."
