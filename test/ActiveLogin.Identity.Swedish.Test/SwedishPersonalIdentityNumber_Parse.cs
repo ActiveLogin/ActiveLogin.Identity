@@ -235,9 +235,12 @@ namespace ActiveLogin.Identity.Swedish.Test
 
         [Theory]
         [InlineData("990913—9801")]
+        [InlineData("19990913—9801")]
         [InlineData("990913_9801")]
+        [InlineData("19990913_9801")]
         [InlineData("990913.9801")]
-        public void Throws_When_Invalid_Delimiter_From_12_Digit_String(string personalIdentityNumberString)
+        [InlineData("19990913.9801")]
+        public void Throws_When_Invalid_Delimiter(string personalIdentityNumberString)
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018));
             Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
