@@ -70,7 +70,9 @@ let parseInSpecificYear parseYear str =
     let fromNumberParts parseYear parsed =
         match parsed.FullYear, parsed.ShortYear, parsed.Month, parsed.Day, parsed.Delimiter, parsed.BirthNumber,
               parsed.Checksum with
-        | Some fullYear, None, month, day, None, birthNumber, checksum ->
+        | Some fullYear, None, month, day, None, birthNumber, checksum
+        | Some fullYear, None, month, day, Some Hyphen, birthNumber, checksum
+        | Some fullYear, None, month, day, Some Whitespace, birthNumber, checksum ->
             create { Year = fullYear
                      Month = month
                      Day = day

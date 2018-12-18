@@ -6,6 +6,7 @@ open System.Text.RegularExpressions
 type Delimiter =
     | Plus
     | Hyphen
+    | Whitespace
 
 type NumberParts =
     { FullYear : int option
@@ -33,6 +34,7 @@ let private buildNumberParts (gs : GroupCollection) =
         |> function
         | Some v when v = "+" -> Some Plus
         | Some v when v = "-" -> Some Hyphen
+        | Some v when v = " " -> Some Whitespace
         | Some _ -> invalidArg "gs" "Invalid delimiter"
         | None -> None
 
@@ -62,7 +64,7 @@ let (|SwedishIdentityNumber|_|) (input : string) =
                   @"((?<fullYear>[0-9]{4})|(?<shortYear>[0-9]{2}))" + 
                   @"(?<month>[0-9]{2})" + 
                   @"(?<day>[0-9]{2})" + 
-                  @"(?<delimiter>[-+]?)" + 
+                  @"(?<delimiter>[-+ ]?)" + 
                   @"(?<birthNumber>[0-9]{3})" + 
                   @"(?<checksum>[0-9]{1})" + 
                   @"$"
