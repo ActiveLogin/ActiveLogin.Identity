@@ -29,12 +29,17 @@ let private buildNumberParts (gs : GroupCollection) =
         |> Option.map Int32.Parse
 
     let asDelimiter (gs : GroupCollection) =
-        gs
-        |> asString "delimiter"
+        let noneEmptyString str = 
+            match str with
+            | "" -> None
+            | d -> Some d
+
+        gs.["delimiter"].ToString()
+        |> noneEmptyString 
         |> function
-        | Some v when v = "+" -> Some Plus
-        | Some v when v = "-" -> Some Hyphen
-        | Some v when v = " " -> Some Whitespace
+        | Some d when d = "+" -> Some Plus
+        | Some d when d = "-" -> Some Hyphen
+        | Some d when d = " " -> Some Whitespace
         | Some _ -> invalidArg "gs" "Invalid delimiter"
         | None -> None
 
@@ -60,14 +65,9 @@ let private buildNumberParts (gs : GroupCollection) =
 
 let (|SwedishIdentityNumber|_|) (input : string) =
     let matchRegex pattern input = Regex.Match(input, pattern)
-    let pattern = @"^" + 
-                  @"((?<fullYear>[0-9]{4})|(?<shortYear>[0-9]{2}))" + 
-                  @"(?<month>[0-9]{2})" + 
-                  @"(?<day>[0-9]{2})" + 
-                  @"(?<delimiter>[-+ ]?)" + 
-                  @"(?<birthNumber>[0-9]{3})" + 
-                  @"(?<checksum>[0-9]{1})" + 
-                  @"$"
+    let pattern =
+        @"^" + @"((?<fullYear>[0-9]{4})|(?<shortYear>[0-9]{2}))" + @"(?<month>[0-9]{2})" + @"(?<day>[0-9]{2})"
+        + @"(?<delimiter>[-+ ]?)" + @"(?<birthNumber>[0-9]{3})" + @"(?<checksum>[0-9]{1})" + @"$"
     let m = input.Trim() |> matchRegex pattern
     match m.Success with
     | true ->
