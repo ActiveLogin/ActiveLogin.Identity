@@ -87,8 +87,8 @@ let parseInSpecificYear parseYear str =
 
             let fullYear =
                 match delimiter with
-                | Some Hyphen | None when shortYear <= lastDigitsParseYear -> fullYearGuess
-                | Some Hyphen | None -> fullYearGuess - 100
+                | Some Hyphen | Some Whitespace | None when shortYear <= lastDigitsParseYear -> fullYearGuess
+                | Some Hyphen | Some Whitespace | None -> fullYearGuess - 100
                 | Some Plus when shortYear <= lastDigitsParseYear -> fullYearGuess - 100
                 | Some Plus -> fullYearGuess - 200
             create { Year = fullYear
