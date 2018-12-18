@@ -58,9 +58,14 @@ let private buildNumberParts (gs : GroupCollection) =
 
 let (|SwedishIdentityNumber|_|) (input : string) =
     let matchRegex pattern input = Regex.Match(input, pattern)
-    let pattern =
-        @"^" + @"((?<fullYear>[0-9]{4})|(?<shortYear>[0-9]{2}))" + @"(?<month>[0-9]{2})" + @"(?<day>[0-9]{2})"
-        + @"(?<delimiter>[-+]?)" + @"(?<birthNumber>[0-9]{3})" + @"(?<checksum>[0-9]{1})" + @"$"
+    let pattern = @"^" + 
+                  @"((?<fullYear>[0-9]{4})|(?<shortYear>[0-9]{2}))" + 
+                  @"(?<month>[0-9]{2})" + 
+                  @"(?<day>[0-9]{2})" + 
+                  @"(?<delimiter>[-+]?)" + 
+                  @"(?<birthNumber>[0-9]{3})" + 
+                  @"(?<checksum>[0-9]{1})" + 
+                  @"$"
     let m = input.Trim() |> matchRegex pattern
     match m.Success with
     | true ->
