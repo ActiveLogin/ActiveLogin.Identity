@@ -118,7 +118,7 @@ type SwedishPersonalIdentityNumber(pin : Types.SwedishPersonalIdentityNumber) =
 
     /// <summary>
     /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars.
-    /// Format is YYMMDDXSSSC, for example <example>990807-2391</example> or <example>120211+9986</example>.
+    /// Format is YYMMDDXBBBC, for example <example>990807-2391</example> or <example>120211+9986</example>.
     /// </summary>
     /// <param name="serializationYear">
     /// The specific year to use when checking if the person has turned / will turn 100 years old.
@@ -133,19 +133,19 @@ type SwedishPersonalIdentityNumber(pin : Types.SwedishPersonalIdentityNumber) =
 
     /// <summary>
     /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent short string representation.
-    /// Format is YYMMDDXSSSC, for example <example>990807-2391</example> or <example>120211+9986</example>.
+    /// Format is YYMMDDXBBBC, for example <example>990807-2391</example> or <example>120211+9986</example>.
     /// </summary>
     member __.To10DigitString() = to10DigitString identityNumber
 
     /// <summary>
     /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent 12 digit string representation.
-    /// Format is YYYYMMDDSSSC, for example <example>19908072391</example> or <example>191202119986</example>.
+    /// Format is YYYYMMDDBBBC, for example <example>19908072391</example> or <example>191202119986</example>.
     /// </summary>
     member __.To12DigitString() = to12DigitString identityNumber
 
     /// <summary>
     /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent 12 digit string representation.
-    /// Format is YYYYMMDDSSSC, for example <example>19908072391</example> or <example>191202119986</example>.
+    /// Format is YYYYMMDDBBBC, for example <example>19908072391</example> or <example>191202119986</example>.
     /// </summary>
     override __.ToString() = __.To12DigitString()
 

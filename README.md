@@ -137,6 +137,31 @@ For more usecases, samples and inspiration; feel free to browse our unit tests a
 
 ## FAQ
 
+### What formats of a Swedish Personal Identity Number do you support parsing?
+
+We consider the following to be valid Swedish Personal Identity Numbers that will be parsed:
+
+#### 10 digit string
+
+* YYMMDD-BBBC
+* YYMMDD+BBBC
+* YYMMDD BBBC _(Treated as YYMMDD-BBBC)_
+* YYMMDDBBBC _(Treated as YYMMDD-BBBC)_
+
+#### 12 digit string
+
+* YYYYMMDDBBBC
+* YYYYMMDD-BBBC _(Treated as YYYYMMDDBBBC)_
+* YYYYMMDD BBBC _(Treated as YYYYMMDDBBBC)_
+
+#### Explanations
+
+* **YY:** Year
+* **MM:** Month
+* **DD:** Day
+* **BBB:** Birth number
+* **C:** Checksum
+
 ### What definition of Swedish Personal Identity Number are the implementations based on?
 
 The implementation is based on the definitions as described here:
