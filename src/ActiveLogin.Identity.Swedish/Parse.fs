@@ -6,14 +6,13 @@ open System.Text.RegularExpressions
 type Delimiter =
     | Plus
     | Hyphen
-    | Whitespace
 
 type NumberParts =
     { FullYear : int option
       ShortYear : int option
       Month : int
       Day : int
-      Delimiter : Delimiter option
+      Delimiter : Delimiter
       BirthNumber : int
       Checksum : int }
 
@@ -29,19 +28,14 @@ let private buildNumberParts (gs : GroupCollection) =
         |> Option.map Int32.Parse
 
     let asDelimiter (gs : GroupCollection) =
-        let noneEmptyString str = 
-            match str with
-            | "" -> None
-            | d -> Some d
 
-        gs.["delimiter"].ToString()
-        |> noneEmptyString 
+        gs
+        |> asString "delimiter"
         |> function
-        | Some d when d = "+" -> Some Plus
-        | Some d when d = "-" -> Some Hyphen
-        | Some d when d = " " -> Some Whitespace
-        | Some _ -> invalidArg "gs" "Invalid delimiter"
-        | None -> None
+        | Some d when d = "+" -> Plus
+        | Some d when d = "-" || d = " " -> Hyphen
+        | None -> Hyphen
+        | _ -> invalidArg "gs" "Invalid delimiter"
 
     { FullYear = asInt "fullYear" gs
       ShortYear = asInt "shortYear" gs
