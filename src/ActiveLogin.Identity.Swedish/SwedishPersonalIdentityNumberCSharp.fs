@@ -171,7 +171,7 @@ type SwedishPersonalIdentityNumberHintExtensions() =
 
     /// <summary>
     /// Date of birth for the person according to the personal identity number.
-    /// Not always the actual date of birth due to limited quantity of personal identity numbers per day.
+    /// Not always the actual date of birth due to the limited quantity of personal identity numbers per day.
     /// </summary>
     [<Extension>]
     static member GetDateOfBirthHint(pin : SwedishPersonalIdentityNumber) = Hints.getDateOfBirthHint pin.IdentityNumber
@@ -186,7 +186,7 @@ type SwedishPersonalIdentityNumberHintExtensions() =
 
     /// <summary>
     /// Get the age of the person according to the date in the personal identity number.
-    /// Not always the actual date of birth due to limited quantity of personal identity numbers per day.
+    /// Not always the actual date of birth due to the limited quantity of personal identity numbers per day.
     /// </summary>
     /// <param name="personalIdentityNumber"></param>
     /// <param name="date">The date when to calculate the age.</param>
@@ -200,7 +200,7 @@ type SwedishPersonalIdentityNumberHintExtensions() =
 
     /// <summary>
     /// Get the age of the person according to the date in the personal identity number.
-    /// Not always the actual date of birth due to limited quantity of personal identity numbers per day.
+    /// Not always the actual date of birth due to the limited quantity of personal identity numbers per day.
     /// </summary>
     [<Extension>]
     static member GetAgeHint(pin : SwedishPersonalIdentityNumber) =
