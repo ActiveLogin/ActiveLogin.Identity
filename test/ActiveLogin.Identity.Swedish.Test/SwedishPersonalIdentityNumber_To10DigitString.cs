@@ -1,3 +1,4 @@
+using System;
 using Xunit;
 
 namespace ActiveLogin.Identity.Swedish.Test
@@ -81,6 +82,13 @@ namespace ActiveLogin.Identity.Swedish.Test
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(2017, 1, 22, 238, 0);
             Assert.Equal("170122-2380", personalIdentityNumber.To10DigitString());
+        }
+
+        [Fact]
+        public void Thows_When_Invalid_Year()
+        {
+            var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(2017, 1, 22, 238, 0);
+            Assert.Throws<ArgumentOutOfRangeException>(() => personalIdentityNumber.To10DigitStringInSpecificYear(-1));
         }
     }
 }
