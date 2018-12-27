@@ -1,3 +1,4 @@
+using System;
 using Xunit;
 using ActiveLogin.Identity.Swedish.FSharp;
 
@@ -21,11 +22,11 @@ namespace ActiveLogin.Identity.Swedish.Test
         {
             var values = new FSharp.Types.SwedishPersonalIdentityNumberValues(1999, 08, 07, 239, 1);
             var personalIdentityNumber = FSharp.SwedishPersonalIdentityNumber.create(values).ResultValue;
-            var expected = @"{Year = Year 1999;
- Month = Month 8;
- Day = Day 7;
- BirthNumber = BirthNumber 239;
- Checksum = Checksum 1;}";
+            var expected = "{Year = Year 1999;\n" +
+                           " Month = Month 8;\n" +
+                           " Day = Day 7;\n" +
+                           " BirthNumber = BirthNumber 239;\n" +
+                           " Checksum = Checksum 1;}";
             Assert.Equal(expected, personalIdentityNumber.ToString());
         }
     }
