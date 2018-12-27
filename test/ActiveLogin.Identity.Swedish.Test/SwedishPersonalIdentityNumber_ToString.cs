@@ -1,6 +1,4 @@
-using System;
 using Xunit;
-using ActiveLogin.Identity.Swedish.FSharp;
 
 namespace ActiveLogin.Identity.Swedish.Test
 {
