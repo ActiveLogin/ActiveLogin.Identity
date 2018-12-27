@@ -30,7 +30,24 @@ namespace ActiveLogin.Identity.Swedish.Test
         [Fact]
         public void TryParse_Returns_False_When_Valid_CoordinationNumber()
         {
-            var isValid = SwedishPersonalIdentityNumber.TryParse("170182-2387", out SwedishPersonalIdentityNumber result);
+            var isValid = SwedishPersonalIdentityNumber.TryParse("170182-2387", out SwedishPersonalIdentityNumber _);
+
+            Assert.False(isValid);
+        }
+
+        [Fact]
+        public void TryParseInSpecificYear_Returns_True_And_Outs_PIN_When_Valid_PIN()
+        {
+            var isValid = SwedishPersonalIdentityNumber.TryParseInSpecificYear("990913+9801", 2018, out SwedishPersonalIdentityNumber personalIdentityNumber);
+
+            Assert.True(isValid);
+            Assert.Equal(SwedishPersonalIdentityNumber.Create(1899, 09, 13, 980, 1), personalIdentityNumber);
+        }
+
+        [Fact]
+        public void TryParseInSpecificYear_Returns_False_When_Invalid_Year()
+        {
+            var isValid = SwedishPersonalIdentityNumber.TryParseInSpecificYear("990913+9801", -1, out SwedishPersonalIdentityNumber _);
 
             Assert.False(isValid);
         }

@@ -39,5 +39,13 @@ namespace ActiveLogin.Identity.Swedish.Test
 
             Assert.Contains("The person is not yet born.", ex.Message);
         }
+
+
+        [Fact]
+        public void Without_Date_Uses_Current_Date()
+        {
+            var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(1899, 09, 13, 980, 1);
+            Assert.Equal(personalIdentityNumber.GetAgeHint(DateTime.UtcNow), personalIdentityNumber.GetAgeHint());
+        }
     }
 }

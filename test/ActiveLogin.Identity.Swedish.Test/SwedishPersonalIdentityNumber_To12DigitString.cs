@@ -43,5 +43,13 @@ namespace ActiveLogin.Identity.Swedish.Test
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(year, month, day, birthNumber, checksum);
             Assert.Equal(expected, personalIdentityNumber.To12DigitString());
         }
+
+
+        [Fact]
+        public void ToString_Returns_12DigitString()
+        {
+            var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(1999, 08, 07, 239, 1);
+            Assert.Equal("199908072391", personalIdentityNumber.To12DigitString());
+        }
     }
 }
