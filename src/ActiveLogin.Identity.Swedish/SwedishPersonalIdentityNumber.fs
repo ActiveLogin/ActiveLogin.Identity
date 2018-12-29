@@ -1,5 +1,5 @@
+[<System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)>]
 module ActiveLogin.Identity.Swedish.FSharp.SwedishPersonalIdentityNumber
-
 open System
 
 let create (values : SwedishPersonalIdentityNumberValues) =
