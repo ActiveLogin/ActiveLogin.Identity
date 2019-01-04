@@ -63,16 +63,16 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData("201703052397", "20180305", 1)]
         [InlineData("201703052397", "20190304", 1)]
         [InlineData("201703052397", "20190305", 2)]
-        [InlineData("201703052397", "20200304", 2)] // Fails. Actual 3
+        [InlineData("201703052397", "20200304", 2)]
         [InlineData("201703052397", "20200305", 3)]
 
         // Birth leap year, after leap day
         [InlineData("201603102383", "20170309", 0)]
-        [InlineData("201603102383", "20170310", 1)] // Fails. Actual 0
+        [InlineData("201603102383", "20170310", 1)]
         [InlineData("201603102383", "20180309", 1)]
-        [InlineData("201603102383", "20180310", 2)] // Fails. Actual 1
+        [InlineData("201603102383", "20180310", 2)]
         [InlineData("201603102383", "20190309", 2)]
-        [InlineData("201603102383", "20190310", 3)] // Fails. Actual 2
+        [InlineData("201603102383", "20190310", 3)]
         [InlineData("201603102383", "20200309", 3)]
         [InlineData("201603102383", "20200310", 4)]
 
