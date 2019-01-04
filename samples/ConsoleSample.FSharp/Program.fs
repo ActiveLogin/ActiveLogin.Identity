@@ -27,6 +27,7 @@ let parseAndPrintPersonalIdentityNumber str =
     let printAgeHint pin =
         pin
         |> SwedishPersonalIdentityNumber.Hints.getAgeHintOnDate DateTime.UtcNow
+        |> Option.defaultValue 0
         |> printfn "SwedishPersonalIdentityNumber.Hints.getAgeHintOnDate: %i"
 
     let printGenderHint pin =

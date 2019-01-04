@@ -121,7 +121,6 @@ module Hints =
             let months = 12 * (onDate.Year - dateOfBirth.Year) + (onDate.Month - dateOfBirth.Month)
             match onDate.Day < dateOfBirth.Day with
             | true ->
-                let days = DateTime.DaysInMonth(dateOfBirth.Year, dateOfBirth.Month) - dateOfBirth.Day + onDate.Day
                 let years = (months - 1) / 12
                 years |> Some
             | false -> months / 12 |> Some
