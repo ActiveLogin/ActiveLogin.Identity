@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using Xunit;
 
 namespace ActiveLogin.Identity.Swedish.Test
@@ -46,6 +47,52 @@ namespace ActiveLogin.Identity.Swedish.Test
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(1899, 09, 13, 980, 1);
             Assert.Equal(personalIdentityNumber.GetAgeHint(DateTime.UtcNow), personalIdentityNumber.GetAgeHint());
+        }
+
+        [Theory]
+        // Birth non leap year, before "leap day"
+        [InlineData("201701052399", "20180104", 0)]
+        [InlineData("201701052399", "20180105", 1)]
+        [InlineData("201701052399", "20190104", 1)]
+        [InlineData("201701052399", "20190105", 2)]
+        [InlineData("201701052399", "20200104", 2)]
+        [InlineData("201701052399", "20200105", 3)]
+
+        // Birth non leap year, after "leap day"
+        [InlineData("201703052397", "20180304", 0)]
+        [InlineData("201703052397", "20180305", 1)]
+        [InlineData("201703052397", "20190304", 1)]
+        [InlineData("201703052397", "20190305", 2)]
+        [InlineData("201703052397", "20200304", 2)] // Fails. Actual 3
+        [InlineData("201703052397", "20200305", 3)]
+
+        // Birth leap year, after leap day
+        [InlineData("201603102383", "20170309", 0)]
+        [InlineData("201603102383", "20170310", 1)] // Fails. Actual 0
+        [InlineData("201603102383", "20180309", 1)]
+        [InlineData("201603102383", "20180310", 2)] // Fails. Actual 1
+        [InlineData("201603102383", "20190309", 2)]
+        [InlineData("201603102383", "20190310", 3)] // Fails. Actual 2
+        [InlineData("201603102383", "20200309", 3)]
+        [InlineData("201603102383", "20200310", 4)]
+
+        // Birth leap year, on leap day
+        [InlineData("201602292383", "20160229", 0)]
+        [InlineData("201602292383", "20170228", 0)]
+        [InlineData("201602292383", "20170301", 1)]
+        [InlineData("201602292383", "20200228", 3)]
+        [InlineData("201602292383", "20200229", 4)]
+        public void GetAgeHint_Handles_LeapYears_Correctly(string personalIdentityNumber, string actualDate, int expectedAge)
+        {
+            // Arrange
+            var swedishPersonalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumber);
+            var date = DateTime.ParseExact(actualDate, "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal);
+
+            // Act
+            var age = swedishPersonalIdentityNumber.GetAgeHint(date);
+
+            // Assert
+            Assert.Equal(expectedAge, age);
         }
     }
 }
