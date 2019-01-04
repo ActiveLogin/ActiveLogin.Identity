@@ -108,12 +108,6 @@ module Hints =
     let getDateOfBirthHint (pin : SwedishPersonalIdentityNumber) =
         DateTime(pin.Year |> Year.value, pin.Month |> Month.value, pin.Day |> Day.value, 0, 0, 0, DateTimeKind.Utc)
 
-    let getAgeHintOnDate_old (date : DateTime) pin =
-        let dateOfBirth = getDateOfBirthHint pin
-        let age = date.Year - dateOfBirth.Year
-        if date.DayOfYear < dateOfBirth.DayOfYear then age - 1
-        else age
-
     let getAgeHintOnDate (onDate : DateTime) pin =
         let dateOfBirth = getDateOfBirthHint pin
         match onDate >= dateOfBirth with
