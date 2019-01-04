@@ -108,12 +108,12 @@ module Hints =
     let getDateOfBirthHint (pin : SwedishPersonalIdentityNumber) =
         DateTime(pin.Year |> Year.value, pin.Month |> Month.value, pin.Day |> Day.value, 0, 0, 0, DateTimeKind.Utc)
 
-    let getAgeHintOnDate (onDate : DateTime) pin =
+    let getAgeHintOnDate (date : DateTime) pin =
         let dateOfBirth = getDateOfBirthHint pin
-        match onDate >= dateOfBirth with
+        match date >= dateOfBirth with
         | true ->
-            let months = 12 * (onDate.Year - dateOfBirth.Year) + (onDate.Month - dateOfBirth.Month)
-            match onDate.Day < dateOfBirth.Day with
+            let months = 12 * (date.Year - dateOfBirth.Year) + (date.Month - dateOfBirth.Month)
+            match date.Day < dateOfBirth.Day with
             | true ->
                 let years = (months - 1) / 12
                 years |> Some
