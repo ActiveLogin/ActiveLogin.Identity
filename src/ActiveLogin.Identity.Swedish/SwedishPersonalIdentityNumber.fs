@@ -110,9 +110,15 @@ module Hints =
 
     let getAgeHintOnDate (date : DateTime) pin =
         let dateOfBirth = getDateOfBirthHint pin
-        let age = date.Year - dateOfBirth.Year
-        if date.DayOfYear < dateOfBirth.DayOfYear then age - 1
-        else age
+        match date >= dateOfBirth with
+        | true ->
+            let months = 12 * (date.Year - dateOfBirth.Year) + (date.Month - dateOfBirth.Month)
+            match date.Day < dateOfBirth.Day with
+            | true ->
+                let years = (months - 1) / 12
+                years |> Some
+            | false -> months / 12 |> Some
+        | false -> None
 
     let getAgeHint pin = getAgeHintOnDate DateTime.UtcNow pin
 

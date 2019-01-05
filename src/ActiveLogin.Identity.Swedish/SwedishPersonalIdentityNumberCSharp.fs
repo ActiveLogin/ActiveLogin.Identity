@@ -195,8 +195,8 @@ type SwedishPersonalIdentityNumberHintExtensions() =
     static member GetAgeHint(pin : SwedishPersonalIdentityNumber, date : DateTime) =
         Hints.getAgeHintOnDate date pin.IdentityNumber
         |> function
-        | i when i < 0 -> invalidArg "pin" "The person is not yet born."
-        | i -> i
+        | None -> invalidArg "pin" "The person is not yet born."
+        | Some i -> i
 
     /// <summary>
     /// Get the age of the person according to the date in the personal identity number.
@@ -206,5 +206,5 @@ type SwedishPersonalIdentityNumberHintExtensions() =
     static member GetAgeHint(pin : SwedishPersonalIdentityNumber) =
         Hints.getAgeHint pin.IdentityNumber
         |> function
-        | i when i < 0 -> invalidArg "pin" "The person is not yet born."
-        | i -> i
+        | None -> invalidArg "pin" "The person is not yet born."
+        | Some i -> i
