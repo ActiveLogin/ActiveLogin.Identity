@@ -107,7 +107,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData("990913—9801")]
         [InlineData("990913_9801")]
         [InlineData("990913.9801")]
-        public void Throws_When_Invalid_Delimiter_From_10_Digit_String(string personalIdentityNumberString)
+        public void Throws_ArgumentException_When_Invalid_Delimiter_From_10_Digit_String(string personalIdentityNumberString)
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018));
             Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
@@ -227,7 +227,7 @@ namespace ActiveLogin.Identity.Swedish.Test
 
         [Theory]
         [InlineData("18990913+9801")]
-        public void Throws_When_Plus_Delimiter_From_12_Digit_String(string personalIdentityNumberString)
+        public void Throws_ArgumentException_When_Plus_Delimiter_From_12_Digit_String(string personalIdentityNumberString)
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018));
             Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
@@ -240,7 +240,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData("19990913_9801")]
         [InlineData("990913.9801")]
         [InlineData("19990913.9801")]
-        public void Throws_When_Invalid_Delimiter(string personalIdentityNumberString)
+        public void Throws_ArgumentException_When_Invalid_Delimiter(string personalIdentityNumberString)
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018));
             Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
@@ -274,6 +274,55 @@ namespace ActiveLogin.Identity.Swedish.Test
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse("170122-2380");
             Assert.Equal(SwedishPersonalIdentityNumber.Create(2017, 1, 22, 238, 0), personalIdentityNumber);
+        }
+
+
+        [Fact]
+        public void Parse_Throws_ArgumentException_When_Empty_String()
+        {
+            var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.Parse(""));
+
+            Assert.Contains("", ex.Message);
+        }
+
+        [Fact]
+        public void Parse_Throws_ArgumentException_When_Whitespace_String()
+        {
+            var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.Parse(" "));
+
+            Assert.Contains("", ex.Message);
+        }
+
+        [Fact]
+        public void Parse_Throws_ArgumentNullException_When_Null()
+        {
+            var ex = Assert.Throws<ArgumentNullException>(() => SwedishPersonalIdentityNumber.Parse(null));
+
+            Assert.Contains("", ex.Message);
+        }
+
+        [Fact]
+        public void ParseInSpecificYear_Throws_ArgumentException_When_Empty_String()
+        {
+            var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear("", 2018));
+
+            Assert.Contains("", ex.Message);
+        }
+
+        [Fact]
+        public void ParseInSpecificYear_Throws_ArgumentException_When_Whitespace_String()
+        {
+            var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(" ", 2018));
+
+            Assert.Contains("", ex.Message);
+        }
+
+        [Fact]
+        public void ParseInSpecificYear_Throws_ArgumentNullException_When_Null()
+        {
+            var ex = Assert.Throws<ArgumentNullException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(null, 2018));
+
+            Assert.Contains("", ex.Message);
         }
     }
 }
