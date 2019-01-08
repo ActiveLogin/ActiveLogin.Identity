@@ -57,7 +57,8 @@ let private buildNumberParts (gs : GroupCollection) =
           | Some m -> m
           | None -> invalidArg "gs" "Invalid checksum" }
 
-let (|SwedishIdentityNumber|_|) (input : string) =
+let (|SwedishIdentityNumber|_|) (input : NonEmptyString) =
+    let input = input |> NonEmptyString.value;
     let matchRegex pattern input = Regex.Match(input, pattern)
     let pattern = @"^" + 
                   @"((?<fullYear>[0-9]{4})|(?<shortYear>[0-9]{2}))" + 

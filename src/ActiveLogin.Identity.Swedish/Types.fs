@@ -3,6 +3,10 @@ module ActiveLogin.Identity.Swedish.FSharp.Types
 
 open System
 
+type ArgumentError = 
+    | Empty
+    | Null
+
 type Error =
     | InvalidYear of int
     | InvalidMonth of int
@@ -10,7 +14,24 @@ type Error =
     | InvalidDay of int
     | InvalidBirthNumber of int
     | InvalidChecksum of int
+    | ArgumentError of ArgumentError
     | ParsingError
+
+type NonEmptyString = private NonEmptyString of string
+
+module NonEmptyString =
+    let create str = 
+        match String.IsNullOrWhiteSpace str with
+        | false ->
+            str
+            |> NonEmptyString
+            |> Ok
+        | true when str = null ->
+            Null |> ArgumentError |> Error
+        | true ->
+            Empty |> ArgumentError |> Error
+
+    let value (NonEmptyString str) = str
 
 type Year = private Year of int
 
