@@ -8,6 +8,7 @@
     <LangVersion>latest</LangVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <NoWarn>1701;1702;1591</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
     <AssemblyName>ActiveLogin.Identity.Swedish</AssemblyName>
     <PackageId>ActiveLogin.Identity.Swedish</PackageId>
