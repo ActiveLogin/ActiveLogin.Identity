@@ -9,9 +9,18 @@ namespace ActiveLogin.Identity.Swedish.Test
     public class SwedishPersonalIdentityNumber_Constructor
     {
         [Fact]
-        public void Should_Have_No_Public_Constructor()
+        public void CSharp_Should_Have_No_Public_Constructor()
         {
             var type = typeof(SwedishPersonalIdentityNumber);
+            var constructors = type.GetConstructors();
+
+            Assert.Empty(constructors);
+        }
+
+        [Fact]
+        public void FSharp_Should_Have_No_Public_Constructor()
+        {
+            var type = typeof(FSharp.SwedishPersonalIdentityNumber);
             var constructors = type.GetConstructors();
 
             Assert.Empty(constructors);
