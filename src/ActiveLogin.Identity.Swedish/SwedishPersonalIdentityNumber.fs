@@ -104,9 +104,9 @@ let parseInSpecificYear parseYear str =
                      Checksum = checksum }
         | _ -> ParsingError |> Error
     match NonEmptyString.create str with
-    | Ok(SwedishIdentityNumber parts) -> fromNumberParts parseYear parts
     | Error error -> Error error
-    | _ -> ParsingError |> Error
+    | Ok(SwedishIdentityNumber parts) -> fromNumberParts parseYear parts
+    | Ok(_) -> ParsingError |> Error
 
 let parse str = result { let! year = DateTime.UtcNow.Year |> Year.create
                          return! parseInSpecificYear year str }
