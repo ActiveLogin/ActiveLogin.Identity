@@ -57,6 +57,14 @@ let internal handleError e =
         raise
             (new ArgumentOutOfRangeException("birthNumber", s, "Invalid birth number. Must be in the range 0 to 999."))
     | InvalidChecksum _ -> raise (new ArgumentException("Invalid checksum.", "checksum"))
+    | ArgumentError a ->
+        match a with
+        | Null ->
+            raise
+                (new ArgumentNullException("personalIdentityNumber"))
+        | Empty ->
+            raise
+                (new ArgumentException("Invalid personalIdentityNumber. Cannot be empty string or whitespace.", "personalIdentityNumber"))
     | ParsingError -> invalidArg "str" "Invalid Swedish personal identity number."
 
 let tryGetResult (pin : Result<SwedishPersonalIdentityNumber, Error>) =
@@ -95,9 +103,10 @@ let parseInSpecificYear parseYear str =
                      BirthNumber = birthNumber
                      Checksum = checksum }
         | _ -> ParsingError |> Error
-    match str with
-    | SwedishIdentityNumber parts -> fromNumberParts parseYear parts
-    | _ -> ParsingError |> Error
+    match NonEmptyString.create str with
+    | Error error -> Error error
+    | Ok(SwedishIdentityNumber parts) -> fromNumberParts parseYear parts
+    | Ok(_) -> ParsingError |> Error
 
 let parse str = result { let! year = DateTime.UtcNow.Year |> Year.create
                          return! parseInSpecificYear year str }

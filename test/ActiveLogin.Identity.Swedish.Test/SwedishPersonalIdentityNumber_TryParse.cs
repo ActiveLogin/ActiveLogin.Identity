@@ -51,5 +51,53 @@ namespace ActiveLogin.Identity.Swedish.Test
 
             Assert.False(isValid);
         }
+
+        [Fact]
+        public void TryParse_Return_False_When_Empty_String()
+        {
+            var isValid = SwedishPersonalIdentityNumber.TryParse("", out _);
+
+            Assert.False(isValid);
+        }
+
+        [Fact]
+        public void TryParse_Return_False_When_Whitespace_String()
+        {
+            var isValid = SwedishPersonalIdentityNumber.TryParse(" ", out _);
+
+            Assert.False(isValid);
+        }
+
+        [Fact]
+        public void TryParse_Return_False_When_Null()
+        {
+            var isValid = SwedishPersonalIdentityNumber.TryParse(null, out _);
+
+            Assert.False(isValid);
+        }
+
+        [Fact]
+        public void TryParseInSpecificYear_Return_False_When_Empty_String()
+        {
+            var isValid = SwedishPersonalIdentityNumber.TryParseInSpecificYear("", 2018, out _);
+
+            Assert.False(isValid);
+        }
+
+        [Fact]
+        public void TryParseInSpecificYear_Return_False_When_Whitespace_String()
+        {
+            var isValid = SwedishPersonalIdentityNumber.TryParseInSpecificYear(" ", 2018, out _);
+
+            Assert.False(isValid);
+        }
+
+        [Fact]
+        public void TryParseInSpecificYear_Return_False_When_Null()
+        {
+            var isValid = SwedishPersonalIdentityNumber.TryParseInSpecificYear(null, 2018, out _);
+
+            Assert.False(isValid);
+        }
     }
 }
