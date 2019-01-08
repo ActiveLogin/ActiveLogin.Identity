@@ -10,7 +10,7 @@ open System.Runtime.InteropServices //for OutAttribute
 /// https://en.wikipedia.org/wiki/Personal_identity_number_(Sweden)
 /// https://sv.wikipedia.org/wiki/Personnummer_i_Sverige
 /// </summary>
-type SwedishPersonalIdentityNumber(pin : Types.SwedishPersonalIdentityNumber) =
+type SwedishPersonalIdentityNumber private(pin : Types.SwedishPersonalIdentityNumber) =
     let identityNumber = pin
     member internal __.IdentityNumber = identityNumber
 
