@@ -282,7 +282,8 @@ namespace ActiveLogin.Identity.Swedish.Test
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.Parse(""));
 
-            Assert.Contains("", ex.Message);
+            Assert.Contains("Invalid personalIdentityNumber", ex.Message);
+            Assert.Contains("Cannot be empty string or whitespace", ex.Message);
         }
 
         [Fact]
@@ -290,7 +291,8 @@ namespace ActiveLogin.Identity.Swedish.Test
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.Parse(" "));
 
-            Assert.Contains("", ex.Message);
+            Assert.Contains("Invalid personalIdentityNumber", ex.Message);
+            Assert.Contains("Cannot be empty string or whitespace", ex.Message);
         }
 
         [Fact]
@@ -298,7 +300,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         {
             var ex = Assert.Throws<ArgumentNullException>(() => SwedishPersonalIdentityNumber.Parse(null));
 
-            Assert.Contains("", ex.Message);
+            Assert.Contains("personalIdentityNumber", ex.Message);
         }
 
         [Fact]
@@ -306,7 +308,8 @@ namespace ActiveLogin.Identity.Swedish.Test
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear("", 2018));
 
-            Assert.Contains("", ex.Message);
+            Assert.Contains("Invalid personalIdentityNumber", ex.Message);
+            Assert.Contains("Cannot be empty string or whitespace", ex.Message);
         }
 
         [Fact]
@@ -314,7 +317,8 @@ namespace ActiveLogin.Identity.Swedish.Test
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(" ", 2018));
 
-            Assert.Contains("", ex.Message);
+            Assert.Contains("Invalid personalIdentityNumber", ex.Message);
+            Assert.Contains("Cannot be empty string or whitespace", ex.Message);
         }
 
         [Fact]
@@ -322,7 +326,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         {
             var ex = Assert.Throws<ArgumentNullException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(null, 2018));
 
-            Assert.Contains("", ex.Message);
+            Assert.Contains("personalIdentityNumber", ex.Message);
         }
     }
 }
