@@ -328,5 +328,29 @@ namespace ActiveLogin.Identity.Swedish.Test
 
             Assert.Contains("personalIdentityNumber", ex.Message);
         }
+
+        [Theory]
+        [InlineData("18-99-09-13-980-1", "189909139801")]
+        [InlineData("18.99.09.13.980.1", "189909139801")]
+        [InlineData("1899-09-13-980-1", "189909139801")]
+        [InlineData("18 99 09 13 980 1", "189909139801")]
+        [InlineData("18A99B09C13D980E1", "189909139801")]
+        [InlineData("+18990913+9801+", "189909139801")]
+        [InlineData("ABC189909139801ABC", "189909139801")]
+        [InlineData("199908072391", "199908072391")]
+        public void Parses_When_Contains_Chars(string personalIdentityNumberString, string expectedPersonalIdentityNumberString)
+        {
+            var personalIdentityNumber = SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018);
+            Assert.Equal(expectedPersonalIdentityNumberString, personalIdentityNumber.To12DigitString());
+        }
+
+        [Theory]
+        [InlineData("189909+13+9801")]
+        [InlineData("18+99+09+13+9801")]
+        public void Throws_ArgumentException_When_Invalid_Plus_Delimiter_In_String(string personalIdentityNumberString)
+        {
+            var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018));
+            Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
+        }
     }
 }
