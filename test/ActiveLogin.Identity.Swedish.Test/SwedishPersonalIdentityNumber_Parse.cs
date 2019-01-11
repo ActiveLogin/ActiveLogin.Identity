@@ -282,7 +282,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.Parse(""));
 
-            Assert.Contains("Invalid personalIdentityNumber", ex.Message);
+            Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
             Assert.Contains("Cannot be empty string or whitespace", ex.Message);
         }
 
@@ -291,7 +291,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.Parse(" "));
 
-            Assert.Contains("Invalid personalIdentityNumber", ex.Message);
+            Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
             Assert.Contains("Cannot be empty string or whitespace", ex.Message);
         }
 
@@ -308,7 +308,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear("", 2018));
 
-            Assert.Contains("Invalid personalIdentityNumber", ex.Message);
+            Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
             Assert.Contains("Cannot be empty string or whitespace", ex.Message);
         }
 
@@ -317,7 +317,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(" ", 2018));
 
-            Assert.Contains("Invalid personalIdentityNumber", ex.Message);
+            Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
             Assert.Contains("Cannot be empty string or whitespace", ex.Message);
         }
 
