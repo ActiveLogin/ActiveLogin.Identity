@@ -337,7 +337,13 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData("18A99B09C13D980E1", "189909139801")]
         [InlineData("+18990913+9801+", "189909139801")]
         [InlineData("ABC189909139801ABC", "189909139801")]
-        [InlineData("199908072391", "199908072391")]
+        [InlineData("\"18\"\"99\"09\"13\"980\"1", "189909139801")]
+        [InlineData("**18*99***09*13*980**1*", "189909139801")]
+        [InlineData("\\18//99/;09\n13\t980\r1\n\r", "189909139801")]
+        [InlineData("ü18ü99ù09ę13é980á1ö", "189909139801")]
+        [InlineData("18----------------------------------------------------------------99-09-13-980-1", "189909139801")]
+        [InlineData("18--DROP TABLE USERS; 99-09-13-980-1", "189909139801")]
+        [InlineData("199908072391", "199908072391")] // TODO is this just a sanity check?
         public void Parses_When_Contains_Chars(string personalIdentityNumberString, string expectedPersonalIdentityNumberString)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018);
@@ -352,5 +358,15 @@ namespace ActiveLogin.Identity.Swedish.Test
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018));
             Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
         }
+        
+        // Is there any reason to not allow super long strings? Maybe we don't need this test 
+        [Theory]
+        [InlineData("18990913--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------9801")]
+        public void Throws_ArgumentException_When_Input_Is_Too_Long(string personalIdentityNumberString)
+        {
+            var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018));
+            Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
+        }
+
     }
 }
