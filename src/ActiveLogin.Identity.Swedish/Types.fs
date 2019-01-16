@@ -17,21 +17,29 @@ type Error =
     | ArgumentError of ArgumentError
     | ParsingError
 
-type NonEmptyString = private NonEmptyString of string
+type internal ParsableString = private ParsableString of string
 
-module NonEmptyString =
+module internal ParsableString =
+    open System.Linq
+
+    let clean (str:string) = 
+        str.ToCharArray()
+        |> Array.filter Char.IsDigit
+        |> String
+
     let create str = 
         match String.IsNullOrWhiteSpace str with
         | false ->
             str
-            |> NonEmptyString
+            |> clean
+            |> ParsableString
             |> Ok
         | true when str = null ->
             Null |> ArgumentError |> Error
         | true ->
             Empty |> ArgumentError |> Error
 
-    let value (NonEmptyString str) = str
+    let value (ParsableString str) = str
 
 type Year = private Year of int
 

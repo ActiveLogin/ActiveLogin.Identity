@@ -233,19 +233,6 @@ namespace ActiveLogin.Identity.Swedish.Test
             Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
         }
 
-        [Theory]
-        [InlineData("990913—9801")]
-        [InlineData("19990913—9801")]
-        [InlineData("990913_9801")]
-        [InlineData("19990913_9801")]
-        [InlineData("990913.9801")]
-        [InlineData("19990913.9801")]
-        public void Throws_ArgumentException_When_Invalid_Delimiter(string personalIdentityNumberString)
-        {
-            var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018));
-            Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
-        }
-
         [Fact]
         public void Same_Number_Will_Use_Different_Delimiter_When_Parsed_On_Or_After_Person_Turns_100()
         {
@@ -351,6 +338,12 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData("18+99+09+13+98+01", "189909139801")]
         [InlineData("19990807+2391", "199908072391")]
         [InlineData("990807+2391", "189908072391")]
+        [InlineData("990913—9801", "199909139801")]
+        [InlineData("19990913—9801", "199909139801")]
+        [InlineData("990913_9801", "199909139801")]
+        [InlineData("19990913_9801", "199909139801")]
+        [InlineData("990913.9801", "199909139801")]
+        [InlineData("19990913.9801", "199909139801")]
         public void Parses_When_Contains_Chars(string personalIdentityNumberString, string expectedPersonalIdentityNumberString)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018);

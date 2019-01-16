@@ -103,7 +103,7 @@ let parseInSpecificYear parseYear str =
                      BirthNumber = birthNumber
                      Checksum = checksum }
         | _ -> ParsingError |> Error
-    match NonEmptyString.create str with
+    match ParsableString.create str with
     | Error error -> Error error
     | Ok(SwedishIdentityNumber parts) -> fromNumberParts parseYear parts
     | Ok(_) -> ParsingError |> Error
