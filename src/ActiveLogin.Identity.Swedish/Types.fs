@@ -24,15 +24,15 @@ module internal ParsableString =
     let cleanAllButDigitsAndPlus (chars:char[]) =
         chars
             |> Array.filter(fun x -> Char.IsDigit(x) || x = '+')
+        
+    let cleanAllButDigits (chars:char[]) =
+        chars
+            |> Array.filter Char.IsDigit
 
     let hasPlusDelimiter (chars:char[]) =
         let revChars = chars
                        |> Array.rev
         revChars.[4] = '+'
-        
-    let cleanAllButDigits (chars:char[]) =
-        chars
-            |> Array.filter Char.IsDigit
 
     let getCharsWithDelimiter (delimiter:char) (chars:char[]) =
         Array.concat [| chars.[..chars.Length-5] ; [| delimiter |] ;  chars.[chars.Length-4..] |]
