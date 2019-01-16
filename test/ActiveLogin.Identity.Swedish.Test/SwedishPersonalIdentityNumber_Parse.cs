@@ -225,14 +225,6 @@ namespace ActiveLogin.Identity.Swedish.Test
             Assert.Equal(expectedPersonalIdentityNumberString, personalIdentityNumber.To12DigitString());
         }
 
-        [Theory]
-        [InlineData("18990913+9801")]
-        public void Throws_ArgumentException_When_Plus_Delimiter_From_12_Digit_String(string personalIdentityNumberString)
-        {
-            var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018));
-            Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
-        }
-
         [Fact]
         public void Same_Number_Will_Use_Different_Delimiter_When_Parsed_On_Or_After_Person_Turns_100()
         {
