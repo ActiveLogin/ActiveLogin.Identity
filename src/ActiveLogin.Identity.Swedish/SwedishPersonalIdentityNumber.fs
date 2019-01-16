@@ -64,10 +64,10 @@ let internal handleError e =
                 (new ArgumentNullException("personalIdentityNumber"))
         | Empty ->
             raise
-                (new ArgumentException("Invalid personalIdentityNumber. Cannot be empty string or whitespace.", "personalIdentityNumber"))
+                (new ArgumentException("Invalid Swedish personal identity number. Cannot be empty string or whitespace.", "personalIdentityNumber"))
         | Length ->
             raise
-                (new ArgumentException("Invalid personalIdentityNumber.", "personalIdentityNumber"))
+                (new ArgumentException("Invalid Swedish personal identity number.", "personalIdentityNumber"))
     | ParsingError -> invalidArg "str" "Invalid Swedish personal identity number."
 
 let tryGetResult (pin : Result<SwedishPersonalIdentityNumber, Error>) =
@@ -81,7 +81,7 @@ let parseInSpecificYear parseYear str =
     let fromNumberParts parseYear parsed =
         match parsed.FullYear, parsed.ShortYear, parsed.Month, parsed.Day, parsed.Delimiter, parsed.BirthNumber,
               parsed.Checksum with
-        | Some fullYear, None, month, day, Hyphen, birthNumber, checksum ->
+        | Some fullYear, None, month, day, None, birthNumber, checksum ->
             create { Year = fullYear
                      Month = month
                      Day = day
@@ -96,20 +96,20 @@ let parseInSpecificYear parseYear str =
 
             let fullYear =
                 match delimiter with
-                | Hyphen when shortYear <= lastDigitsParseYear -> fullYearGuess
-                | Hyphen -> fullYearGuess - 100
-                | Plus when shortYear <= lastDigitsParseYear -> fullYearGuess - 100
-                | Plus -> fullYearGuess - 200
+                | (Some Hyphen) | None when shortYear <= lastDigitsParseYear -> fullYearGuess
+                | (Some Hyphen) | None -> fullYearGuess - 100
+                | (Some Plus) when shortYear <= lastDigitsParseYear -> fullYearGuess - 100
+                | (Some Plus) -> fullYearGuess - 200
             create { Year = fullYear
                      Month = month
                      Day = day
                      BirthNumber = birthNumber
                      Checksum = checksum }
         | _ -> ParsingError |> Error
-    match ParsableString.create str with
+
+    match NumberParts.create str with
     | Error error -> Error error
-    | Ok(SwedishIdentityNumber parts) -> fromNumberParts parseYear parts
-    | Ok(_) -> ParsingError |> Error
+    | Ok numberParts -> fromNumberParts parseYear numberParts
 
 let parse str = result { let! year = DateTime.UtcNow.Year |> Year.create
                          return! parseInSpecificYear year str }

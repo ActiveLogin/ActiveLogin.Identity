@@ -18,51 +18,6 @@ type Error =
     | ArgumentError of ArgumentError
     | ParsingError
 
-type internal ParsableString = private ParsableString of string
-
-module internal ParsableString =
-    let cleanAllButDigitsAndPlus (chars:char[]) =
-        chars
-            |> Array.filter(fun x -> Char.IsDigit(x) || x = '+')
-        
-    let cleanAllButDigits (chars:char[]) =
-        chars
-            |> Array.filter Char.IsDigit
-
-    let hasPlusDelimiter (chars:char[]) =
-        let revChars = chars
-                       |> Array.rev
-        revChars.[4] = '+'
-
-    let getCharsWithDelimiter (delimiter:char) (chars:char[]) =
-        Array.concat [| chars.[..chars.Length-5] ; [| delimiter |] ;  chars.[chars.Length-4..] |]
-
-    let clean (str:string) =
-        let digitsAndPlus = str.ToCharArray()
-                            |> cleanAllButDigitsAndPlus
-        let digits = digitsAndPlus
-                     |> cleanAllButDigits
-
-        match Array.length digits with
-        | 10 -> match hasPlusDelimiter digitsAndPlus with
-                | true -> digits |> getCharsWithDelimiter '+' |> String |> Ok
-                | false -> digits |> getCharsWithDelimiter '-' |> String |> Ok             
-        | 12 -> digits |> String |> Ok
-        | _ -> Length |> ArgumentError |> Error
-
-    let create str = 
-        match String.IsNullOrWhiteSpace str with
-        | false ->
-            str
-            |> clean
-            |> Result.map ParsableString
-        | true when str = null ->
-            Null |> ArgumentError |> Error
-        | true ->
-            Empty |> ArgumentError |> Error
-
-    let value (ParsableString str) = str
-
 type Year = private Year of int
 
 module Year =

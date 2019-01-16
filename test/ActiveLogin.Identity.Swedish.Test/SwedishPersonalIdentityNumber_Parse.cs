@@ -251,7 +251,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.Parse(""));
 
-            Assert.Contains("Invalid personalIdentityNumber", ex.Message);
+            Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
             Assert.Contains("Cannot be empty string or whitespace", ex.Message);
         }
 
@@ -260,7 +260,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.Parse(" "));
 
-            Assert.Contains("Invalid personalIdentityNumber", ex.Message);
+            Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
             Assert.Contains("Cannot be empty string or whitespace", ex.Message);
         }
 
@@ -277,7 +277,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear("", 2018));
 
-            Assert.Contains("Invalid personalIdentityNumber", ex.Message);
+            Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
             Assert.Contains("Cannot be empty string or whitespace", ex.Message);
         }
 
@@ -286,7 +286,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(" ", 2018));
 
-            Assert.Contains("Invalid personalIdentityNumber", ex.Message);
+            Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
             Assert.Contains("Cannot be empty string or whitespace", ex.Message);
         }
 
@@ -320,8 +320,8 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData("18+99+09+13+98+01", "189909139801")]
         [InlineData("19990807+2391", "199908072391")]
         [InlineData("990807+2391", "189908072391")]
-        [InlineData("990913—9801", "199909139801")]
-        [InlineData("19990913—9801", "199909139801")]
+        [InlineData("990913ï¿½9801", "199909139801")]
+        [InlineData("19990913ï¿½9801", "199909139801")]
         [InlineData("990913_9801", "199909139801")]
         [InlineData("19990913_9801", "199909139801")]
         [InlineData("990913.9801", "199909139801")]
@@ -339,7 +339,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Throws_ArgumentException_When_Invalid_Number_Of_Digits(string personalIdentityNumberString)
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018));
-            Assert.Contains("Invalid personalIdentityNumber.", ex.Message);
+            Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
         }
     }
 }
