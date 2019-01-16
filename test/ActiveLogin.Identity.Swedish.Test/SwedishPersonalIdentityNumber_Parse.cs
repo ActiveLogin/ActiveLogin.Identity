@@ -104,16 +104,6 @@ namespace ActiveLogin.Identity.Swedish.Test
         }
 
         [Theory]
-        [InlineData("990913—9801")]
-        [InlineData("990913_9801")]
-        [InlineData("990913.9801")]
-        public void Throws_ArgumentException_When_Invalid_Delimiter_From_10_Digit_String(string personalIdentityNumberString)
-        {
-            var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018));
-            Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
-        }
-
-        [Theory]
         [InlineData("189909139801", 1899)]
         [InlineData("191202119986", 1912)]
         public void Parses_Year_From_12_Digit_String_When_Plus_Is_Delimiter(string personalIdentityNumberString, int expectedYear)
@@ -349,17 +339,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Throws_ArgumentException_When_Invalid_Number_Of_Digits(string personalIdentityNumberString)
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018));
-            Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
+            Assert.Contains("Invalid personalIdentityNumber.", ex.Message);
         }
-        
-        // Is there any reason to not allow super long strings? Maybe we don't need this test 
-        [Theory]
-        [InlineData("18990913--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------9801")]
-        public void Throws_ArgumentException_When_Input_Is_Too_Long(string personalIdentityNumberString)
-        {
-            var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018));
-            Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
-        }
-
     }
 }

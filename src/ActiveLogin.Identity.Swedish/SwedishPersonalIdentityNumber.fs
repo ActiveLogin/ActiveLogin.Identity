@@ -65,6 +65,9 @@ let internal handleError e =
         | Empty ->
             raise
                 (new ArgumentException("Invalid personalIdentityNumber. Cannot be empty string or whitespace.", "personalIdentityNumber"))
+        | Length ->
+            raise
+                (new ArgumentException("Invalid personalIdentityNumber.", "personalIdentityNumber"))
     | ParsingError -> invalidArg "str" "Invalid Swedish personal identity number."
 
 let tryGetResult (pin : Result<SwedishPersonalIdentityNumber, Error>) =

@@ -28,7 +28,7 @@ module internal ParsableString =
     let hasPlusDelimiter (chars:char[]) =
         let revChars = chars
                        |> Array.rev
-        revChars.[3] = '+'
+        revChars.[4] = '+'
         
     let cleanAllButDigits (chars:char[]) =
         chars
