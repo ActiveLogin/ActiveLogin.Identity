@@ -330,7 +330,9 @@ namespace ActiveLogin.Identity.Swedish.Test
         }
 
         [Theory]
+        [InlineData("99-09-13+980-1", "189909139801")]
         [InlineData("18-99-09-13-980-1", "189909139801")]
+        [InlineData("99.09.13-+980.1", "189909139801")]
         [InlineData("18.99.09.13.980.1", "189909139801")]
         [InlineData("1899-09-13-980-1", "189909139801")]
         [InlineData("18 99 09 13 980 1", "189909139801")]
@@ -343,7 +345,12 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData("ü18ü99ù09ę13é980á1ö", "189909139801")]
         [InlineData("18----------------------------------------------------------------99-09-13-980-1", "189909139801")]
         [InlineData("18--DROP TABLE USERS; 99-09-13-980-1", "189909139801")]
-        [InlineData("199908072391", "199908072391")] // TODO is this just a sanity check?
+        [InlineData("9909+13+9801", "189909139801")]
+        [InlineData("189909+13+9801", "189909139801")]
+        [InlineData("18+99+09+13+9801", "189909139801")]
+        [InlineData("18+99+09+13+98+01", "189909139801")]
+        [InlineData("19990807+2391", "199908072391")]
+        [InlineData("990807+2391", "189908072391")]
         public void Parses_When_Contains_Chars(string personalIdentityNumberString, string expectedPersonalIdentityNumberString)
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018);
@@ -351,9 +358,10 @@ namespace ActiveLogin.Identity.Swedish.Test
         }
 
         [Theory]
-        [InlineData("189909+13+9801")]
-        [InlineData("18+99+09+13+9801")]
-        public void Throws_ArgumentException_When_Invalid_Plus_Delimiter_In_String(string personalIdentityNumberString)
+        [InlineData("123")]
+        [InlineData("12345678901")]
+        [InlineData("1234567890123")]
+        public void Throws_ArgumentException_When_Invalid_Number_Of_Digits(string personalIdentityNumberString)
         {
             var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018));
             Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
