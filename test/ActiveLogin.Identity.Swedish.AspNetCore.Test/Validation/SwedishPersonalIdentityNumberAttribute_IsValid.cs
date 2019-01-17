@@ -26,7 +26,7 @@ namespace ActiveLogin.Identity.Swedish.AspNetCore.Test.Validation
         [Fact]
         public void Returns_Invalid_When_Invalid_Personal_Identity_Number()
         {
-            var model = new SampleValidationModel("990913_9801");
+            var model = new SampleValidationModel("A");
             var context = new ValidationContext(model);
             var results = new List<ValidationResult>();
             var isValid = Validator.TryValidateObject(model, context, results, true);

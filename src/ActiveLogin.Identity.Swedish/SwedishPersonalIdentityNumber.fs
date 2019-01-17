@@ -64,10 +64,10 @@ let internal handleError e =
                 (new ArgumentNullException("personalIdentityNumber"))
         | Empty ->
             raise
-                (new ArgumentException("Invalid Swedish personal identity number. Cannot be empty string or whitespace.", "personalIdentityNumber"))
+                (new FormatException("String was not recognized as a valid SwedishPersonalIdentityNumber. Cannot be empty string or whitespace."))
         | Length ->
             raise
-                (new ArgumentException("Invalid Swedish personal identity number.", "personalIdentityNumber"))
+                (new FormatException("String was not recognized as a valid SwedishPersonalIdentityNumber."))
         | Invalid paramName ->
             raise
                 (new ArgumentOutOfRangeException(paramName, "Invalid Swedish personal identity number. %s"))

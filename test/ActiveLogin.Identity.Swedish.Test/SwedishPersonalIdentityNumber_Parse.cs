@@ -9,7 +9,7 @@ namespace ActiveLogin.Identity.Swedish.Test
     /// </remarks>
     public class SwedishPersonalIdentityNumber_Parse
     {
-        private const string InvalidSwedishPersonalIdentityNumberErrorMessage = "Invalid Swedish personal identity number.";
+        private const string InvalidSwedishPersonalIdentityNumberErrorMessage = "String was not recognized as a valid SwedishPersonalIdentityNumber.";
 
         [Theory]
         [InlineData("900101+9802", 1890)]
@@ -247,9 +247,9 @@ namespace ActiveLogin.Identity.Swedish.Test
 
 
         [Fact]
-        public void Parse_Throws_ArgumentException_When_Empty_String()
+        public void Parse_Throws_FormatException_When_Empty_String()
         {
-            var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.Parse(""));
+            var ex = Assert.Throws<FormatException>(() => SwedishPersonalIdentityNumber.Parse(""));
 
             Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
             Assert.Contains("Cannot be empty string or whitespace", ex.Message);
@@ -258,7 +258,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [Fact]
         public void Parse_Throws_ArgumentException_When_Whitespace_String()
         {
-            var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.Parse(" "));
+            var ex = Assert.Throws<FormatException>(() => SwedishPersonalIdentityNumber.Parse(" "));
 
             Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
             Assert.Contains("Cannot be empty string or whitespace", ex.Message);
@@ -273,18 +273,18 @@ namespace ActiveLogin.Identity.Swedish.Test
         }
 
         [Fact]
-        public void ParseInSpecificYear_Throws_ArgumentException_When_Empty_String()
+        public void ParseInSpecificYear_Throws_FormatException_When_Empty_String()
         {
-            var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear("", 2018));
+            var ex = Assert.Throws<FormatException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear("", 2018));
 
             Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
             Assert.Contains("Cannot be empty string or whitespace", ex.Message);
         }
 
         [Fact]
-        public void ParseInSpecificYear_Throws_ArgumentException_When_Whitespace_String()
+        public void ParseInSpecificYear_Throws_FormatException_When_Whitespace_String()
         {
-            var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(" ", 2018));
+            var ex = Assert.Throws<FormatException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(" ", 2018));
 
             Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
             Assert.Contains("Cannot be empty string or whitespace", ex.Message);
@@ -337,9 +337,19 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData("123")]
         [InlineData("12345678901")]
         [InlineData("1234567890123")]
-        public void Throws_ArgumentException_When_Invalid_Number_Of_Digits(string personalIdentityNumberString)
+        public void Throws_FormatException_When_Invalid_Number_Of_Digits(string personalIdentityNumberString)
         {
-            var ex = Assert.Throws<ArgumentException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018));
+            var ex = Assert.Throws<FormatException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018));
+            Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
+        }
+
+        [Theory]
+        [InlineData("199913139801")]
+        [InlineData("199909139802")]
+        [InlineData("199909329801")]
+        public void Throws_FormatException_When_Invalid_Pin(string personalIdentityNumberString)
+        {
+            var ex = Assert.Throws<FormatException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018));
             Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
         }
     }
