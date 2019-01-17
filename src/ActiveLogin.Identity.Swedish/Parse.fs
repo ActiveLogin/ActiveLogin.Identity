@@ -85,11 +85,11 @@ let parse parseYear =
                 let lastDigitsParseYear = parseYear % 100
 
                 let! fullYear =
-                    match str.[6..6] with
-                    | "-" when shortYear <= lastDigitsParseYear -> fullYearGuess |> Ok
-                    | "-" -> fullYearGuess - 100 |> Ok
-                    | "+" when shortYear <= lastDigitsParseYear -> fullYearGuess - 100 |> Ok
-                    | "+" -> fullYearGuess - 200 |> Ok
+                    match str.[6] with
+                    | '-' when shortYear <= lastDigitsParseYear -> fullYearGuess |> Ok
+                    | '-' -> fullYearGuess - 100 |> Ok
+                    | '+' when shortYear <= lastDigitsParseYear -> fullYearGuess - 100 |> Ok
+                    | '+' -> fullYearGuess - 200 |> Ok
                     | _ -> "delimiter" |> Invalid |> ArgumentError |> Error
                 return { Year = fullYear
                          Month = str.[2..3] |> int
