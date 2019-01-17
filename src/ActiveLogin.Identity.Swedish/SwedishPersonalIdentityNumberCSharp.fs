@@ -56,7 +56,7 @@ type SwedishPersonalIdentityNumber private(pin : Types.SwedishPersonalIdentityNu
                  Day = day
                  BirthNumber = birthNumber
                  Checksum = checksum }
-        |> tryGetResult
+        |> Error.handle
         |> SwedishPersonalIdentityNumber
 
     /// <summary>
@@ -74,7 +74,7 @@ type SwedishPersonalIdentityNumber private(pin : Types.SwedishPersonalIdentityNu
     static member ParseInSpecificYear((s : string), parseYear : int) =
         result { let! year = parseYear |> Year.create
                  return! parseInSpecificYear year s }
-        |> tryGetResult
+        |> Error.handle
         |> SwedishPersonalIdentityNumber
 
     /// <summary>
@@ -85,7 +85,7 @@ type SwedishPersonalIdentityNumber private(pin : Types.SwedishPersonalIdentityNu
     /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid SwedishPersonalIdentityNumber.</exception>
     static member Parse(s) =
         parse s
-        |> tryGetResult
+        |> Error.handle
         |> SwedishPersonalIdentityNumber
 
     /// <summary>

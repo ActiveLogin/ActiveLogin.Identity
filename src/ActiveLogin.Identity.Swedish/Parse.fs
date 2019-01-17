@@ -19,7 +19,7 @@ let parse parseYear =
             |> Error
         | true ->
             Empty
-            |> ArgumentError
+            |> ParsingError
             |> Error
 
     let requireDigitCount (str : string) =
@@ -34,7 +34,7 @@ let parse parseYear =
         | 12 -> (chars |> TwelveDigits) |> Ok
         | _ ->
             Length
-            |> ArgumentError
+            |> ParsingError
             |> Error
 
     let clean numberType =
@@ -90,7 +90,7 @@ let parse parseYear =
                     | '-' -> fullYearGuess - 100 |> Ok
                     | '+' when shortYear <= lastDigitsParseYear -> fullYearGuess - 100 |> Ok
                     | '+' -> fullYearGuess - 200 |> Ok
-                    | _ -> "delimiter" |> Invalid |> ArgumentError |> Error
+                    | _ -> "delimiter" |> Invalid |> ParsingError |> Error
                 return { Year = fullYear
                          Month = str.[2..3] |> int
                          Day = str.[4..5] |> int

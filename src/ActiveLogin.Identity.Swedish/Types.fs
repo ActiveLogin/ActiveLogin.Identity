@@ -4,9 +4,11 @@ module ActiveLogin.Identity.Swedish.FSharp.Types
 open System
 
 type ArgumentError =
-    | Length
-    | Empty
     | Null
+
+type ParsingError =
+    | Empty
+    | Length
     | Invalid of string
 
 type Error =
@@ -17,7 +19,41 @@ type Error =
     | InvalidBirthNumber of int
     | InvalidChecksum of int
     | ArgumentError of ArgumentError
-    | ParsingError
+    | ParsingError of ParsingError
+
+module Error =
+    let handle result =
+        match result with
+        | Ok res -> res 
+        | Error e -> 
+            match e with
+            | InvalidYear y -> raise (new ArgumentOutOfRangeException("year", y, "Invalid year."))
+            | InvalidMonth m ->
+                raise (new ArgumentOutOfRangeException("month", m, "Invalid month. Must be in the range 1 to 12."))
+            | InvalidDay d ->
+                raise
+                    (new ArgumentOutOfRangeException("day", d, "Invalid day of month. It might be a valid co-ordination number."))
+            | InvalidDayAndCoordinationDay d -> raise (new ArgumentOutOfRangeException("day", d, "Invalid day of month."))
+            | InvalidBirthNumber s ->
+                raise
+                    (new ArgumentOutOfRangeException("birthNumber", s, "Invalid birth number. Must be in the range 0 to 999."))
+            | InvalidChecksum _ -> raise (new ArgumentException("Invalid checksum.", "checksum"))
+            | ArgumentError a ->
+                match a with
+                | Null ->
+                    raise
+                        (new ArgumentNullException("personalIdentityNumber"))
+            | ParsingError p -> 
+                match p with
+                | Empty ->
+                    raise
+                        (new FormatException("String was not recognized as a valid SwedishPersonalIdentityNumber. Cannot be empty string or whitespace."))
+                | Length ->
+                    raise
+                        (new FormatException("String was not recognized as a valid SwedishPersonalIdentityNumber."))
+                | Invalid msg ->
+                    raise
+                        (new FormatException(sprintf "String was not recognized as a valid SwedishPersonalIdentityNumber. %s" msg))
 
 type Year = private Year of int
 

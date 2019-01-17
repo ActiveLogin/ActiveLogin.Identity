@@ -44,44 +44,28 @@ let to12DigitString pid =
     let vs = extractValues pid
     sprintf "%02i%02i%02i%03i%1i" vs.Year vs.Month vs.Day vs.BirthNumber vs.Checksum
 
-let internal handleError e =
-    match e with
-    | InvalidYear y -> raise (new ArgumentOutOfRangeException("year", y, "Invalid year."))
+let internal toParsingError err = 
+    let invalidWithMsg msg i =
+        i |> sprintf "%s %i" msg |> Invalid |> ParsingError 
+    match err with
+    | InvalidYear y ->
+        y |> invalidWithMsg "InvalidYear:"
     | InvalidMonth m ->
-        raise (new ArgumentOutOfRangeException("month", m, "Invalid month. Must be in the range 1 to 12."))
-    | InvalidDay d ->
-        raise
-            (new ArgumentOutOfRangeException("day", d, "Invalid day of month. It might be a valid co-ordination number."))
-    | InvalidDayAndCoordinationDay d -> raise (new ArgumentOutOfRangeException("day", d, "Invalid day of month."))
-    | InvalidBirthNumber s ->
-        raise
-            (new ArgumentOutOfRangeException("birthNumber", s, "Invalid birth number. Must be in the range 0 to 999."))
-    | InvalidChecksum _ -> raise (new ArgumentException("Invalid checksum.", "checksum"))
-    | ArgumentError a ->
-        match a with
-        | Null ->
-            raise
-                (new ArgumentNullException("personalIdentityNumber"))
-        | Empty ->
-            raise
-                (new FormatException("String was not recognized as a valid SwedishPersonalIdentityNumber. Cannot be empty string or whitespace."))
-        | Length ->
-            raise
-                (new FormatException("String was not recognized as a valid SwedishPersonalIdentityNumber."))
-        | Invalid paramName ->
-            raise
-                (new ArgumentOutOfRangeException(paramName, "Invalid Swedish personal identity number. %s"))
-    | ParsingError -> invalidArg "str" "Invalid Swedish personal identity number."
-
-let internal tryGetResult (pin : Result<SwedishPersonalIdentityNumber, Error>) =
-    match pin with
-    | Ok p -> p
-    | Error e -> handleError e
-
+        m |> invalidWithMsg "Invalid month:" 
+    | InvalidDay d | InvalidDayAndCoordinationDay d ->
+        d |> invalidWithMsg "Invalid day:"
+    | InvalidBirthNumber b ->
+        b |> invalidWithMsg "Invalid birthnumber:" 
+    | InvalidChecksum c ->
+        c |> invalidWithMsg "Invalid checksum:"
+    | ParsingError err -> ParsingError err
+    | ArgumentError err -> ArgumentError err
+    
 let parseInSpecificYear parseYear str =
     match Parse.parse parseYear str with
-    | Ok pinValues -> create pinValues
+    | Ok pinValues -> create pinValues 
     | Error error -> Error error
+    |> Result.mapError toParsingError
 
 let parse str = result { let! year = DateTime.UtcNow.Year |> Year.create
                          return! parseInSpecificYear year str }
