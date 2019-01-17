@@ -37,7 +37,7 @@ let to10DigitString (pin : SwedishPersonalIdentityNumber) =
         |> Year.create
         |> function
         | Ok y -> y
-        | Error e -> invalidArg "year" "DateTime.Year wasn't a year"
+        | Error _ -> invalidArg "year" "DateTime.Year wasn't a year"
     to10DigitStringInSpecificYear year pin
 
 let to12DigitString pid =
@@ -68,6 +68,9 @@ let internal handleError e =
         | Length ->
             raise
                 (new ArgumentException("Invalid Swedish personal identity number.", "personalIdentityNumber"))
+        | Invalid paramName ->
+            raise
+                (new ArgumentOutOfRangeException(paramName, "Invalid Swedish personal identity number. %s"))
     | ParsingError -> invalidArg "str" "Invalid Swedish personal identity number."
 
 let tryGetResult (pin : Result<SwedishPersonalIdentityNumber, Error>) =
@@ -75,41 +78,10 @@ let tryGetResult (pin : Result<SwedishPersonalIdentityNumber, Error>) =
     | Ok p -> p
     | Error e -> handleError e
 
-open Parse
-
 let parseInSpecificYear parseYear str =
-    let fromNumberParts parseYear parsed =
-        match parsed.FullYear, parsed.ShortYear, parsed.Month, parsed.Day, parsed.Delimiter, parsed.BirthNumber,
-              parsed.Checksum with
-        | Some fullYear, None, month, day, None, birthNumber, checksum ->
-            create { Year = fullYear
-                     Month = month
-                     Day = day
-                     BirthNumber = birthNumber
-                     Checksum = checksum }
-        | None, Some shortYear, month, day, delimiter, birthNumber, checksum ->
-            let getCentury (year : int) = (year / 100) * 100
-            let parseYear = Year.value parseYear
-            let parseCentury = getCentury parseYear
-            let fullYearGuess = parseCentury + shortYear
-            let lastDigitsParseYear = parseYear % 100
-
-            let fullYear =
-                match delimiter with
-                | (Some Hyphen) | None when shortYear <= lastDigitsParseYear -> fullYearGuess
-                | (Some Hyphen) | None -> fullYearGuess - 100
-                | (Some Plus) when shortYear <= lastDigitsParseYear -> fullYearGuess - 100
-                | (Some Plus) -> fullYearGuess - 200
-            create { Year = fullYear
-                     Month = month
-                     Day = day
-                     BirthNumber = birthNumber
-                     Checksum = checksum }
-        | _ -> ParsingError |> Error
-
-    match NumberParts.create str with
+    match Parse.parse parseYear str with
+    | Ok pinValues -> create pinValues
     | Error error -> Error error
-    | Ok numberParts -> fromNumberParts parseYear numberParts
 
 let parse str = result { let! year = DateTime.UtcNow.Year |> Year.create
                          return! parseInSpecificYear year str }

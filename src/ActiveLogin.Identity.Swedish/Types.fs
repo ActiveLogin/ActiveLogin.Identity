@@ -7,6 +7,7 @@ type ArgumentError =
     | Length
     | Empty
     | Null
+    | Invalid of string
 
 type Error =
     | InvalidYear of int
