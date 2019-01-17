@@ -73,7 +73,7 @@ let internal handleError e =
                 (new ArgumentOutOfRangeException(paramName, "Invalid Swedish personal identity number. %s"))
     | ParsingError -> invalidArg "str" "Invalid Swedish personal identity number."
 
-let tryGetResult (pin : Result<SwedishPersonalIdentityNumber, Error>) =
+let internal tryGetResult (pin : Result<SwedishPersonalIdentityNumber, Error>) =
     match pin with
     | Ok p -> p
     | Error e -> handleError e
