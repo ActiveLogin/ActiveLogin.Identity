@@ -7,6 +7,7 @@
     <TargetFrameworkIdentifier Condition="'$(_ShortFrameworkIdentifier)'=='netstandard'">.NETStandard</TargetFrameworkIdentifier>
     <LangVersion>latest</LangVersion>
     <NeutralLanguage>en</NeutralLanguage>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
     <AssemblyName>ActiveLogin.Identity.Swedish.AspNetCore</AssemblyName>
     <PackageId>ActiveLogin.Identity.Swedish.AspNetCore</PackageId>
@@ -37,7 +38,6 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
