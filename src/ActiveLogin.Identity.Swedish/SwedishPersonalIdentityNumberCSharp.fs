@@ -12,6 +12,28 @@ open System.Runtime.InteropServices //for OutAttribute
 /// </summary>
 type SwedishPersonalIdentityNumber private(pin : Types.SwedishPersonalIdentityNumber) =
     let identityNumber = pin
+
+    /// <summary>
+    /// Creates an instance of <see cref="SwedishPersonalIdentityNumber"/> out of the individual parts.
+    /// </summary>
+    /// <param name="year">The year part.</param>
+    /// <param name="month">The month part.</param>
+    /// <param name="day">The day part.</param>
+    /// <param name="birthNumber">The birth number part.</param>
+    /// <param name="checksum">The checksum part.</param>
+    /// <returns>An instance of <see cref="SwedishPersonalIdentityNumber"/> if all the paramaters are valid by themselfes and in combination.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when any of the range arguments is invalid.</exception>
+    /// <exception cref="ArgumentException">Thrown when checksum is invalid.</exception>
+    new(year, month, day, birthNumber, checksum) =
+        let pin = 
+            create { Year = year
+                     Month = month
+                     Day = day
+                     BirthNumber = birthNumber
+                     Checksum = checksum }
+            |> Error.handle
+        SwedishPersonalIdentityNumber(pin)
+
     member internal __.IdentityNumber = identityNumber
 
     /// <summary>
@@ -40,52 +62,38 @@ type SwedishPersonalIdentityNumber private(pin : Types.SwedishPersonalIdentityNu
     member __.Checksum = identityNumber.Checksum |> Checksum.value
 
     /// <summary>
-    /// Creates an instance of <see cref="SwedishPersonalIdentityNumber"/> out of the individual parts.
+    /// Converts the string representation of the Swedish personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent.
     /// </summary>
-    /// <param name="year">The year part.</param>
-    /// <param name="month">The month part.</param>
-    /// <param name="day">The day part.</param>
-    /// <param name="birthNumber">The birth number part.</param>
-    /// <param name="checksum">The checksum part.</param>
-    /// <returns>An instance of <see cref="SwedishPersonalIdentityNumber"/> if all the paramaters are valid by themselfes and in combination.</returns>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when any of the arguments are invalid.</exception>
-    static member Create(year, month, day, birthNumber, checksum) =
-        create { Year = year
-                 Month = month
-                 Day = day
-                 BirthNumber = birthNumber
-                 Checksum = checksum }
-        |> tryGetResult
-        |> SwedishPersonalIdentityNumber
-
-    /// <summary>
-    /// Converts the string representation of the personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent.
-    /// </summary>
-    /// <param name="personalIdentityNumber">A string representation of the personal identity number to parse.</param>
+    /// <param name="s">A string representation of the Swedish personal identity number to parse.</param>
     /// <param name="parseYear">
     /// The specific year to use when checking if the person has turned / will turn 100 years old.
     /// That information changes the delimiter (- or +).
     ///
     /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
     /// </param>
-    static member ParseInSpecificYear((personalIdentityNumber : string), parseYear : int) =
+    /// <exception cref="ArgumentNullException">Thrown when string input is null.</exception>
+    /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid SwedishPersonalIdentityNumber.</exception>
+    static member ParseInSpecificYear((s : string), parseYear : int) =
         result { let! year = parseYear |> Year.create
-                 return! parseInSpecificYear year personalIdentityNumber }
-        |> tryGetResult
+                 return! parseInSpecificYear year s }
+        |> Error.handle
         |> SwedishPersonalIdentityNumber
 
     /// <summary>
     /// Converts the string representation of the personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent.
     /// </summary>
-    static member Parse(personalIdentityNumber) =
-        parse personalIdentityNumber
-        |> tryGetResult
+    /// <param name="s">A string representation of the Swedish personal identity number to parse.</param>
+    /// <exception cref="ArgumentNullException">Thrown when string input is null.</exception>
+    /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid SwedishPersonalIdentityNumber.</exception>
+    static member Parse(s) =
+        parse s
+        |> Error.handle
         |> SwedishPersonalIdentityNumber
 
     /// <summary>
     /// Converts the string representation of the personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent  and returns a value that indicates whether the conversion succeeded.
     /// </summary>
-    /// <param name="personalIdentityNumber">A string representation of the personal identity number to parse.</param>
+    /// <param name="s">A string representation of the Swedish personal identity number to parse.</param>
     /// <param name="parseYear">
     /// The specific year to use when checking if the person has turned / will turn 100 years old.
     /// That information changes the delimiter (- or +).
@@ -93,10 +101,10 @@ type SwedishPersonalIdentityNumber private(pin : Types.SwedishPersonalIdentityNu
     /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
     /// </param>
     /// <param name="parseResult">If valid, an instance of <see cref="SwedishPersonalIdentityNumber"/></param>
-    static member TryParseInSpecificYear((personalIdentityNumber : string), (parseYear : int),
+    static member TryParseInSpecificYear((s : string), (parseYear : int),
                                          [<Out>] parseResult : SwedishPersonalIdentityNumber byref) =
         let pin = result { let! year = parseYear |> Year.create
-                           return! parseInSpecificYear year personalIdentityNumber }
+                           return! parseInSpecificYear year s }
         match pin with
         | Error _ -> false
         | Ok pin ->
@@ -106,10 +114,10 @@ type SwedishPersonalIdentityNumber private(pin : Types.SwedishPersonalIdentityNu
     /// <summary>
     /// Converts the string representation of the personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent  and returns a value that indicates whether the conversion succeeded.
     /// </summary>
-    /// <param name="personalIdentityNumber">A string representation of the personal identity number to parse.</param>
+    /// <param name="s">A string representation of the Swedish personal identity number to parse.</param>
     /// <param name="parseResult">If valid, an instance of <see cref="SwedishPersonalIdentityNumber"/></param>
-    static member TryParse((personalIdentityNumber : string), [<Out>] parseResult : SwedishPersonalIdentityNumber byref) =
-        let pin = parse personalIdentityNumber
+    static member TryParse((s : string), [<Out>] parseResult : SwedishPersonalIdentityNumber byref) =
+        let pin = parse s
         match pin with
         | Error _ -> false
         | Ok pin ->
@@ -188,7 +196,7 @@ type SwedishPersonalIdentityNumberHintExtensions() =
     /// Get the age of the person according to the date in the personal identity number.
     /// Not always the actual date of birth due to the limited quantity of personal identity numbers per day.
     /// </summary>
-    /// <param name="personalIdentityNumber"></param>
+    /// <param name="pin"></param>
     /// <param name="date">The date when to calculate the age.</param>
     /// <returns></returns>
     [<Extension>]

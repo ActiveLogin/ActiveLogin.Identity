@@ -1,77 +1,104 @@
 module internal ActiveLogin.Identity.Swedish.FSharp.Parse
 
 open System
-open System.Text.RegularExpressions
 
-type Delimiter =
-    | Plus
-    | Hyphen
+type private PinType<'T> =
+    | TwelveDigits of 'T
+    | TenDigits of 'T
 
-type NumberParts =
-    { FullYear : int option
-      ShortYear : int option
-      Month : int
-      Day : int
-      Delimiter : Delimiter
-      BirthNumber : int
-      Checksum : int }
+let parse parseYear =
+    let toChars str = [ for c in str -> c ]
+    let toString = Array.ofList >> String
 
-let private buildNumberParts (gs : GroupCollection) =
-    let asString (k : string) (gs : GroupCollection) =
-        let value = gs.[k].ToString()
-        if String.IsNullOrWhiteSpace value then None
-        else Some value
+    let requireNotEmpty str =
+        match String.IsNullOrWhiteSpace str with
+        | false -> str |> Ok
+        | true when str = null ->
+            Null
+            |> ArgumentError
+            |> Error
+        | true ->
+            Empty
+            |> ParsingError
+            |> Error
 
-    let asInt (k : string) (gs : GroupCollection) =
-        gs
-        |> asString k
-        |> Option.map Int32.Parse
+    let requireDigitCount (str : string) =
+        let chars = str |> toChars
 
-    let asDelimiter (gs : GroupCollection) =
+        let numDigits =
+            chars
+            |> List.filter Char.IsDigit
+            |> List.length
+        match numDigits with
+        | 10 -> (chars |> TenDigits) |> Ok
+        | 12 -> (chars |> TwelveDigits) |> Ok
+        | _ ->
+            Length
+            |> ParsingError
+            |> Error
 
-        gs
-        |> asString "delimiter"
-        |> function
-        | Some d when d = "+" -> Plus
-        | Some d when d = "-" || d = " " -> Hyphen
-        | None -> Hyphen
-        | _ -> invalidArg "gs" "Invalid delimiter"
+    let clean numberType =
+        let (|IsDigit|IsPlus|NotDigitOrPlus|) char =
+            match char |> Char.IsDigit with
+            | true -> IsDigit
+            | false when char = '+' -> IsPlus
+            | false -> NotDigitOrPlus
 
-    { FullYear = asInt "fullYear" gs
-      ShortYear = asInt "shortYear" gs
-      Month =
-          match asInt "month" gs with
-          | Some m -> m
-          | None -> invalidArg "gs" "Invalid month"
-      Day =
-          match asInt "day" gs with
-          | Some m -> m
-          | None -> invalidArg "g" "Invalid day"
-      Delimiter = asDelimiter gs
-      BirthNumber =
-          match asInt "birthNumber" gs with
-          | Some m -> m
-          | None -> invalidArg "gs" "Invalid birth number"
-      Checksum =
-          match asInt "checksum" gs with
-          | Some m -> m
-          | None -> invalidArg "gs" "Invalid checksum" }
+        let folder char state =
+            match state |> List.length, char with
+            | 4, IsPlus -> char :: state
+            | 4, IsDigit -> char :: ('-' :: state)
+            | _, IsDigit -> char :: state
+            | _ -> state
 
-let (|SwedishIdentityNumber|_|) (input : NonEmptyString) =
-    let input = input |> NonEmptyString.value;
-    let matchRegex pattern input = Regex.Match(input, pattern)
-    let pattern = @"^" + 
-                  @"((?<fullYear>[0-9]{4})|(?<shortYear>[0-9]{2}))" + 
-                  @"(?<month>[0-9]{2})" + 
-                  @"(?<day>[0-9]{2})" + 
-                  @"(?<delimiter>[-+ ]?)" + 
-                  @"(?<birthNumber>[0-9]{3})" + 
-                  @"(?<checksum>[0-9]{1})" + 
-                  @"$"
-    let m = input.Trim() |> matchRegex pattern
-    match m.Success with
-    | true ->
-        m.Groups
-        |> buildNumberParts
-        |> Some
-    | false -> None
+        match numberType with
+        | TwelveDigits chars ->
+            chars
+            |> List.filter Char.IsDigit
+            |> toString
+            |> TwelveDigits
+        | TenDigits chars ->
+            (chars, [])
+            ||> List.foldBack folder
+            |> toString
+            |> TenDigits
+
+    let parseNumberValues (numberType : PinType<string>) =
+        result {
+            match numberType with
+            | TwelveDigits str ->
+                // YYYYMMDDbbbc
+                // 012345678901
+                return { Year = str.[0..3] |> int
+                         Month = str.[4..5] |> int
+                         Day = str.[6..7] |> int
+                         BirthNumber = str.[8..10] |> int
+                         Checksum = str.[11..11] |> int }
+            | TenDigits str ->
+                // YYMMDD-bbbc or YYMMDD+bbbc
+                // 01234567890    01234567890
+                let shortYear = (str.[0..1] |> int)
+                let getCentury (year : int) = (year / 100) * 100
+                let parseYear = Year.value parseYear
+                let parseCentury = getCentury parseYear
+                let fullYearGuess = parseCentury + shortYear
+                let lastDigitsParseYear = parseYear % 100
+
+                let! fullYear =
+                    match str.[6] with
+                    | '-' when shortYear <= lastDigitsParseYear -> fullYearGuess |> Ok
+                    | '-' -> fullYearGuess - 100 |> Ok
+                    | '+' when shortYear <= lastDigitsParseYear -> fullYearGuess - 100 |> Ok
+                    | '+' -> fullYearGuess - 200 |> Ok
+                    | _ -> "delimiter" |> Invalid |> ParsingError |> Error
+                return { Year = fullYear
+                         Month = str.[2..3] |> int
+                         Day = str.[4..5] |> int
+                         BirthNumber = str.[7..9] |> int
+                         Checksum = str.[10..10] |> int }
+        }
+
+    requireNotEmpty
+    >> Result.bind requireDigitCount
+    >> Result.map clean
+    >> Result.bind parseNumberValues

@@ -26,8 +26,6 @@ ActiveLogin.Identity provides parsing and validation of Swedish identities such 
 
 ActiveLogin.Identity is distributed as [packages on NuGet](https://www.nuget.org/profiles/ActiveLogin), install using the tool of your choice, for example _dotnet cli_:
 
-_Note:_ The packages relfecting the documentation are currently in alpha, so make sure to search for the pre release packages.
-
 ```powershell
 dotnet add package ActiveLogin.Identity.Swedish
 ```
@@ -139,20 +137,23 @@ For more usecases, samples and inspiration; feel free to browse our unit tests a
 
 ### What formats of a Swedish Personal Identity Number do you support parsing?
 
-We consider the following to be valid Swedish Personal Identity Numbers that will be parsed:
-
-#### 10 digit string
+It will try cleaning away any invalid chars, while still preserving digits and + when that applies.
+The "standard" ways of input would be in any of these formats:
 
 * YYMMDD-BBBC
 * YYMMDD+BBBC
-* YYMMDD BBBC _(Treated as YYMMDD-BBBC)_
-* YYMMDDBBBC _(Treated as YYMMDD-BBBC)_
-
-#### 12 digit string
-
+* YYMMDDBBBC
 * YYYYMMDDBBBC
-* YYYYMMDD-BBBC _(Treated as YYYYMMDDBBBC)_
-* YYYYMMDD BBBC _(Treated as YYYYMMDDBBBC)_
+
+But it also supports other variations such as:
+
+* YYMMDD BBBC
+* YYYYMMDD-BBBC
+* YYYYMMDD BBBC
+* YYYY MM DD BBB C
+* YY-MM-DD-BBBC
+
+And basically anything else that can be cleaned and parsed :)
 
 #### Explanations
 
