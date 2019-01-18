@@ -24,7 +24,7 @@ namespace ActiveLogin.Identity.Swedish.Test
             var isValid = SwedishPersonalIdentityNumber.TryParse("000101-2384", out SwedishPersonalIdentityNumber personalIdentityNumber);
 
             Assert.True(isValid);
-            Assert.Equal(SwedishPersonalIdentityNumber.Create(2000, 01, 01, 238, 4), personalIdentityNumber);
+            Assert.Equal(new SwedishPersonalIdentityNumber(2000, 01, 01, 238, 4), personalIdentityNumber);
         }
 
         [Fact]
@@ -41,7 +41,7 @@ namespace ActiveLogin.Identity.Swedish.Test
             var isValid = SwedishPersonalIdentityNumber.TryParseInSpecificYear("990913+9801", 2018, out SwedishPersonalIdentityNumber personalIdentityNumber);
 
             Assert.True(isValid);
-            Assert.Equal(SwedishPersonalIdentityNumber.Create(1899, 09, 13, 980, 1), personalIdentityNumber);
+            Assert.Equal(new SwedishPersonalIdentityNumber(1899, 09, 13, 980, 1), personalIdentityNumber);
         }
 
         [Fact]
