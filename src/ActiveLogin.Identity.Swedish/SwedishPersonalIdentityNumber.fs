@@ -37,76 +37,35 @@ let to10DigitString (pin : SwedishPersonalIdentityNumber) =
         |> Year.create
         |> function
         | Ok y -> y
-        | Error e -> invalidArg "year" "DateTime.Year wasn't a year"
+        | Error _ -> invalidArg "year" "DateTime.Year wasn't a year"
     to10DigitStringInSpecificYear year pin
 
 let to12DigitString pid =
     let vs = extractValues pid
     sprintf "%02i%02i%02i%03i%1i" vs.Year vs.Month vs.Day vs.BirthNumber vs.Checksum
 
-let internal handleError e =
-    match e with
-    | InvalidYear y -> raise (new ArgumentOutOfRangeException("year", y, "Invalid year."))
+let internal toParsingError err = 
+    let invalidWithMsg msg i =
+        i |> sprintf "%s %i" msg |> Invalid |> ParsingError 
+    match err with
+    | InvalidYear y ->
+        y |> invalidWithMsg "InvalidYear:"
     | InvalidMonth m ->
-        raise (new ArgumentOutOfRangeException("month", m, "Invalid month. Must be in the range 1 to 12."))
-    | InvalidDay d ->
-        raise
-            (new ArgumentOutOfRangeException("day", d, "Invalid day of month. It might be a valid co-ordination number."))
-    | InvalidDayAndCoordinationDay d -> raise (new ArgumentOutOfRangeException("day", d, "Invalid day of month."))
-    | InvalidBirthNumber s ->
-        raise
-            (new ArgumentOutOfRangeException("birthNumber", s, "Invalid birth number. Must be in the range 0 to 999."))
-    | InvalidChecksum _ -> raise (new ArgumentException("Invalid checksum.", "checksum"))
-    | ArgumentError a ->
-        match a with
-        | Null ->
-            raise
-                (new ArgumentNullException("personalIdentityNumber"))
-        | Empty ->
-            raise
-                (new ArgumentException("Invalid personalIdentityNumber. Cannot be empty string or whitespace.", "personalIdentityNumber"))
-    | ParsingError -> invalidArg "str" "Invalid Swedish personal identity number."
-
-let tryGetResult (pin : Result<SwedishPersonalIdentityNumber, Error>) =
-    match pin with
-    | Ok p -> p
-    | Error e -> handleError e
-
-open Parse
-
+        m |> invalidWithMsg "Invalid month:" 
+    | InvalidDay d | InvalidDayAndCoordinationDay d ->
+        d |> invalidWithMsg "Invalid day:"
+    | InvalidBirthNumber b ->
+        b |> invalidWithMsg "Invalid birthnumber:" 
+    | InvalidChecksum c ->
+        c |> invalidWithMsg "Invalid checksum:"
+    | ParsingError err -> ParsingError err
+    | ArgumentError err -> ArgumentError err
+    
 let parseInSpecificYear parseYear str =
-    let fromNumberParts parseYear parsed =
-        match parsed.FullYear, parsed.ShortYear, parsed.Month, parsed.Day, parsed.Delimiter, parsed.BirthNumber,
-              parsed.Checksum with
-        | Some fullYear, None, month, day, Hyphen, birthNumber, checksum ->
-            create { Year = fullYear
-                     Month = month
-                     Day = day
-                     BirthNumber = birthNumber
-                     Checksum = checksum }
-        | None, Some shortYear, month, day, delimiter, birthNumber, checksum ->
-            let getCentury (year : int) = (year / 100) * 100
-            let parseYear = Year.value parseYear
-            let parseCentury = getCentury parseYear
-            let fullYearGuess = parseCentury + shortYear
-            let lastDigitsParseYear = parseYear % 100
-
-            let fullYear =
-                match delimiter with
-                | Hyphen when shortYear <= lastDigitsParseYear -> fullYearGuess
-                | Hyphen -> fullYearGuess - 100
-                | Plus when shortYear <= lastDigitsParseYear -> fullYearGuess - 100
-                | Plus -> fullYearGuess - 200
-            create { Year = fullYear
-                     Month = month
-                     Day = day
-                     BirthNumber = birthNumber
-                     Checksum = checksum }
-        | _ -> ParsingError |> Error
-    match NonEmptyString.create str with
+    match Parse.parse parseYear str with
+    | Ok pinValues -> create pinValues 
     | Error error -> Error error
-    | Ok(SwedishIdentityNumber parts) -> fromNumberParts parseYear parts
-    | Ok(_) -> ParsingError |> Error
+    |> Result.mapError toParsingError
 
 let parse str = result { let! year = DateTime.UtcNow.Year |> Year.create
                          return! parseInSpecificYear year str }
