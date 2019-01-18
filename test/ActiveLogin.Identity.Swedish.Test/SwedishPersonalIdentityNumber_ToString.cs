@@ -11,7 +11,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [Fact]
         public void ToString_Returns_12DigitString()
         {
-            var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(1999, 08, 07, 239, 1);
+            var personalIdentityNumber = new SwedishPersonalIdentityNumber(1999, 08, 07, 239, 1);
             Assert.Equal("199908072391", personalIdentityNumber.ToString());
         }
 

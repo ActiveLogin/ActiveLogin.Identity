@@ -18,7 +18,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData(1912, 02, 11, 998, 6, 106)]
         public void When_Older_Than_100_Years_Calculates_Age(int year, int month, int day, int birthNumber, int checksum, int expectedAge)
         {
-            var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(year, month, day, birthNumber, checksum);
+            var personalIdentityNumber = new SwedishPersonalIdentityNumber(year, month, day, birthNumber, checksum);
             Assert.Equal(expectedAge, personalIdentityNumber.GetAgeHint(_date_2018_07_15));
         }
 
@@ -27,7 +27,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData(2018, 01, 01, 239, 2, 0)]
         public void When_Younger_Than_100_Years_Calculates_Age(int year, int month, int day, int birthNumber, int checksum, int expectedAge)
         {
-            var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(year, month, day, birthNumber, checksum);
+            var personalIdentityNumber = new SwedishPersonalIdentityNumber(year, month, day, birthNumber, checksum);
             Assert.Equal(expectedAge, personalIdentityNumber.GetAgeHint(_date_2018_07_15));
         }
 
@@ -35,7 +35,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData(2018, 01, 01, 239, 2)]
         public void When_Not_Yet_Born_Throws_Exception(int year, int month, int day, int birthNumber, int checksum)
         {
-            var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(year, month, day, birthNumber, checksum);
+            var personalIdentityNumber = new SwedishPersonalIdentityNumber(year, month, day, birthNumber, checksum);
             var ex = Assert.Throws<ArgumentException>(() => personalIdentityNumber.GetAgeHint(_date_2000_04_14));
 
             Assert.Contains("The person is not yet born.", ex.Message);
@@ -45,7 +45,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [Fact]
         public void Without_Date_Uses_UtcNow()
         {
-            var personalIdentityNumber = SwedishPersonalIdentityNumber.Create(1899, 09, 13, 980, 1);
+            var personalIdentityNumber = new SwedishPersonalIdentityNumber(1899, 09, 13, 980, 1);
             Assert.Equal(personalIdentityNumber.GetAgeHint(DateTime.UtcNow), personalIdentityNumber.GetAgeHint());
         }
 

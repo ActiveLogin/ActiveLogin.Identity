@@ -12,6 +12,28 @@ open System.Runtime.InteropServices //for OutAttribute
 /// </summary>
 type SwedishPersonalIdentityNumber private(pin : Types.SwedishPersonalIdentityNumber) =
     let identityNumber = pin
+
+    /// <summary>
+    /// Creates an instance of <see cref="SwedishPersonalIdentityNumber"/> out of the individual parts.
+    /// </summary>
+    /// <param name="year">The year part.</param>
+    /// <param name="month">The month part.</param>
+    /// <param name="day">The day part.</param>
+    /// <param name="birthNumber">The birth number part.</param>
+    /// <param name="checksum">The checksum part.</param>
+    /// <returns>An instance of <see cref="SwedishPersonalIdentityNumber"/> if all the paramaters are valid by themselfes and in combination.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when any of the range arguments is invalid.</exception>
+    /// <exception cref="ArgumentException">Thrown when checksum is invalid.</exception>
+    new(year, month, day, birthNumber, checksum) =
+        let pin = 
+            create { Year = year
+                     Month = month
+                     Day = day
+                     BirthNumber = birthNumber
+                     Checksum = checksum }
+            |> Error.handle
+        SwedishPersonalIdentityNumber(pin)
+
     member internal __.IdentityNumber = identityNumber
 
     /// <summary>
@@ -38,26 +60,6 @@ type SwedishPersonalIdentityNumber private(pin : Types.SwedishPersonalIdentityNu
     /// A checksum (kontrollsiffra) used for validation. Last digit in the PIN.
     /// </summary>
     member __.Checksum = identityNumber.Checksum |> Checksum.value
-
-    /// <summary>
-    /// Creates an instance of <see cref="SwedishPersonalIdentityNumber"/> out of the individual parts.
-    /// </summary>
-    /// <param name="year">The year part.</param>
-    /// <param name="month">The month part.</param>
-    /// <param name="day">The day part.</param>
-    /// <param name="birthNumber">The birth number part.</param>
-    /// <param name="checksum">The checksum part.</param>
-    /// <returns>An instance of <see cref="SwedishPersonalIdentityNumber"/> if all the paramaters are valid by themselfes and in combination.</returns>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when any of the range arguments is invalid.</exception>
-    /// <exception cref="ArgumentException">Thrown when checksum is invalid.</exception>
-    static member Create(year, month, day, birthNumber, checksum) =
-        create { Year = year
-                 Month = month
-                 Day = day
-                 BirthNumber = birthNumber
-                 Checksum = checksum }
-        |> Error.handle
-        |> SwedishPersonalIdentityNumber
 
     /// <summary>
     /// Converts the string representation of the Swedish personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent.
