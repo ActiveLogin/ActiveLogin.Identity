@@ -50,14 +50,14 @@ type SwedishPersonalIdentityNumber private(pin : Types.SwedishPersonalIdentityNu
     /// <returns>An instance of <see cref="SwedishPersonalIdentityNumber"/> if all the paramaters are valid by themselfes and in combination.</returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when any of the range arguments is invalid.</exception>
     /// <exception cref="ArgumentException">Thrown when checksum is invalid.</exception>
-    static member Create(year, month, day, birthNumber, checksum) =
-        create { Year = year
-                 Month = month
-                 Day = day
-                 BirthNumber = birthNumber
-                 Checksum = checksum }
-        |> Error.handle
-        |> SwedishPersonalIdentityNumber
+    new(year, month, day, birthNumber, checksum) =
+        let pin = create { Year = year
+                           Month = month
+                           Day = day
+                           BirthNumber = birthNumber
+                           Checksum = checksum }
+                |> Error.handle
+        SwedishPersonalIdentityNumber(pin)
 
     /// <summary>
     /// Converts the string representation of the Swedish personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent.

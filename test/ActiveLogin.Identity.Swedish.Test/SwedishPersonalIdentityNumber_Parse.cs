@@ -225,7 +225,7 @@ namespace ActiveLogin.Identity.Swedish.Test
             var pinOnYearTurning100 = SwedishPersonalIdentityNumber.ParseInSpecificYear(withPlus, 2012);
             var pinAfterTurning100 = SwedishPersonalIdentityNumber.ParseInSpecificYear(withPlus, 2013);
 
-            var expected = SwedishPersonalIdentityNumber.Create(1912, 02, 11, 998, 6);
+            var expected = new SwedishPersonalIdentityNumber(1912, 02, 11, 998, 6);
             Assert.Equal(expected, pinBeforeTurning100);
             Assert.Equal(expected, pinOnYearTurning100);
             Assert.Equal(expected, pinAfterTurning100);
@@ -235,14 +235,14 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void Parses_When_Begins_With_Zero()
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse("000101-2384");
-            Assert.Equal(SwedishPersonalIdentityNumber.Create(2000, 1, 1, 238, 4), personalIdentityNumber);
+            Assert.Equal(new SwedishPersonalIdentityNumber(2000, 1, 1, 238, 4), personalIdentityNumber);
         }
 
         [Fact]
         public void Parses_When_Ends_With_Zero()
         {
             var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse("170122-2380");
-            Assert.Equal(SwedishPersonalIdentityNumber.Create(2017, 1, 22, 238, 0), personalIdentityNumber);
+            Assert.Equal(new SwedishPersonalIdentityNumber(2017, 1, 22, 238, 0), personalIdentityNumber);
         }
 
 
