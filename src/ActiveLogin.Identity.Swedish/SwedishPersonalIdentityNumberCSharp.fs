@@ -25,12 +25,13 @@ type SwedishPersonalIdentityNumber private(pin : Types.SwedishPersonalIdentityNu
     /// <exception cref="ArgumentOutOfRangeException">Thrown when any of the range arguments is invalid.</exception>
     /// <exception cref="ArgumentException">Thrown when checksum is invalid.</exception>
     new(year, month, day, birthNumber, checksum) =
-        let pin = create { Year = year
-                           Month = month
-                           Day = day
-                           BirthNumber = birthNumber
-                           Checksum = checksum }
-                |> Error.handle
+        let pin = 
+            create { Year = year
+                     Month = month
+                     Day = day
+                     BirthNumber = birthNumber
+                     Checksum = checksum }
+            |> Error.handle
         SwedishPersonalIdentityNumber(pin)
 
     member internal __.IdentityNumber = identityNumber
