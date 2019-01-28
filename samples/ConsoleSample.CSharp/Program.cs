@@ -1,5 +1,6 @@
 ﻿using System;
 using ActiveLogin.Identity.Swedish;
+using ActiveLogin.Identity.Swedish.Extensions;
 
 namespace ConsoleSample
 {

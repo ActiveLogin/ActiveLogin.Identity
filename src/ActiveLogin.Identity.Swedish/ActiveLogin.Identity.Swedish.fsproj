@@ -54,6 +54,7 @@
     <Compile Include="Parse.fs" />
     <Compile Include="SwedishPersonalIdentityNumber.fs" />
     <Compile Include="SwedishPersonalIdentityNumberCSharp.fs" />
+    <Compile Include="SwedishPersonalIdentityNumberCSharpHintExtensions.fs" />
   </ItemGroup>
 
   <ItemGroup>
