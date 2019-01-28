@@ -74,12 +74,12 @@ SwedishPersonalIdentityNumber
 
 #### Hints
 
-Some data, such as DateOfBirth, Age and Gender can't be garanteed to reflect the truth due to the limited quantity of personal identity numbers per day.
-Therefore they are exposed as extension methods and are suffixed with `Hint` to reflect this.
+Some data, such as DateOfBirth, Age and Gender can't be guaranteed to reflect the truth due to the limited quantity of personal identity numbers per day.
+Therefore they are exposed as extension methods in the C# api and are suffixed with `Hint` to reflect this. They are also placed in a separate namespace `ActiveLogin.Identity.Swedish.Extensions`. In the F# api these functions are available in the `ActiveLogin.Identity.Swedish.FSharp.SwedishPersonalIdentityNumber.Hints` module.
 
 #### ASP.NET Core MVC
 
-If used to validate input in an ASP.NET Core MVC project, the `SwedishPersonalIdentityNumberAttribute` can be used  like this:
+If used to validate input in an ASP.NET Core MVC project, the `SwedishPersonalIdentityNumberAttribute` can be used like this:
 
 ```c#
 public class SampleDataModel

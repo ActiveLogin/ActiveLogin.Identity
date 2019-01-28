@@ -10,7 +10,8 @@ open System.Runtime.InteropServices //for OutAttribute
 /// https://en.wikipedia.org/wiki/Personal_identity_number_(Sweden)
 /// https://sv.wikipedia.org/wiki/Personnummer_i_Sverige
 /// </summary>
-type SwedishPersonalIdentityNumber private(pin : Types.SwedishPersonalIdentityNumber) =
+[<CompiledName("SwedishPersonalIdentityNumber")>]
+type SwedishPersonalIdentityNumberCSharp private(pin : SwedishPersonalIdentityNumber) =
     let identityNumber = pin
 
     /// <summary>
@@ -32,7 +33,7 @@ type SwedishPersonalIdentityNumber private(pin : Types.SwedishPersonalIdentityNu
                      BirthNumber = birthNumber
                      Checksum = checksum }
             |> Error.handle
-        SwedishPersonalIdentityNumber(pin)
+        SwedishPersonalIdentityNumberCSharp(pin)
 
     member internal __.IdentityNumber = identityNumber
 
@@ -77,7 +78,7 @@ type SwedishPersonalIdentityNumber private(pin : Types.SwedishPersonalIdentityNu
         result { let! year = parseYear |> Year.create
                  return! parseInSpecificYear year s }
         |> Error.handle
-        |> SwedishPersonalIdentityNumber
+        |> SwedishPersonalIdentityNumberCSharp
 
     /// <summary>
     /// Converts the string representation of the personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent.
@@ -88,7 +89,7 @@ type SwedishPersonalIdentityNumber private(pin : Types.SwedishPersonalIdentityNu
     static member Parse(s) =
         parse s
         |> Error.handle
-        |> SwedishPersonalIdentityNumber
+        |> SwedishPersonalIdentityNumberCSharp
 
     /// <summary>
     /// Converts the string representation of the personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent  and returns a value that indicates whether the conversion succeeded.
@@ -102,13 +103,13 @@ type SwedishPersonalIdentityNumber private(pin : Types.SwedishPersonalIdentityNu
     /// </param>
     /// <param name="parseResult">If valid, an instance of <see cref="SwedishPersonalIdentityNumber"/></param>
     static member TryParseInSpecificYear((s : string), (parseYear : int),
-                                         [<Out>] parseResult : SwedishPersonalIdentityNumber byref) =
+                                         [<Out>] parseResult : SwedishPersonalIdentityNumberCSharp byref) =
         let pin = result { let! year = parseYear |> Year.create
                            return! parseInSpecificYear year s }
         match pin with
         | Error _ -> false
         | Ok pin ->
-            parseResult <- (pin |> SwedishPersonalIdentityNumber)
+            parseResult <- (pin |> SwedishPersonalIdentityNumberCSharp)
             true
 
     /// <summary>
@@ -116,12 +117,12 @@ type SwedishPersonalIdentityNumber private(pin : Types.SwedishPersonalIdentityNu
     /// </summary>
     /// <param name="s">A string representation of the Swedish personal identity number to parse.</param>
     /// <param name="parseResult">If valid, an instance of <see cref="SwedishPersonalIdentityNumber"/></param>
-    static member TryParse((s : string), [<Out>] parseResult : SwedishPersonalIdentityNumber byref) =
+    static member TryParse((s : string), [<Out>] parseResult : SwedishPersonalIdentityNumberCSharp byref) =
         let pin = parse s
         match pin with
         | Error _ -> false
         | Ok pin ->
-            parseResult <- (pin |> SwedishPersonalIdentityNumber)
+            parseResult <- (pin |> SwedishPersonalIdentityNumberCSharp)
             true
 
     /// <summary>
@@ -162,57 +163,12 @@ type SwedishPersonalIdentityNumber private(pin : Types.SwedishPersonalIdentityNu
     /// <returns>true if <paramref name="value">value</paramref> is an instance of <see cref="SwedishPersonalIdentityNumber"></see> and equals the value of this instance; otherwise, false.</returns>
     override __.Equals(b) =
         match b with
-        | :? SwedishPersonalIdentityNumber as pin -> identityNumber = pin.IdentityNumber
+        | :? SwedishPersonalIdentityNumberCSharp as pin -> identityNumber = pin.IdentityNumber
         | _ -> false
 
     /// <summary>Returns the hash code for this instance.</summary>
     /// <returns>A 32-bit signed integer hash code.</returns>
     override __.GetHashCode() = hash identityNumber
 
-    static member op_Equality (left: SwedishPersonalIdentityNumber, right: SwedishPersonalIdentityNumber) =
+    static member op_Equality (left: SwedishPersonalIdentityNumberCSharp, right: SwedishPersonalIdentityNumberCSharp) =
         left.IdentityNumber = right.IdentityNumber
-
-open System.Runtime.CompilerServices
-
-[<Extension>]
-type SwedishPersonalIdentityNumberHintExtensions() =
-
-    /// <summary>
-    /// Date of birth for the person according to the personal identity number.
-    /// Not always the actual date of birth due to the limited quantity of personal identity numbers per day.
-    /// </summary>
-    [<Extension>]
-    static member GetDateOfBirthHint(pin : SwedishPersonalIdentityNumber) = Hints.getDateOfBirthHint pin.IdentityNumber
-
-    /// <summary>
-    /// Gender (juridiskt kön) in Sweden according to the last digit of the birth number in the personal identity number.
-    /// Odd number: Male
-    /// Even number: Female
-    /// </summary>
-    [<Extension>]
-    static member GetGenderHint(pin : SwedishPersonalIdentityNumber) = Hints.getGenderHint pin.IdentityNumber
-
-    /// <summary>
-    /// Get the age of the person according to the date in the personal identity number.
-    /// Not always the actual date of birth due to the limited quantity of personal identity numbers per day.
-    /// </summary>
-    /// <param name="pin"></param>
-    /// <param name="date">The date when to calculate the age.</param>
-    /// <returns></returns>
-    [<Extension>]
-    static member GetAgeHint(pin : SwedishPersonalIdentityNumber, date : DateTime) =
-        Hints.getAgeHintOnDate date pin.IdentityNumber
-        |> function
-        | None -> invalidArg "pin" "The person is not yet born."
-        | Some i -> i
-
-    /// <summary>
-    /// Get the age of the person according to the date in the personal identity number.
-    /// Not always the actual date of birth due to the limited quantity of personal identity numbers per day.
-    /// </summary>
-    [<Extension>]
-    static member GetAgeHint(pin : SwedishPersonalIdentityNumber) =
-        Hints.getAgeHint pin.IdentityNumber
-        |> function
-        | None -> invalidArg "pin" "The person is not yet born."
-        | Some i -> i

@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using Xunit;
+using ActiveLogin.Identity.Swedish.Extensions;
 
 namespace ActiveLogin.Identity.Swedish.Test
 {
