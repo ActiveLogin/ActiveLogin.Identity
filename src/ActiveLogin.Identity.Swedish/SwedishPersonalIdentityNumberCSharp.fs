@@ -11,7 +11,7 @@ open System.Runtime.InteropServices //for OutAttribute
 /// https://sv.wikipedia.org/wiki/Personnummer_i_Sverige
 /// </summary>
 [<CompiledName("SwedishPersonalIdentityNumber")>]
-type SwedishPersonalIdentityNumberCSharp private(pin : Types.SwedishPersonalIdentityNumber) =
+type SwedishPersonalIdentityNumberCSharp private(pin : SwedishPersonalIdentityNumber) =
     let identityNumber = pin
 
     /// <summary>
