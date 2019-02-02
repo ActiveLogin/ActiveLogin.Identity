@@ -171,4 +171,7 @@ type SwedishPersonalIdentityNumberCSharp private(pin : SwedishPersonalIdentityNu
     override __.GetHashCode() = hash identityNumber
 
     static member op_Equality (left: SwedishPersonalIdentityNumberCSharp, right: SwedishPersonalIdentityNumberCSharp) =
-        left.IdentityNumber = right.IdentityNumber
+        match box left, box right with
+        | (null, null) -> true
+        | (null, _) | (_, null) -> false
+        | _ -> left.IdentityNumber = right.IdentityNumber

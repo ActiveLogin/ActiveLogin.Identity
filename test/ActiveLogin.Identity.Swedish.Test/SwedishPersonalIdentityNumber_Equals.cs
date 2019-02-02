@@ -78,5 +78,25 @@ namespace ActiveLogin.Identity.Swedish.Test
 
             Assert.True(equals);
         }
+
+        [Fact]
+        public void Two_Nulls_Are_Equal_Using_Operator()
+        {
+            Assert.True((SwedishPersonalIdentityNumber)null == (SwedishPersonalIdentityNumber)null);
+        }
+
+        [Fact]
+        public void When_Left_Side_Is_Null_Should_Not_Equal_Using_Operator()
+        {
+            var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse("191202119986");
+            Assert.False((SwedishPersonalIdentityNumber)null == personalIdentityNumber);
+        }
+
+        [Fact]
+        public void When_Right_Side_Is_Null_Should_Not_Equal_Using_Operator()
+        {
+            var personalIdentityNumber = SwedishPersonalIdentityNumber.Parse("191202119986");
+            Assert.False(personalIdentityNumber == (SwedishPersonalIdentityNumber)null);
+        }
     }
 }
