@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\ActiveLogin.Identity.Swedish\ActiveLogin.Identity.Swedish.fsproj" />
+    <ProjectReference Include="..\..\src\ActiveLogin.Identity.Swedish.TestData\ActiveLogin.Identity.Swedish.TestData.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

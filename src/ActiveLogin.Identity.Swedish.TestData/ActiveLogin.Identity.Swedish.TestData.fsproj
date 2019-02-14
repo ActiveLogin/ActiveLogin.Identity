@@ -1,0 +1,58 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks Condition="'$(LibraryFrameworks)'==''">netstandard2.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(LibraryFrameworks)'!=''">$(LibraryFrameworks)</TargetFrameworks>
+    <TargetFrameworkIdentifier Condition="'$(_ShortFrameworkIdentifier)'=='net'">.NETFramework</TargetFrameworkIdentifier>
+    <TargetFrameworkIdentifier Condition="'$(_ShortFrameworkIdentifier)'=='netstandard'">.NETStandard</TargetFrameworkIdentifier>
+    <LangVersion>latest</LangVersion>
+    <NeutralLanguage>en</NeutralLanguage>
+    <NoWarn>1701;1702;1591;FS2003</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+    <AssemblyName>ActiveLogin.Identity.Swedish.TestData</AssemblyName>
+    <PackageId>ActiveLogin.Identity.Swedish.TestData</PackageId>
+
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion Condition="'$(BUILD_BUILDNUMBER)' != ''">$(VersionPrefix).$(BUILD_BUILDNUMBER)</FileVersion>
+
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>StrongNameKey.snk</AssemblyOriginatorKeyFile>
+
+    <Description>.NET classes that provides swedish personal identity numbers test data</Description>
+    <PackageTags>PersonalIdentityNumber;PIN;personnummer;Sweden;testdata;test</PackageTags>
+
+    <Authors>Peter Örneholm;Viktor Andersson;Nikolay Krondev;Elin Ohlsson;Robert Folkesson;Jakob Ehn</Authors>
+    <Copyright>Copyright © ActiveLogin</Copyright>
+
+    <PackageProjectUrl>https://github.com/ActiveLogin/ActiveLogin.Identity</PackageProjectUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/ActiveLogin/ActiveLogin.Identity/master/docs/images/active-login-logo-fingerprint-blue-v2-256x256.png</PackageIconUrl>
+
+    <PackageLicenseUrl>https://raw.githubusercontent.com/ActiveLogin/ActiveLogin.Identity/master/LICENSE.md</PackageLicenseUrl>
+    <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
+
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/ActiveLogin/ActiveLogin.Identity.git</RepositoryUrl>
+
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="StrongNameKey.snk" />
+    <Compile Include="AllPins.fs" />
+    <Compile Include="TestData.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="4.5.4" />
+  </ItemGroup>
+
+</Project>

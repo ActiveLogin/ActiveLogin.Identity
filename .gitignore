@@ -290,3 +290,5 @@ __pycache__/
 
 # VSCode configuration
 .vscode
+
+.DS_Store
