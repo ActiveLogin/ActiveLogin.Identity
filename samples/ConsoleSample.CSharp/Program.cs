@@ -1,6 +1,7 @@
 ﻿using System;
 using ActiveLogin.Identity.Swedish;
 using ActiveLogin.Identity.Swedish.Extensions;
+using ActiveLogin.Identity.Swedish.TestData;
 
 namespace ConsoleSample
 {
@@ -28,7 +29,15 @@ namespace ConsoleSample
                 WriteSpace();
             }
 
+            Console.WriteLine("Here are some valid personal identity number strings that can be used for testing:");
+            Console.WriteLine("----------------------");
+            foreach (var pin in SwedishPersonalIdentityTestNumber.Random(3))
+            {
+                Console.WriteLine(pin);
+            }
+
             WriteSpace();
+
             Console.WriteLine("What is your (Swedish) Personal Identity Number?");
             var userRawPersonalIdentityNumber = Console.ReadLine();
             WritePersonalIdentityNumberInfo(userRawPersonalIdentityNumber);

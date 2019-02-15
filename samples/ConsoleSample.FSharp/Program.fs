@@ -1,8 +1,8 @@
 ﻿module ConsoleSample.FSharp
 
 open ActiveLogin.Identity.Swedish.FSharp
-open ActiveLogin.Identity.Swedish.FSharp.TestData
 open System
+open ActiveLogin.Identity.Swedish.TestData
 
 let sampleStrings = [ "990913+9801"; "120211+9986"; "990807-2391"; "180101-2392"; "180101.2392"; "ABC" ]
 
@@ -53,7 +53,11 @@ let main argv =
     printfn "Sample showing possible uses of SwedishPersonalIdentityNumber."
     printf "\n\n"
     sampleStrings |> List.iter parseAndPrintPersonalIdentityNumber
-    printfn "TestData: %s" (SwedishPersonalIdentityNumber.random())
+    printfn "Here are some valid personal identity number strings that can be used for testing:\n----------------------"
+    SwedishPersonalIdentityTestNumber.Random(3)
+    |> Array.iter (printfn "%s")
+    printf "\n\n"
+
     printfn "What is your (Swedish) Personal Identity Number?"
     let userInput = Console.ReadLine()
     parseAndPrintPersonalIdentityNumber userInput
