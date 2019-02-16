@@ -186,17 +186,29 @@ Unforentunately the term "social security number" or SSN is often used even for 
 
 To comply with GDPR and not no expose any real PINs, we are using the official test data for Swedish Personal Identity Numbers [provided by Skatteverket](https://skatteverket.entryscape.net/catalog/9/datasets/147).
 
-If you need to use test numbers yourself, for example if you are using this library in your application and want to test it without violating GDPR we provide a nuget package with a simple api to get random test numbers:
+If you need to use test numbers yourself, for example if you need to write tests using personal identity numbers, but want to avoid violating GDPR, we provide a nuget package with a simple api to get random test numbers or strings. You can also check if a personal identity number is a test number.
+
+#### C#
+```csharp
+using ActiveLogin.Identity.Swedish.TestData; 
+
+var testNumberWith12Digits = SwedishPersonalIdentityTestNumbers.Random12DigitString();
+var fiveTestNumbersWith10Digits = SwedishPersonalIdentityTestNumbers.Random10DigitStrings(5);
+var threePersonalIdentityNumbers = SwedishPersonalIdentityTestNumbers.RandomPins(3);
+var thisIsTrue = SwedishPersonalIdentityTestNumbers.IsTestNumber(threePersonalIdentityNumbers[0]);
+```
 
 #### F#
 ```fsharp
-open ActiveLogin.Identity.Swedish.TestData
+open ActiveLogin.Identity.Swedish.TestData.FSharp
 
-let oneTestNumber = SwedishPersonalIdentityTestNumber.Random()
-let fiveTestNumbers = SwedishPersonalIdentityTestNumber.Random(5)
-let all20000NumbersInOrder = SwedishPersonalIdentityTestNumber.AllInOrder
-let all20000NumbersInRandomOrder = SwedishPersonalIdentityTestNumber.AllShuffled()
+let testNumberWith12Digits = SwedishPersonalIdentityTestNumbers.random12DigitString()
+let fiveTestNumbersWith10Digits = SwedishPersonalIdentityTestNumbers.random10DigitStrings 5 
+let threePersonalIdentityNumbers = SwedishPersonalIdentityTestNumbers.randomPins 3
+let thisIsTrue = SwedishPersonalIdentityTestNumbers.isTestNumber threePersonalIdentityNumbers.[0]
 ```
+
+You can 
 
 
 ### When should I use `...InSpecificYear(...)`?

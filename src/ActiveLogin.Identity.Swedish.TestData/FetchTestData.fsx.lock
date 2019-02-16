@@ -2,6 +2,8 @@ STORAGE: NONE
 RESTRICTION: == netstandard2.0
 NUGET
   remote: https://api.nuget.org/v3/index.json
+    ActiveLogin.Identity.Swedish (2.0.1)
+      FSharp.Core (>= 4.5.4)
     FSharp.Core (4.5.4)
     FSharp.Data (3.0)
       FSharp.Core (>= 4.3.4)

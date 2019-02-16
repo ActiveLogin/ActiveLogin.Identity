@@ -29,12 +29,29 @@ namespace ConsoleSample
                 WriteSpace();
             }
 
-            Console.WriteLine("Here are some valid personal identity number strings that can be used for testing:");
+            Console.WriteLine("Here are some valid 10 digit strings that can be used for testing:");
             Console.WriteLine("----------------------");
-            foreach (var pin in SwedishPersonalIdentityTestNumber.Random(3))
+            foreach (var pin in SwedishPersonalIdentityTestNumbers.Random10DigitStrings(3))
             {
                 Console.WriteLine(pin);
             }
+
+            WriteSpace();
+
+            Console.WriteLine("Here are some valid 12 digit strings that can be used for testing:");
+            Console.WriteLine("----------------------");
+            foreach (var pin in SwedishPersonalIdentityTestNumbers.Random12DigitStrings(3))
+            {
+                Console.WriteLine(pin);
+            }
+
+            WriteSpace();
+
+            Console.WriteLine("Here is a personal identity number that can be used for testing:");
+            Console.WriteLine("----------------------");
+            var randomPin = SwedishPersonalIdentityTestNumbers.RandomPin();
+            WritePersonalIdentityNumberInfo(randomPin);
+            Console.WriteLine($"Is it a test number? {SwedishPersonalIdentityTestNumbers.IsTestNumber(randomPin)}");
 
             WriteSpace();
 

@@ -49,10 +49,15 @@
     <None Include="StrongNameKey.snk" />
     <Compile Include="AllPins.fs" />
     <Compile Include="TestData.fs" />
+    <Compile Include="TestDataCSharp.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="4.5.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ActiveLogin.Identity.Swedish\ActiveLogin.Identity.Swedish.fsproj" />
   </ItemGroup>
 
 </Project>
