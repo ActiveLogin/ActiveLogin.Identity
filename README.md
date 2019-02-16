@@ -186,6 +186,19 @@ Unforentunately the term "social security number" or SSN is often used even for 
 
 To comply with GDPR and not no expose any real PINs, we are using the official test data for Swedish Personal Identity Numbers [provided by Skatteverket](https://skatteverket.entryscape.net/catalog/9/datasets/147).
 
+If you need to use test numbers yourself, for example if you are using this library in your application and want to test it without violating GDPR we provide a nuget package with a simple api to get random test numbers:
+
+#### F#
+```fsharp
+open ActiveLogin.Identity.Swedish.TestData
+
+let oneTestNumber = SwedishPersonalIdentityTestNumber.Random()
+let fiveTestNumbers = SwedishPersonalIdentityTestNumber.Random(5)
+let all20000NumbersInOrder = SwedishPersonalIdentityTestNumber.AllInOrder
+let all20000NumbersInRandomOrder = SwedishPersonalIdentityTestNumber.AllShuffled()
+```
+
+
 ### When should I use `...InSpecificYear(...)`?
 
 Some forms of a Swedish Personal Identity Number depends of the age of the person it represents.
