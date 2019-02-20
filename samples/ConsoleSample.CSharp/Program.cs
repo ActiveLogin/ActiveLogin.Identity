@@ -31,27 +31,27 @@ namespace ConsoleSample
 
             Console.WriteLine("Here are some valid 10 digit strings that can be used for testing:");
             Console.WriteLine("----------------------");
-            foreach (var pin in SwedishPersonalIdentityTestNumbers.Random10DigitStrings(3))
+            foreach (var pin in SwedishPersonalIdentityNumberTestData.GetRandom(3))
             {
-                Console.WriteLine(pin);
+                Console.WriteLine(pin.To10DigitString());
             }
 
             WriteSpace();
 
             Console.WriteLine("Here are some valid 12 digit strings that can be used for testing:");
             Console.WriteLine("----------------------");
-            foreach (var pin in SwedishPersonalIdentityTestNumbers.Random12DigitStrings(3))
+            foreach (var pin in SwedishPersonalIdentityNumberTestData.GetRandom(3))
             {
-                Console.WriteLine(pin);
+                Console.WriteLine(pin.To12DigitString());
             }
 
             WriteSpace();
 
             Console.WriteLine("Here is a personal identity number that can be used for testing:");
             Console.WriteLine("----------------------");
-            var randomPin = SwedishPersonalIdentityTestNumbers.RandomPin();
+            var randomPin = SwedishPersonalIdentityNumberTestData.GetRandom();
             WritePersonalIdentityNumberInfo(randomPin);
-            Console.WriteLine($"Is it a test number? {SwedishPersonalIdentityTestNumbers.IsTestNumber(randomPin)}");
+            Console.WriteLine($"Is it a test number? {(randomPin.IsTestNumber())}");
 
             WriteSpace();
 
