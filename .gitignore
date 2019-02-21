@@ -292,3 +292,6 @@ __pycache__/
 .vscode
 
 .DS_Store
+
+# BenchmarkDotNet results
+BenchmarkDotNet.Artifacts

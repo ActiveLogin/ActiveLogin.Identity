@@ -55,23 +55,23 @@ let main argv =
 
     sampleStrings |> List.iter parseAndPrintPersonalIdentityNumber
 
-    printfn "Here are some valid 10 digit strings that can be used for testing:\n----------------------"
-    SwedishPersonalIdentityNumberTestData.getRandomWithCount 3
-    |> Seq.map SwedishPersonalIdentityNumber.to10DigitString
-    |> Seq.iter (printfn "%s")
+    printfn "Here is a valid 10 digit string that can be used for testing:\n----------------------"
+    SwedishPersonalIdentityNumberTestData.getRandom()
+    |> SwedishPersonalIdentityNumber.to10DigitString
+    |> printfn "%s"
     printf "\n\n"
 
-    printfn "Here are some valid 12 digit strings that can be used for testing:\n----------------------"
-    SwedishPersonalIdentityNumberTestData.getRandomWithCount 3
-    |> Seq.map SwedishPersonalIdentityNumber.to12DigitString
-    |> Seq.iter (printfn "%s")
+    printfn "Here is a valid 12 digit string that can be used for testing:\n----------------------"
+    SwedishPersonalIdentityNumberTestData.getRandom()
+    |> SwedishPersonalIdentityNumber.to12DigitString
+    |> printfn "%s"
     printf "\n\n"
 
     printfn "Here is a personal identity number that can be used for testing:\n----------------------"
     let pin = SwedishPersonalIdentityNumberTestData.getRandom()
     printfn "%A" pin
     pin
-    |> SwedishPersonalIdentityNumberTestData.isTestNumber
+    |> SwedishPersonalIdentityNumber.isTestNumber
     |> printfn "Is it a test number? %b!"
     printf "\n\n"
 

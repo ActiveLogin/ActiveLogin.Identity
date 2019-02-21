@@ -192,20 +192,16 @@ If you need to use test numbers yourself, for example if you need to write tests
 ```csharp
 using ActiveLogin.Identity.Swedish.TestData; 
 
-var testNumberWith12Digits = SwedishPersonalIdentityTestNumbers.Random12DigitString();
-var fiveTestNumbersWith10Digits = SwedishPersonalIdentityTestNumbers.Random10DigitStrings(5);
-var threePersonalIdentityNumbers = SwedishPersonalIdentityTestNumbers.RandomPins(3);
-var thisIsTrue = SwedishPersonalIdentityTestNumbers.IsTestNumber(threePersonalIdentityNumbers[0]);
+var aTestNumber = SwedishPersonalIdentityNumberTestData.GetRandom();
+aTestNumber.IsTestNumber(); // => true
 ```
 
 #### F#
 ```fsharp
 open ActiveLogin.Identity.Swedish.TestData.FSharp
 
-let testNumberWith12Digits = SwedishPersonalIdentityTestNumbers.random12DigitString()
-let fiveTestNumbersWith10Digits = SwedishPersonalIdentityTestNumbers.random10DigitStrings 5 
-let threePersonalIdentityNumbers = SwedishPersonalIdentityTestNumbers.randomPins 3
-let thisIsTrue = SwedishPersonalIdentityTestNumbers.isTestNumber threePersonalIdentityNumbers.[0]
+let aTestNumber = SwedishPersonalIdentityNumberTestData.getRandom()
+aTestNumber |> SwedishPersonalIdentityNumber.isTestNumber // => true
 ```
 
 You can 

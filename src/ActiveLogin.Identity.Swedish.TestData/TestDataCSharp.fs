@@ -20,8 +20,9 @@ type SwedishPersonalIdentityNumberTestDataCSharp() =
     static member AllPinsShuffled() = allPinsShuffled() |> Seq.map toCSharpPin
 
     static member IsTestNumber (pin:SwedishPersonalIdentityNumberCSharp) = 
-        pin.To12DigitString()
-        |> isTestNumberString
+        (pin.Year, pin.Month, pin.Day, pin.BirthNumber, pin.Checksum)
+        |> isTestNumberTuple
+
 
 
 open System.Runtime.CompilerServices

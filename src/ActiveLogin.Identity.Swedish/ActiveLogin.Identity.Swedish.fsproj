@@ -44,6 +44,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All" />
+    <PackageReference Update="FSharp.Core" Version="4.6.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -55,10 +56,6 @@
     <Compile Include="SwedishPersonalIdentityNumber.fs" />
     <Compile Include="SwedishPersonalIdentityNumberCSharp.fs" />
     <Compile Include="SwedishPersonalIdentityNumberCSharpHintExtensions.fs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="4.5.4" />
   </ItemGroup>
 
 </Project>

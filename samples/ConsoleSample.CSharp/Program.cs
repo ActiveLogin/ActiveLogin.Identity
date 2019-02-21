@@ -29,21 +29,15 @@ namespace ConsoleSample
                 WriteSpace();
             }
 
-            Console.WriteLine("Here are some valid 10 digit strings that can be used for testing:");
+            Console.WriteLine("Here is a valid 10 digit string that can be used for testing:");
             Console.WriteLine("----------------------");
-            foreach (var pin in SwedishPersonalIdentityNumberTestData.GetRandom(3))
-            {
-                Console.WriteLine(pin.To10DigitString());
-            }
+            Console.WriteLine(SwedishPersonalIdentityNumberTestData.GetRandom().To10DigitString());
 
             WriteSpace();
 
-            Console.WriteLine("Here are some valid 12 digit strings that can be used for testing:");
+            Console.WriteLine("Here is a valid 12 digit string that can be used for testing:");
             Console.WriteLine("----------------------");
-            foreach (var pin in SwedishPersonalIdentityNumberTestData.GetRandom(3))
-            {
-                Console.WriteLine(pin.To12DigitString());
-            }
+            Console.WriteLine(SwedishPersonalIdentityNumberTestData.GetRandom().To12DigitString());
 
             WriteSpace();
 
