@@ -165,11 +165,14 @@ And basically anything else that can be cleaned and parsed :)
 
 ### What definition of Swedish Personal Identity Number are the implementations based on?
 
-The implementation is based on the definitions as described here:
+The implementation is primarily based on the definition defined in Swedish Law:
 
 * [Folkbokföringslagen (FOL 18 §)](https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18)
+
+But when there have been ambiguities we have also read more info and samples from these links from Swedish authorities:
 * [Skatteverket (English)](https://www.skatteverket.se/servicelankar/otherlanguages/inenglish/individualsandemployees/livinginsweden/personalidentitynumberandcoordinationnumber.4.2cf1b5cd163796a5c8b4295.html)
 * [Skatteverket (Swedish)](https://www.skatteverket.se/privat/folkbokforing/personnummerochsamordningsnummer.4.3810a01c150939e893f18c29.html)
+* [Statistiska Centralbyrån (Swedish)](https://www.scb.se/contentassets/8d9d985ca9c84c6e8d879cc89a8ae479/ov9999_2016a01_br_be96br1601.pdf)
 
 Worth noticing is that the date part is not guaranteed to be the exact date you were born, but can be changed for another date within the same month.
 
