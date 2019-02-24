@@ -23,7 +23,7 @@ module SwedishPersonalIdentityNumberTestData =
         | Ok p -> p
         | Error _ -> failwith "broken test data" 
 
-    let allPinsSorted() = seq { for pin in allPins do yield create pin }
+    let allPinsByDateDesc() = seq { for pin in allPins do yield create pin }
     let allPinsShuffled() = seq { for pin in shuffledPins() do yield create pin }
     let getRandom() = 
         let index = rng.Next(0, Array.length allPins - 1)

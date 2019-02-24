@@ -16,7 +16,7 @@ type SwedishPersonalIdentityNumberTestDataCSharp() =
 
     static member GetRandom() = getRandom() |> toCSharpPin
     static member GetRandom(count) = getRandomWithCount(count) |> Seq.map toCSharpPin |> List.ofSeq :> IReadOnlyCollection<_>
-    static member AllPinsSorted() = allPinsSorted() |> Seq.map toCSharpPin
+    static member AllPinsByDateDesc() = allPinsByDateDesc() |> Seq.map toCSharpPin
     static member AllPinsShuffled() = allPinsShuffled() |> Seq.map toCSharpPin
 
     static member IsTestNumber (pin:SwedishPersonalIdentityNumberCSharp) = 
