@@ -14,6 +14,7 @@ type SwedishPersonalIdentityNumberTestDataCSharp() =
         let checksum = pin.Checksum |> Checksum.value
         SwedishPersonalIdentityNumberCSharp(year, month, day, birthNumber, checksum)
 
+    static member Raw12DigitStrings = raw12DigitStrings
     static member GetRandom() = getRandom() |> toCSharpPin
     static member GetRandom(count) = getRandomWithCount(count) |> Seq.map toCSharpPin |> List.ofSeq :> IReadOnlyCollection<_>
     static member AllPinsByDateDesc() = allPinsByDateDesc() |> Seq.map toCSharpPin
