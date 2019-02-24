@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <GenerateProgramFile>false</GenerateProgramFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="PinTestHelpers.fs" />
+    <Compile Include="TestDataTests.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Expecto" Version="8.*" />
+    <PackageReference Include="Expecto.FsCheck" Version="8.*" />
+    <PackageReference Include="FsCheck" Version="2.*" />
+    <PackageReference Include="FSharp.Core" Version="4.*" />
+    <PackageReference Include="Unquote" Version="4.0.0" />
+    <PackageReference Include="YoloDev.Expecto.TestSdk" Version="0.*" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.*" />
+    <PackageReference Update="FSharp.Core" Version="4.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\ActiveLogin.Identity.Swedish\ActiveLogin.Identity.Swedish.fsproj" />
+    <ProjectReference Include="..\..\src\ActiveLogin.Identity.Swedish.TestData\ActiveLogin.Identity.Swedish.TestData.fsproj" />
+  </ItemGroup>
+</Project>

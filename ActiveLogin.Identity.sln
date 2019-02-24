@@ -41,6 +41,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ActiveLogin.Identity.Swedis
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ActiveLogin.Identity.Swedish.Benchmarks", "test\ActiveLogin.Identity.Swedish.Benchmarks\ActiveLogin.Identity.Swedish.Benchmarks.fsproj", "{823B4D48-9D0D-4BF2-B9DF-FDD654DCDBB1}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ActiveLogin.Identity.Swedish.FSharp.Test", "test\ActiveLogin.Identity.Swedish.FSharp.Test\ActiveLogin.Identity.Swedish.FSharp.Test.fsproj", "{74037699-2583-4482-B5E9-5065750C2041}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +81,10 @@ Global
 		{823B4D48-9D0D-4BF2-B9DF-FDD654DCDBB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{823B4D48-9D0D-4BF2-B9DF-FDD654DCDBB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{823B4D48-9D0D-4BF2-B9DF-FDD654DCDBB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74037699-2583-4482-B5E9-5065750C2041}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74037699-2583-4482-B5E9-5065750C2041}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74037699-2583-4482-B5E9-5065750C2041}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74037699-2583-4482-B5E9-5065750C2041}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -93,6 +99,7 @@ Global
 		{19725E99-986D-4B5E-89A6-CB7B0E6415F6} = {812BD112-1B02-4012-9B4D-61E5EAE23044}
 		{92E53830-40AF-4475-ACBE-20EB0B68DA3A} = {9A0CF459-87CC-448D-B49D-EFC3D6482AA6}
 		{823B4D48-9D0D-4BF2-B9DF-FDD654DCDBB1} = {9A0CF459-87CC-448D-B49D-EFC3D6482AA6}
+		{74037699-2583-4482-B5E9-5065750C2041} = {12A0FDF2-523E-42C7-81FE-4FDCA5E66A69}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2076F58C-968B-489D-94CA-B3729F5DE10D}

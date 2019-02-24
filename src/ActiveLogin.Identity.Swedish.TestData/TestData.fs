@@ -8,9 +8,9 @@ module SwedishPersonalIdentityNumberTestData =
     let private rng = Random()
     let private random _ = rng.Next()
     let internal shuffledPins() = allPins |> Array.sortBy random
-    let raw12DigitStrings= 
+    let raw12DigitStrings = 
         allPins
-        |> Array.map (fun (year, month, day, birthNumber, checksum) -> sprintf "%i%i%i%i%i" year month day birthNumber checksum)
+        |> Array.map (fun (year, month, day, birthNumber, checksum) -> sprintf "%04i%02i%02i%03i%i" year month day birthNumber checksum)
 
     let internal create (year, month, day, birthNumber, checksum) =
         let values =

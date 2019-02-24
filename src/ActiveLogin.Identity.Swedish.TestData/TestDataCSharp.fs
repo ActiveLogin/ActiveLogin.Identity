@@ -23,8 +23,6 @@ type SwedishPersonalIdentityNumberTestDataCSharp() =
         (pin.Year, pin.Month, pin.Day, pin.BirthNumber, pin.Checksum)
         |> isTestNumberTuple
 
-
-
 open System.Runtime.CompilerServices
 
 [<Extension>]
