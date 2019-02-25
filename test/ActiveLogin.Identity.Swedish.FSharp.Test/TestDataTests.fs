@@ -5,6 +5,7 @@ open ActiveLogin.Identity.Swedish.FSharp
 open ActiveLogin.Identity.Swedish.FSharp.TestData
 open ActiveLogin.Identity.Swedish.FSharp.Test.PinTestHelpers
 open Expecto.Flip
+open FsCheck
 
 
 [<Tests>]
@@ -26,4 +27,14 @@ let tests =
           test "getRandomWithCount returns expected number of unique test numbers" {
               let pins = SwedishPersonalIdentityNumberTestData.getRandomWithCount 3 |> List.ofSeq
               pins |> List.distinct |> List.length =! 3
+          } 
+          test "getRandom returns random" {
+              // with a non thread-safe implementation of the random generator in TestData this will actually fail when 
+              // too many tests are running in parallel.
+              let numUnique = 
+                  seq { 1..5 }
+                  |> Seq.map (fun _ -> SwedishPersonalIdentityNumberTestData.getRandom())
+                  |> Seq.distinct
+                  |> Seq.length 
+              numUnique >! 1
           } ]
