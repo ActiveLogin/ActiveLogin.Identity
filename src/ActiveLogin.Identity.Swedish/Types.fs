@@ -179,8 +179,10 @@ type SwedishPersonalIdentityNumber =
       BirthNumber : BirthNumber
       /// A checksum (kontrollsiffra) used for validation. Last digit in the PIN.
       Checksum : Checksum }
+    /// <summary>
     /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent 12 digit string representation.
     /// Format is YYYYMMDDBBBC, for example <example>19908072391</example> or <example>191202119986</example>.
+    /// </summary>
     override this.ToString() = sprintf "%A" this
 
 type SwedishPersonalIdentityNumberValues =

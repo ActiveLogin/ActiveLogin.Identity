@@ -2,7 +2,9 @@ module ActiveLogin.Identity.Swedish.FSharp.SwedishPersonalIdentityNumber
 
 open System
 
+/// <summary>
 /// Creates a <see cref="SwedishPersonalIdentityNumber"/> out of the individual parts.
+/// </summary>
 /// <param name="values">SwedishPersonalIdentityNumberValues containing all the number parts</param>
 let create (values : SwedishPersonalIdentityNumberValues) =
     result {
@@ -25,7 +27,9 @@ let private extractValues (pin : SwedishPersonalIdentityNumber) : SwedishPersona
       BirthNumber = pin.BirthNumber |> BirthNumber.value
       Checksum = pin.Checksum |> Checksum.value }
 
+/// <summary>
 /// Converts a SwedishPersonalIdentityNumber to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars. 
+/// </summary>
 /// <param name="serializationYear">
 /// The specific year to use when checking if the person has turned / will turn 100 years old.
 /// That information changes the delimiter (- or +).
@@ -41,7 +45,9 @@ let to10DigitStringInSpecificYear serializationYear (pin : SwedishPersonalIdenti
     let vs = extractValues pin
     sprintf "%02i%02i%02i%s%03i%1i" (vs.Year % 100) vs.Month vs.Day delimiter vs.BirthNumber vs.Checksum
 
+/// <summary>
 /// Converts a SwedishPersonalIdentityNumber to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars. 
+/// </summary>
 /// <param name="pin">A SwedishPersonalIdentityNumber</param>
 let to10DigitString (pin : SwedishPersonalIdentityNumber) =
     let year =
@@ -52,8 +58,10 @@ let to10DigitString (pin : SwedishPersonalIdentityNumber) =
         | Error _ -> invalidArg "year" "DateTime.Year wasn't a year"
     to10DigitStringInSpecificYear year pin
 
+/// <summary>
 /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent 12 digit string representation.
 /// Format is YYYYMMDDBBBC, for example <example>19908072391</example> or <example>191202119986</example>.
+/// </summary>
 /// <param name="pin">A SwedishPersonalIdentityNumber</param>
 let to12DigitString pin =
     let vs = extractValues pin
@@ -102,14 +110,18 @@ let parse str = result { let! year = DateTime.UtcNow.Year |> Year.create
 module Hints =
     open ActiveLogin.Identity.Swedish
 
+    /// <summary>
     /// Date of birth for the person according to the personal identity number.
     /// Not always the actual date of birth due to the limited quantity of personal identity numbers per day.
+    /// </summary>
     /// <param name="pin">A SwedishPersonalIdentityNumber</param>
     let getDateOfBirthHint (pin : SwedishPersonalIdentityNumber) =
         DateTime(pin.Year |> Year.value, pin.Month |> Month.value, pin.Day |> Day.value, 0, 0, 0, DateTimeKind.Utc)
 
+    /// <summary>
     /// Get the age of the person according to the date in the personal identity number.
     /// Not always the actual date of birth due to the limited quantity of personal identity numbers per day.
+    /// </summary>
     /// <param name="date">The date when to calculate the age.</param>
     /// <param name="pin">A SwedishPersonalIdentityNumber</param>
     let getAgeHintOnDate (date : DateTime) pin =
@@ -124,14 +136,18 @@ module Hints =
             | false -> months / 12 |> Some
         | false -> None
 
+    /// <summary>
     /// Get the age of the person according to the date in the personal identity number.
     /// Not always the actual date of birth due to the limited quantity of personal identity numbers per day.
+    /// </summary>
     /// <param name="pin">A SwedishPersonalIdentityNumber</param>
     let getAgeHint pin = getAgeHintOnDate DateTime.UtcNow pin
 
+    /// <summary>
     /// Gender (juridiskt kön) in Sweden according to the last digit of the birth number in the personal identity number.
     /// Odd number: Male
     /// Even number: Female
+    /// </summary>
     /// <param name="pin">A SwedishPersonalIdentityNumber</param>
     let getGenderHint (pin : SwedishPersonalIdentityNumber) =
         let isBirthNumberEven = (pin.BirthNumber |> BirthNumber.value) % 2 = 0

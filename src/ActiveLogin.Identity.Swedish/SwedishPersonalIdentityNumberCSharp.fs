@@ -137,7 +137,7 @@ type SwedishPersonalIdentityNumberCSharp private(pin : SwedishPersonalIdentityNu
     /// </param>
     member __.To10DigitStringInSpecificYear(serializationYear : int) =
         match serializationYear |> Year.create with
-        | Error _ -> raise (new ArgumentOutOfRangeException("year", serializationYear, "Invalid year."))
+        | Error _ -> raise (ArgumentOutOfRangeException("year", serializationYear, "Invalid year."))
         | Ok year -> to10DigitStringInSpecificYear year identityNumber
 
     /// <summary>
