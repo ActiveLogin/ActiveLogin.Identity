@@ -1,9 +1,10 @@
 namespace ActiveLogin.Identity.Swedish.Benchmark
 
+open System
 open BenchmarkDotNet.Attributes
 open ActiveLogin.Identity.Swedish.FSharp.TestData
 open ActiveLogin.Identity.Swedish.FSharp
-open System
+open ActiveLogin.Identity.Swedish.TestData
 
 type BenchmarkPinAccess() =
     let rng = Random()
@@ -15,6 +16,11 @@ type BenchmarkPinAccess() =
     member __.GetRandomPin() =
         for i = 0 to __.N do
             SwedishPersonalIdentityNumberTestData.getRandom() |> ignore
+
+    [<Benchmark>]
+    member __.GetRandomPinCSharp() =
+        for i = 0 to __.N do
+            SwedishPersonalIdentityNumberTestDataCSharp.GetRandom() |> ignore
 
     [<Benchmark>]
     member __.Get12DigitStringFromRandomPin() =
