@@ -132,7 +132,7 @@ module Hints =
     /// Gender (juridiskt kön) in Sweden according to the last digit of the birth number in the personal identity number.
     /// Odd number: Male
     /// Even number: Female
-    /// <param name="pin"> A SwedishPersonalIdentityNumber</param>
+    /// <param name="pin">A SwedishPersonalIdentityNumber</param>
     let getGenderHint (pin : SwedishPersonalIdentityNumber) =
         let isBirthNumberEven = (pin.BirthNumber |> BirthNumber.value) % 2 = 0
         if isBirthNumberEven then Gender.Female
