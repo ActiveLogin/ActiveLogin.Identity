@@ -32,7 +32,7 @@ let private extractValues (pin : SwedishPersonalIdentityNumber) : SwedishPersona
 ///
 /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
 /// </param>
-/// <param name="pin"> A SwedishPersonalIdentityNumber</param>
+/// <param name="pin">A SwedishPersonalIdentityNumber</param>
 let to10DigitStringInSpecificYear serializationYear (pin : SwedishPersonalIdentityNumber) =
     let delimiter =
         if (serializationYear |> Year.value) - (pin.Year |> Year.value) >= 100 then "+"
@@ -42,7 +42,7 @@ let to10DigitStringInSpecificYear serializationYear (pin : SwedishPersonalIdenti
     sprintf "%02i%02i%02i%s%03i%1i" (vs.Year % 100) vs.Month vs.Day delimiter vs.BirthNumber vs.Checksum
 
 /// Converts a SwedishPersonalIdentityNumber to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars. 
-/// <param name="pin"> A SwedishPersonalIdentityNumber</param>
+/// <param name="pin">A SwedishPersonalIdentityNumber</param>
 let to10DigitString (pin : SwedishPersonalIdentityNumber) =
     let year =
         DateTime.UtcNow.Year
@@ -54,7 +54,7 @@ let to10DigitString (pin : SwedishPersonalIdentityNumber) =
 
 /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent 12 digit string representation.
 /// Format is YYYYMMDDBBBC, for example <example>19908072391</example> or <example>191202119986</example>.
-/// <param name="pin"> A SwedishPersonalIdentityNumber</param>
+/// <param name="pin">A SwedishPersonalIdentityNumber</param>
 let to12DigitString pin =
     let vs = extractValues pin
     sprintf "%02i%02i%02i%03i%1i" vs.Year vs.Month vs.Day vs.BirthNumber vs.Checksum
@@ -104,14 +104,14 @@ module Hints =
 
     /// Date of birth for the person according to the personal identity number.
     /// Not always the actual date of birth due to the limited quantity of personal identity numbers per day.
-    /// <param name="pin"> A SwedishPersonalIdentityNumber</param>
+    /// <param name="pin">A SwedishPersonalIdentityNumber</param>
     let getDateOfBirthHint (pin : SwedishPersonalIdentityNumber) =
         DateTime(pin.Year |> Year.value, pin.Month |> Month.value, pin.Day |> Day.value, 0, 0, 0, DateTimeKind.Utc)
 
     /// Get the age of the person according to the date in the personal identity number.
     /// Not always the actual date of birth due to the limited quantity of personal identity numbers per day.
     /// <param name="date">The date when to calculate the age.</param>
-    /// <param name="pin"> A SwedishPersonalIdentityNumber</param>
+    /// <param name="pin">A SwedishPersonalIdentityNumber</param>
     let getAgeHintOnDate (date : DateTime) pin =
         let dateOfBirth = getDateOfBirthHint pin
         match date >= dateOfBirth with
@@ -126,7 +126,7 @@ module Hints =
 
     /// Get the age of the person according to the date in the personal identity number.
     /// Not always the actual date of birth due to the limited quantity of personal identity numbers per day.
-    /// <param name="pin"> A SwedishPersonalIdentityNumber</param>
+    /// <param name="pin">A SwedishPersonalIdentityNumber</param>
     let getAgeHint pin = getAgeHintOnDate DateTime.UtcNow pin
 
     /// Gender (juridiskt kön) in Sweden according to the last digit of the birth number in the personal identity number.
