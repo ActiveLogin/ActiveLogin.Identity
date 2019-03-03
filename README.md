@@ -204,9 +204,6 @@ let aTestNumber = SwedishPersonalIdentityNumberTestData.getRandom()
 aTestNumber |> SwedishPersonalIdentityNumber.isTestNumber // => true
 ```
 
-You can 
-
-
 ### When should I use `...InSpecificYear(...)`?
 
 Some forms of a Swedish Personal Identity Number depends of the age of the person it represents.
