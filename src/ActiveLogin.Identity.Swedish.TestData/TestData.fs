@@ -44,15 +44,19 @@ module SwedishPersonalIdentityNumberTestData =
         let index = rng(0, Array.length allPins - 1)
         allPins.[index]
         |> create
+    /// <summary>
     /// Returns a sequence of length specified by count, of unique random test numbers. If it is not important that the 
     /// sequence of numbers is unique it is more efficient to call getRandom() repeatedly
+    /// </summary>
     /// <param name="count">The number of numbers to return</param>
     let getRandomWithCount(count) = allPinsShuffled() |> Seq.take count
 
     let internal isTestNumberTuple (year, month, day, birthNumber, checksum) =
         allPins |> Array.contains (year, month, day, birthNumber, checksum)
 
+    /// <summary>
     /// Checks if a SwedishPersonalIdentityNumber is a test number
+    /// </summary>
     /// <param name="pin">A SwedishPersonalIdentityNumber</param>
     let isTestNumber pin =
         let asTuple 
@@ -65,7 +69,9 @@ module SwedishPersonalIdentityNumberTestData =
         pin |> asTuple |> isTestNumberTuple
 
 module SwedishPersonalIdentityNumber =
+    /// <summary>
     /// Checks if a SwedishPersonalIdentityNumber is a test number
+    /// </summary>
     /// <param name="pin">A SwedishPersonalIdentityNumber</param>
     let isTestNumber = SwedishPersonalIdentityNumberTestData.isTestNumber
 

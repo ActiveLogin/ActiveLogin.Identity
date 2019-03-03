@@ -19,8 +19,10 @@ type SwedishPersonalIdentityNumberTestDataCSharp() =
     static member Raw12DigitStrings = raw12DigitStrings
     /// A random test number
     static member GetRandom() = getRandom() |> toCSharpPin
+    /// <summary>
     /// Returns a sequence of length specified by count, of unique random test numbers. If it is not important that the 
     /// sequence of numbers is unique it is more efficient to call getRandom() repeatedly
+    /// </summary>
     /// <param name="count">The number of numbers to return</param>
     static member GetRandom(count) = 
         getRandomWithCount(count) 
@@ -31,7 +33,9 @@ type SwedishPersonalIdentityNumberTestDataCSharp() =
     /// A sequence of all test numbers in random order
     static member AllPinsShuffled() = allPinsShuffled() |> Seq.map toCSharpPin
 
+    /// <summary>
     /// Checks if a SwedishPersonalIdentityNumber is a test number
+    /// </summary>
     /// <param name="pin">A SwedishPersonalIdentityNumber</param>
     static member IsTestNumber (pin:SwedishPersonalIdentityNumberCSharp) = 
         (pin.Year, pin.Month, pin.Day, pin.BirthNumber, pin.Checksum)
