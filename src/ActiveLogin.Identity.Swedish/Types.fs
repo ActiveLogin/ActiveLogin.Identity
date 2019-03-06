@@ -22,38 +22,39 @@ type Error =
     | ParsingError of ParsingError
 
 module Error =
+    /// This function will raise the most fitting Exceptions for the Error type provided.
     let handle result =
         match result with
         | Ok res -> res 
         | Error e -> 
             match e with
-            | InvalidYear y -> raise (new ArgumentOutOfRangeException("year", y, "Invalid year."))
+            | InvalidYear y -> raise (ArgumentOutOfRangeException("year", y, "Invalid year."))
             | InvalidMonth m ->
-                raise (new ArgumentOutOfRangeException("month", m, "Invalid month. Must be in the range 1 to 12."))
+                raise (ArgumentOutOfRangeException("month", m, "Invalid month. Must be in the range 1 to 12."))
             | InvalidDay d ->
                 raise
-                    (new ArgumentOutOfRangeException("day", d, "Invalid day of month. It might be a valid co-ordination number."))
-            | InvalidDayAndCoordinationDay d -> raise (new ArgumentOutOfRangeException("day", d, "Invalid day of month."))
+                    (ArgumentOutOfRangeException("day", d, "Invalid day of month. It might be a valid co-ordination number."))
+            | InvalidDayAndCoordinationDay d -> raise (ArgumentOutOfRangeException("day", d, "Invalid day of month."))
             | InvalidBirthNumber s ->
                 raise
-                    (new ArgumentOutOfRangeException("birthNumber", s, "Invalid birth number. Must be in the range 0 to 999."))
-            | InvalidChecksum _ -> raise (new ArgumentException("Invalid checksum.", "checksum"))
+                    (ArgumentOutOfRangeException("birthNumber", s, "Invalid birth number. Must be in the range 0 to 999."))
+            | InvalidChecksum _ -> raise (ArgumentException("Invalid checksum.", "checksum"))
             | ArgumentError a ->
                 match a with
                 | Null ->
                     raise
-                        (new ArgumentNullException("personalIdentityNumber"))
+                        (ArgumentNullException("personalIdentityNumber"))
             | ParsingError p -> 
                 match p with
                 | Empty ->
                     raise
-                        (new FormatException("String was not recognized as a valid SwedishPersonalIdentityNumber. Cannot be empty string or whitespace."))
+                        (FormatException("String was not recognized as a valid SwedishPersonalIdentityNumber. Cannot be empty string or whitespace."))
                 | Length ->
                     raise
-                        (new FormatException("String was not recognized as a valid SwedishPersonalIdentityNumber."))
+                        (FormatException("String was not recognized as a valid SwedishPersonalIdentityNumber."))
                 | Invalid msg ->
                     raise
-                        (new FormatException(sprintf "String was not recognized as a valid SwedishPersonalIdentityNumber. %s" msg))
+                        (FormatException(sprintf "String was not recognized as a valid SwedishPersonalIdentityNumber. %s" msg))
 
 type Year = private Year of int
 
@@ -164,12 +165,24 @@ module Checksum =
 
     let value (Checksum sum) = sum
 
-type SwedishPersonalIdentityNumber =
-    { Year : Year
+/// Represents a Swedish Personal Identity Number (Svenskt Personnummer).
+/// https://en.wikipedia.org/wiki/Personal_identity_number_(Sweden)
+/// https://sv.wikipedia.org/wiki/Personnummer_i_Sverige
+type SwedishPersonalIdentityNumber = 
+    { /// The year for date of birth.
+      Year : Year
+      /// The month for date of birth.
       Month : Month
+      /// The day for date of birth.
       Day : Day
+      /// A birth number (födelsenummer) to distinguish people born on the same day.
       BirthNumber : BirthNumber
+      /// A checksum (kontrollsiffra) used for validation. Last digit in the PIN.
       Checksum : Checksum }
+    /// <summary>
+    /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent 12 digit string representation.
+    /// Format is YYYYMMDDBBBC, for example <example>19908072391</example> or <example>191202119986</example>.
+    /// </summary>
     override this.ToString() = sprintf "%A" this
 
 type SwedishPersonalIdentityNumberValues =
