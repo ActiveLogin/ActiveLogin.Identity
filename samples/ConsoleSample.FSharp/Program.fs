@@ -34,6 +34,12 @@ let parseAndPrintPersonalIdentityNumber str =
     let printGenderHint pin =
         let gender = pin |> SwedishPersonalIdentityNumber.Hints.getGenderHint
         gender.ToString() |> printfn "SwedishPersonalIdentityNumber.Hints.getGenderHint: %s"
+    
+    let printIsTestNumber pin =
+        // isTestNumber is an extension from ActiveLogin.Identity.Swedish.FSharp.TestData
+        pin
+        |> SwedishPersonalIdentityNumber.isTestNumber
+        |> printfn "SwedishPersonalIdentityNumber.isTestNumber: %b"
 
     printHeader str
     match SwedishPersonalIdentityNumber.parse str with
@@ -45,6 +51,7 @@ let parseAndPrintPersonalIdentityNumber str =
         printDateOfBirthHint pin
         printAgeHint pin
         printGenderHint pin
+        printIsTestNumber pin
     | Error e -> printfn "%A: Unable to parse the input as a SwedishPersonalIdentityNumber." e
     printf "\n\n"
 

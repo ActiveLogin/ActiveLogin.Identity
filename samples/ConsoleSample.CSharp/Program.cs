@@ -45,7 +45,6 @@ namespace ConsoleSample
             Console.WriteLine("----------------------");
             var randomPin = SwedishPersonalIdentityNumberTestData.GetRandom();
             WritePersonalIdentityNumberInfo(randomPin);
-            Console.WriteLine($"Is it a test number? {(randomPin.IsTestNumber())}");
 
             WriteSpace();
 
@@ -87,6 +86,9 @@ namespace ConsoleSample
             WriteKeyValueInfo("   .GetAgeHint()", personalIdentityNumber.GetAgeHint().ToString());
 
             WriteKeyValueInfo("   .GetGenderHint()", personalIdentityNumber.GetGenderHint().ToString());
+
+            // IsTestNumber is an extension method from ActiveLogin.Identity.Swedish.TestData
+            WriteKeyValueInfo("   .IsTestNumber()", personalIdentityNumber.IsTestNumber().ToString());
         }
 
         private static void WriteHeader(string header)
