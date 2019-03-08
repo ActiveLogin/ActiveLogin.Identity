@@ -1,7 +1,8 @@
 ﻿module ConsoleSample.FSharp
 
-open ActiveLogin.Identity.Swedish.FSharp
 open System
+open ActiveLogin.Identity.Swedish.FSharp
+open ActiveLogin.Identity.Swedish.FSharp.TestData
 
 let sampleStrings = [ "990913+9801"; "120211+9986"; "990807-2391"; "180101-2392"; "180101.2392"; "ABC" ]
 
@@ -33,6 +34,12 @@ let parseAndPrintPersonalIdentityNumber str =
     let printGenderHint pin =
         let gender = pin |> SwedishPersonalIdentityNumber.Hints.getGenderHint
         gender.ToString() |> printfn "SwedishPersonalIdentityNumber.Hints.getGenderHint: %s"
+    
+    let printIsTestNumber pin =
+        // isTestNumber is an extension from the package ActiveLogin.Identity.Swedish.FSharp.TestData
+        pin
+        |> SwedishPersonalIdentityNumber.isTestNumber
+        |> printfn "SwedishPersonalIdentityNumber.isTestNumber: %b"
 
     printHeader str
     match SwedishPersonalIdentityNumber.parse str with
@@ -44,6 +51,7 @@ let parseAndPrintPersonalIdentityNumber str =
         printDateOfBirthHint pin
         printAgeHint pin
         printGenderHint pin
+        printIsTestNumber pin
     | Error e -> printfn "%A: Unable to parse the input as a SwedishPersonalIdentityNumber." e
     printf "\n\n"
 
@@ -51,7 +59,29 @@ let parseAndPrintPersonalIdentityNumber str =
 let main argv =
     printfn "Sample showing possible uses of SwedishPersonalIdentityNumber."
     printf "\n\n"
+
     sampleStrings |> List.iter parseAndPrintPersonalIdentityNumber
+
+    printfn "Here is a valid 10 digit string that can be used for testing:\n----------------------"
+    SwedishPersonalIdentityNumberTestData.getRandom()
+    |> SwedishPersonalIdentityNumber.to10DigitString
+    |> printfn "%s"
+    printf "\n\n"
+
+    printfn "Here is a valid 12 digit string that can be used for testing:\n----------------------"
+    SwedishPersonalIdentityNumberTestData.getRandom()
+    |> SwedishPersonalIdentityNumber.to12DigitString
+    |> printfn "%s"
+    printf "\n\n"
+
+    printfn "Here is a personal identity number that can be used for testing:\n----------------------"
+    let pin = SwedishPersonalIdentityNumberTestData.getRandom()
+    printfn "%A" pin
+    pin
+    |> SwedishPersonalIdentityNumber.isTestNumber
+    |> printfn "Is it a test number? %b!"
+    printf "\n\n"
+
     printfn "What is your (Swedish) Personal Identity Number?"
     let userInput = Console.ReadLine()
     parseAndPrintPersonalIdentityNumber userInput

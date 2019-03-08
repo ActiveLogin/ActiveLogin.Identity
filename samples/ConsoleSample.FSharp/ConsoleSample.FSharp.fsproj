@@ -12,10 +12,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\ActiveLogin.Identity.Swedish\ActiveLogin.Identity.Swedish.fsproj" />
+    <ProjectReference Include="..\..\src\ActiveLogin.Identity.Swedish.TestData\ActiveLogin.Identity.Swedish.TestData.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="4.5.4" />
+    <PackageReference Update="FSharp.Core" Version="4.6.2" />
   </ItemGroup>
 
 </Project>

@@ -290,3 +290,8 @@ __pycache__/
 
 # VSCode configuration
 .vscode
+
+.DS_Store
+
+# BenchmarkDotNet results
+BenchmarkDotNet.Artifacts

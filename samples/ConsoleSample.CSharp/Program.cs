@@ -1,6 +1,7 @@
 ﻿using System;
 using ActiveLogin.Identity.Swedish;
 using ActiveLogin.Identity.Swedish.Extensions;
+using ActiveLogin.Identity.Swedish.TestData;
 
 namespace ConsoleSample
 {
@@ -28,7 +29,25 @@ namespace ConsoleSample
                 WriteSpace();
             }
 
+            Console.WriteLine("Here is a valid 10 digit string that can be used for testing:");
+            Console.WriteLine("----------------------");
+            Console.WriteLine(SwedishPersonalIdentityNumberTestData.GetRandom().To10DigitString());
+
             WriteSpace();
+
+            Console.WriteLine("Here is a valid 12 digit string that can be used for testing:");
+            Console.WriteLine("----------------------");
+            Console.WriteLine(SwedishPersonalIdentityNumberTestData.GetRandom().To12DigitString());
+
+            WriteSpace();
+
+            Console.WriteLine("Here is a personal identity number that can be used for testing:");
+            Console.WriteLine("----------------------");
+            var randomPin = SwedishPersonalIdentityNumberTestData.GetRandom();
+            WritePersonalIdentityNumberInfo(randomPin);
+
+            WriteSpace();
+
             Console.WriteLine("What is your (Swedish) Personal Identity Number?");
             var userRawPersonalIdentityNumber = Console.ReadLine();
             WritePersonalIdentityNumberInfo(userRawPersonalIdentityNumber);
@@ -67,6 +86,9 @@ namespace ConsoleSample
             WriteKeyValueInfo("   .GetAgeHint()", personalIdentityNumber.GetAgeHint().ToString());
 
             WriteKeyValueInfo("   .GetGenderHint()", personalIdentityNumber.GetGenderHint().ToString());
+
+            // IsTestNumber is an extension method from the package ActiveLogin.Identity.Swedish.TestData
+            WriteKeyValueInfo("   .IsTestNumber()", personalIdentityNumber.IsTestNumber().ToString());
         }
 
         private static void WriteHeader(string header)
