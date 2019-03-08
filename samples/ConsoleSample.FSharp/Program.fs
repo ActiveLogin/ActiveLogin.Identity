@@ -36,7 +36,7 @@ let parseAndPrintPersonalIdentityNumber str =
         gender.ToString() |> printfn "SwedishPersonalIdentityNumber.Hints.getGenderHint: %s"
     
     let printIsTestNumber pin =
-        // isTestNumber is an extension from ActiveLogin.Identity.Swedish.FSharp.TestData
+        // isTestNumber is an extension from the package ActiveLogin.Identity.Swedish.FSharp.TestData
         pin
         |> SwedishPersonalIdentityNumber.isTestNumber
         |> printfn "SwedishPersonalIdentityNumber.isTestNumber: %b"
