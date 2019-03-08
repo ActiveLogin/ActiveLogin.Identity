@@ -53,6 +53,9 @@ if (SwedishPersonalIdentityNumber.TryParse(rawPersonalIdentityNumber, out var pe
     Console.WriteLine(" .GetAgeHint(): {0}", personalIdentityNumber.GetAgeHint().ToString());
 
     Console.WriteLine(" .GetGenderHint(): {0}", personalIdentityNumber.GetGenderHint().ToString());
+    
+    // IsTestNumber is an extension method from the package ActiveLogin.Identity.Swedish.TestData
+    Console.WriteLine(" .IsTestNumber(): {0}", personalIdentityNumber.IsTestNumber().ToString());
 }
 else
 {
@@ -70,6 +73,7 @@ SwedishPersonalIdentityNumber
  .GetDateOfBirthHint(): 1999-08-07
  .GetAgeHint(): 18
  .GetGenderHint(): Male
+ .IsTestNumber(): True
 ```
 
 #### Hints
@@ -106,6 +110,9 @@ The `SwedishPersonalIdentityNumber`-module provides functions for parsing, creat
     pin |> SwedishPersonalIdentityNumber.Hints.getDateOfBirthHint |> (fun date -> date.ToShortDateString() |> printfn "getDateOfBirthHint: %s")
     pin |> SwedishPersonalIdentityNumber.Hints.getAgeHint |> printfn "getAgeHint: %i"
     pin |> SwedishPersonalIdentityNumber.Hints.getGenderHint |> printfn "getGenderHint: %A"
+    
+    // isTestNumber is an extension from the package ActiveLogin.Identity.Swedish.FSharp.TestData
+    pin |> SwedishPersonalIdentityNumber.isTestNumber |> printfn "isTestNumber: %b"
 | Error e -> printfn "Not a valid Swedish personal identity number. Error %A" e 
 ```
 
@@ -122,6 +129,7 @@ to12DigitString: 199908072391
 getDateOfBirthHint: 1999-08-07
 getAgeHint: 18
 getGenderHint: Male
+isTestNumber: true
 ```
 
 ### 4. Browse tests and samples
