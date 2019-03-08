@@ -87,7 +87,7 @@ namespace ConsoleSample
 
             WriteKeyValueInfo("   .GetGenderHint()", personalIdentityNumber.GetGenderHint().ToString());
 
-            // IsTestNumber is an extension method from ActiveLogin.Identity.Swedish.TestData
+            // IsTestNumber is an extension method from the package ActiveLogin.Identity.Swedish.TestData
             WriteKeyValueInfo("   .IsTestNumber()", personalIdentityNumber.IsTestNumber().ToString());
         }
 
