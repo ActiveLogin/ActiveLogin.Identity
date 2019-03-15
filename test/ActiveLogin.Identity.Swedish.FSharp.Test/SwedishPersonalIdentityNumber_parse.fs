@@ -1,8 +1,8 @@
 module ActiveLogin.Identity.Swedish.FSharp.Test.SwedishPersonalIdentityNumber_parse
 
+open Swensen.Unquote
 open Expecto
 open Expecto.Flip
-open Swensen.Unquote
 open ActiveLogin.Identity.Swedish.FSharp
 open ActiveLogin.Identity.Swedish.FSharp.TestData
 open PinTestHelpers
@@ -14,9 +14,9 @@ let addToConfig arbTypes = { config with arbitrary = arbTypes @ config.arbitrary
 
 let testProp arbTypes name =
     testPropertyWithConfig (addToConfig arbTypes) name
-let fTestProp arbTypes name = 
+let ftestProp arbTypes name = 
     ftestPropertyWithConfig (addToConfig arbTypes) name
-let pTestProp arbTypes name = 
+let ptestProp arbTypes name = 
     ptestPropertyWithConfig (addToConfig arbTypes) name
 
 let yearTurning100 (pin:SwedishPersonalIdentityNumberValues) = 
@@ -36,68 +36,65 @@ let tests = testList "parse" [
     testProp [ typeof<Valid12Digit> ] "Can parse any valid 12-digit string" <| fun (input, expected) ->
                 let pin = input |> SwedishPersonalIdentityNumber.parse
                 pin |> Expect.equalPin expected
+
     // this does not include 10 digit strings without delimiter
     testProp [ typeof<Valid10Digit> ] "Can parse any valid 10-digit string" <| fun (input, expected) ->
         let pin = input |> SwedishPersonalIdentityNumber.parse
         pin |> Expect.equalPin expected
+
     testProp [ typeof<Valid10DigitWithPlusDelimiter> ] 
         "Can parse valid 10-digit string with plus delimiter for person the year they turn 100" <| 
-        fun (input, expected: SwedishPersonalIdentityNumberValues) ->
-            let pin = input |> SwedishPersonalIdentityNumber.parseInSpecificYear (yearTurning100 expected)
-            pin |> Expect.equalPin expected
+            fun (input, expected: SwedishPersonalIdentityNumberValues) ->
+                let pin = input |> SwedishPersonalIdentityNumber.parseInSpecificYear (yearTurning100 expected)
+                pin |> Expect.equalPin expected
+
     testProp [ typeof<Valid10DigitStringWithAnyDelimiterExceptPlus> ] 
         "Cannot correctly parse 10-digit string when person is turning 100 and delimiter is anything else than plus" <| 
-        fun (input, expected: SwedishPersonalIdentityNumberValues) ->
-            let yearTurning100 = yearTurning100 expected
-            let pin = input |> SwedishPersonalIdentityNumber.parseInSpecificYear yearTurning100
-            pin |> Expect.isOk "should be ok"
-            pin |> Result.iter (fun p -> p.Year |> Year.value <>! expected.Year)
+            fun (input, expected: SwedishPersonalIdentityNumberValues) ->
+                let yearTurning100 = yearTurning100 expected
+                let pin = input |> SwedishPersonalIdentityNumber.parseInSpecificYear yearTurning100
+                pin |> Expect.isOk "should be ok"
+                pin |> Result.iter (fun p -> p.Year |> Year.value <>! expected.Year)
+
     testProp [ typeof<Valid10DigitWithPlusDelimiter>; typeof<RandomLessThan100> ] 
         "Cannot correctly parse 10-digit string with plus delimiter when parseYear is before person turned 100" <| 
-        fun ((input, expected: SwedishPersonalIdentityNumberValues), lessThan100) ->
-            let yearWhenNotTurned100 = 
-                expected.Year - lessThan100 
-                |> Year.create 
-                |> function 
-                | Ok y -> y 
-                | Error _ -> failwith "test setup error"
-            let pin = input |> SwedishPersonalIdentityNumber.parseInSpecificYear yearWhenNotTurned100
-            pin |> Expect.isOk "should be ok"
-            pin |> Result.iter (fun p -> p.Year |> Year.value <>! expected.Year)
+            fun ((input, expected: SwedishPersonalIdentityNumberValues), lessThan100) ->
+                let yearWhenNotTurned100 = 
+                    expected.Year - lessThan100 
+                    |> Year.create 
+                    |> function 
+                    | Ok y -> y 
+                    | Error _ -> failwith "test setup error"
+                let pin = input |> SwedishPersonalIdentityNumber.parseInSpecificYear yearWhenNotTurned100
+                pin |> Expect.isOk "should be ok"
+                pin |> Result.iter (fun p -> p.Year |> Year.value <>! expected.Year)
+
     testProp [ typeof<Valid12DigitStringWithAnyDelimiter> ] "Can parse 12-digit string with any delimiter" <| 
         fun (input, expected) ->
             let pin = input |> SwedishPersonalIdentityNumber.parse
             pin |> Expect.equalPin expected
+
     testProp [ typeof<Valid10DigitStringWithAnyDelimiterExceptPlus> ] 
         "Can parse 10-digit string for person < 100 years of age with any delimiter as long as it is not plus" <|
-        fun (input, expected) ->
-            let pin = input |> SwedishPersonalIdentityNumber.parse
-            pin |> Expect.equalPin expected
+            fun (input, expected) ->
+                let pin = input |> SwedishPersonalIdentityNumber.parse
+                pin |> Expect.equalPin expected
+
     testProp [ typeof<Valid12DigitStringMixedWithCharacters> ] 
         "Can parse valid 12 digit string even if it has leading-, trailing- and characters mixed into it" <| 
-        fun (input, expected) ->
-            let pin = input |> SwedishPersonalIdentityNumber.parse
-            pin |> Expect.equalPin expected
+            fun (input, expected) ->
+                let pin = input |> SwedishPersonalIdentityNumber.parse
+                pin |> Expect.equalPin expected
+
     testProp [ typeof<Valid10DigitStringMixedWithCharacters> ] 
         "Can parse valid 10 digit string even if it has leading-, trailing- and characters mixed into it" <| 
-        fun (input, expected) ->
-            let pin = input |> SwedishPersonalIdentityNumber.parse
-            pin |> Expect.equalPin expected ]
-
-
-
-
-
-        // [Theory]
-        // [InlineData("18990913 9801", "189909139801")]
-        // [InlineData("19120211 9986", "191202119986")]
-        // [InlineData("19990807 2391", "199908072391")]
-        // public void Parses_When_Whitespace_Delimiter_From_12_Digit_String(string personalIdentityNumberString, string expectedPersonalIdentityNumberString)
-        // {
-        //     var personalIdentityNumber = SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018);
-        //     Assert.Equal(expectedPersonalIdentityNumberString, personalIdentityNumber.To12DigitString());
-        // }
-
+            fun (input, expected) ->
+                let pin = input |> SwedishPersonalIdentityNumber.parse
+                pin |> Expect.equalPin expected 
+    // testProp [ typeof<EmptyOrWhitespaceString> ] "Parse with empty or whitespace string returns error" <| fun input ->
+    //     let result = SwedishPersonalIdentityNumber.parse input
+    //     result =! (Empty |> ParsingError |> Error)
+    ]
 
         // [Fact]
         // public void Same_Number_Will_Use_Different_Delimiter_When_Parsed_On_Or_After_Person_Turns_100()

@@ -4,6 +4,7 @@ open Generators
 open FsCheck
 open ActiveLogin.Identity.Swedish.FSharp
 open ActiveLogin.Identity.Swedish.FSharp.TestData
+open System
 
 let addToConfig config arbTypes = 
     { config with arbitrary = arbTypes @ config.arbitrary }
@@ -94,41 +95,45 @@ type Valid12DigitStringWithAnyDelimiter() =
             return (result, expected)
         } |> Arb.fromGen
 
-type Valid12DigitStringMixedWithCharacters =
+let mix noise pin =
+    let toStringList str =
+        [ for c in str -> [|c|] |> String ]
+    let result = ResizeArray<string>()
+    let first, rest = 
+        match noise with
+        | first :: rest -> first, rest
+        | _ -> failwith "test setup error"
+    result.Add(first) 
+    pin 
+    |> toStringList
+    |> List.zip rest 
+    |> List.iter (fun (fst,snd) -> 
+        result.Add fst
+        result.Add snd)
+
+    result
+    |> List.ofSeq
+    |> String.concat ""
+
+type Valid12DigitStringMixedWithCharacters() =
+    
+
     static member Valid12DigitStringMixedWithCharacters : Arbitrary<string * SwedishPersonalIdentityNumberValues> =
         gen {
-            let! cs1 = printableAscii
-            let! cs2 = printableAscii
-            let! cs3 = printableAscii
-            let! cs4 = printableAscii
-            let! cs5 = printableAscii
-            let! cs6 = printableAscii
-            let! cs7 = printableAscii
-            let! cs8 = printableAscii
-            let! cs9 = printableAscii
-            let! cs10 = printableAscii
-            let! cs11 = printableAscii
-            let! cs12 = printableAscii
-            let! cs13 = printableAscii
             let! (str, expected) = random12Digit
-            return (cs1 + str.[0..0] + cs2 + str.[1..1] + cs3 + str.[2..2] + cs4 + str.[3..3] + cs5 + str.[4..4] + cs6 + str.[5..5] + cs7 + str.[6..6] + cs8 + str.[7..7] + cs9 + str.[8..8] + cs10 + str.[9..9] + cs11 + str.[10..10] + cs12 + str.[11..11] + cs13, expected)
+            let! randomNoise = Gen.listOfLength 13 printableAscii
+            let withNoise = mix randomNoise str
+            return (withNoise, expected)
         } |> Arb.fromGen
 
-type Valid10DigitStringMixedWithCharacters =
+type Valid10DigitStringMixedWithCharacters() =
     static member Valid12DigitStringMixedWithCharacters : Arbitrary<string * SwedishPersonalIdentityNumberValues> =
         gen {
-            let! cs1 = printableAsciiExceptPlus
-            let! cs2 = printableAsciiExceptPlus
-            let! cs3 = printableAsciiExceptPlus
-            let! cs4 = printableAsciiExceptPlus
-            let! cs5 = printableAsciiExceptPlus
-            let! cs6 = printableAsciiExceptPlus
-            let! cs7 = printableAsciiExceptPlus
-            let! cs8 = printableAsciiExceptPlus
-            let! cs9 = printableAsciiExceptPlus
-            let! cs10 = printableAsciiExceptPlus
-            let! cs11 = printableAsciiExceptPlus
-            let! cs12 = printableAsciiExceptPlus
             let! (str, expected) = random10Digit
-            return (cs1 + str.[0..0] + cs2 + str.[1..1] + cs3 + str.[2..2] + cs4 + str.[3..3] + cs5 + str.[4..4] + cs6 + str.[5..5] + cs7 + str.[6..6] + cs8 + str.[7..7] + cs9 + str.[8..8] + cs10 + str.[9..9] + cs11 + str.[10..10] + cs12, expected)
+            let! randomNoise = Gen.listOfLength 12 printableAsciiExceptPlus
+            let withNoise = mix randomNoise str
+            return (withNoise, expected)
         } |> Arb.fromGen
+
+// type EmptyOrWhitespaceString
+                
