@@ -10,24 +10,24 @@ let addToConfig config arbTypes =
     { config with arbitrary = arbTypes @ config.arbitrary }
 
 type InvalidYearGen() =
-    static member Year() : Arbitrary<SwedishPersonalIdentityNumberValues> = Arb.fromGen invalidYear
+    static member Gen() : Arbitrary<SwedishPersonalIdentityNumberValues> = Arb.fromGen invalidYear
 
 type InvalidMonthGen() = 
-    static member Month() : Arbitrary<SwedishPersonalIdentityNumberValues> = Arb.fromGen invalidMonth
+    static member Gen() : Arbitrary<SwedishPersonalIdentityNumberValues> = Arb.fromGen invalidMonth
 
 type InvalidDayGen() =
-    static member Day() : Arbitrary<SwedishPersonalIdentityNumberValues> = Arb.fromGen invalidDay
+    static member Gen() : Arbitrary<SwedishPersonalIdentityNumberValues> = Arb.fromGen invalidDay
 
 type InvalidBirthNumberGen() =
-    static member BirthNumber() : Arbitrary<SwedishPersonalIdentityNumberValues> = Arb.fromGen invalidBirthNumber
+    static member Gen() : Arbitrary<SwedishPersonalIdentityNumberValues> = Arb.fromGen invalidBirthNumber
 
 type ValidValuesGen() =
-    static member ValidValues() : Arbitrary<SwedishPersonalIdentityNumberValues> = 
+    static member Gen() : Arbitrary<SwedishPersonalIdentityNumberValues> = 
         gen { return! validValues } 
         |> Arb.fromGen 
 
 type TwoPins() =
-    static member TwoPins() : Arbitrary<SwedishPersonalIdentityNumber * SwedishPersonalIdentityNumber> =
+    static member Gen() : Arbitrary<SwedishPersonalIdentityNumber * SwedishPersonalIdentityNumber> =
         gen {
             let pin1 = SwedishPersonalIdentityNumberTestData.getRandom()
             let pin2 = SwedishPersonalIdentityNumberTestData.getRandom()
@@ -35,38 +35,38 @@ type TwoPins() =
         } |> Arb.fromGen
 
 type Valid12Digit() =
-    static member Valid12Digit() : Arbitrary<string * SwedishPersonalIdentityNumberValues> =
+    static member Gen() : Arbitrary<string * SwedishPersonalIdentityNumberValues> =
         random12Digit |> Arb.fromGen
 
 type ValidPin() =
-    static member ValidPin() : Arbitrary<SwedishPersonalIdentityNumber> =
+    static member Gen() : Arbitrary<SwedishPersonalIdentityNumber> =
         validPin |> Arb.fromGen
 
 type TwoEqualPins() =
-    static member TwoEqualPins() : Arbitrary<SwedishPersonalIdentityNumber * SwedishPersonalIdentityNumber> =
+    static member Gen() : Arbitrary<SwedishPersonalIdentityNumber * SwedishPersonalIdentityNumber> =
         gen {
             let! pin = validPin
             return (pin, pin)
         } |> Arb.fromGen
 
 type Valid10Digit() =
-    static member Valid10Digit : Arbitrary<string * SwedishPersonalIdentityNumberValues> =
+    static member Gen() : Arbitrary<string * SwedishPersonalIdentityNumberValues> =
         random10Digit |> Arb.fromGen
 
 type Valid10DigitWithPlusDelimiter() =
-    static member ValidWithPlusDelimiter : Arbitrary<string * SwedishPersonalIdentityNumberValues> =
+    static member Gen() : Arbitrary<string * SwedishPersonalIdentityNumberValues> =
         gen {
             return random10DigitWithPlusDelimiter |> Seq.head
         } |> Arb.fromGen
 
 type Valid10DigitWithHyphenDelimiter() =
-    static member ValidWithHyphenDelimiter : Arbitrary<string * SwedishPersonalIdentityNumberValues> =
+    static member Gen() : Arbitrary<string * SwedishPersonalIdentityNumberValues> =
         gen {
             return random10DigitWithHyphenDelimiter |> Seq.head
         } |> Arb.fromGen
 
 type Valid12DigitWithLeadingAndTrailingCharacters() =
-    static member Valid12DigitWithLeadingAndTrailingCharacters : Arbitrary<string * SwedishPersonalIdentityNumberValues> =
+    static member Gen() : Arbitrary<string * SwedishPersonalIdentityNumberValues> =
         gen {
             let! leading = noiseStringWeighted
             let! trailing = noiseStringWeighted
@@ -95,6 +95,7 @@ type Valid12DigitStringWithAnyDelimiter() =
             return (result, expected)
         } |> Arb.fromGen
 
+// Inserts noise between all characters in pin
 let mix noise pin =
     let toStringList str =
         [ for c in str -> [|c|] |> String ]
