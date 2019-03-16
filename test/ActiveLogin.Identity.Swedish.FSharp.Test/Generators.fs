@@ -6,10 +6,10 @@ open System
 open ActiveLogin.Identity.Swedish.FSharp.TestData
 open ActiveLogin.Identity.Swedish.FSharp.Test.PinTestHelpers
 
-let chooseFromArray xs =
+let private chooseFromArray xs =
     gen { let! index = Gen.choose (0, (Array.length xs) - 1)
           return xs.[index] }
-let valid12Digit = chooseFromArray SwedishPersonalIdentityNumberTestData.raw12DigitStrings
+let private valid12Digit = chooseFromArray SwedishPersonalIdentityNumberTestData.raw12DigitStrings
 
 let private stringToValues (pin : string) =
     { Year = pin.[0..3] |> int
@@ -104,9 +104,6 @@ let noiseStringWeighted =
                |> String
     }
 
-let noiseCharWeightedExcludingPlus =
-    Gen.frequency [ (2, weightedExcludingPlus); (1 ,printableAsciiCharsExcludingPlus) ]
-
 let noiseDelimiterWeighted =
     gen {
         let! char = noiseCharWeighted
@@ -116,6 +113,9 @@ let noiseDelimiterWeighted =
     }
 
 let noiseDelimiterWeightedExcludingPlus =
+    let noiseCharWeightedExcludingPlus =
+        Gen.frequency [ (2, weightedExcludingPlus); (1 ,printableAsciiCharsExcludingPlus) ]
+
     gen {
         let! charsGen = Gen.listOf noiseCharWeightedExcludingPlus
         return charsGen
