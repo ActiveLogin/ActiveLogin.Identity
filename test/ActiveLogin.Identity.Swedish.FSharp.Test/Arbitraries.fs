@@ -68,17 +68,17 @@ type Valid10DigitWithHyphenDelimiter() =
 type Valid12DigitWithLeadingAndTrailingCharacters() =
     static member Valid12DigitWithLeadingAndTrailingCharacters : Arbitrary<string * SwedishPersonalIdentityNumberValues> =
         gen {
-            let! leading = printableAscii
-            let! trailing = printableAscii
+            let! leading = noiseStringWeighted
+            let! trailing = noiseStringWeighted
             let! (str, values) = random12Digit
             return (sprintf "%s%s%s" leading str trailing, values)
         } |> Arb.fromGen
 
-type Valid10DigitStringWithAnyDelimiterExceptPlus() =
-    static member Valid10DigitStringWithAnyDelimiterExceptPlus : Arbitrary<string * SwedishPersonalIdentityNumberValues> =
+type Valid10DigitStringWithAnyDelimiterExcludingPlus() =
+    static member Gen() : Arbitrary<string * SwedishPersonalIdentityNumberValues> =
         gen {
             let (str, expected) = random10DigitWithHyphenDelimiter |> Seq.head
-            let! delimiter = singlePrintableAsciiString
+            let! delimiter = noiseDelimiterWeightedExcludingPlus
             let result = 
                 match delimiter with
                 | "+" -> str.[ 0..5 ] + str.[ 7..10 ] 
@@ -87,10 +87,10 @@ type Valid10DigitStringWithAnyDelimiterExceptPlus() =
         } |> Arb.fromGen
 
 type Valid12DigitStringWithAnyDelimiter() =
-    static member Valid12DigitStringWithAnyDelimiter() : Arbitrary<string * SwedishPersonalIdentityNumberValues> =
+    static member Gen() : Arbitrary<string * SwedishPersonalIdentityNumberValues> =
         gen {
             let! (str, expected) = random12Digit
-            let! delimiter = singlePrintableAsciiString
+            let! delimiter = noiseDelimiterWeighted
             let result = str.[ 0..7 ] + delimiter + str.[ 8..11 ]
             return (result, expected)
         } |> Arb.fromGen
@@ -116,24 +116,19 @@ let mix noise pin =
     |> String.concat ""
 
 type Valid12DigitStringMixedWithCharacters() =
-    
-
-    static member Valid12DigitStringMixedWithCharacters : Arbitrary<string * SwedishPersonalIdentityNumberValues> =
+    static member Gen() : Arbitrary<string * SwedishPersonalIdentityNumberValues> =
         gen {
             let! (str, expected) = random12Digit
-            let! randomNoise = Gen.listOfLength 13 printableAscii
+            let! randomNoise = Gen.listOfLength 13 noiseStringWeighted
             let withNoise = mix randomNoise str
             return (withNoise, expected)
         } |> Arb.fromGen
 
 type Valid10DigitStringMixedWithCharacters() =
-    static member Valid12DigitStringMixedWithCharacters : Arbitrary<string * SwedishPersonalIdentityNumberValues> =
+    static member Gen() : Arbitrary<string * SwedishPersonalIdentityNumberValues> =
         gen {
             let! (str, expected) = random10Digit
-            let! randomNoise = Gen.listOfLength 12 printableAsciiExceptPlus
+            let! randomNoise = Gen.listOfLength 12 noiseDelimiterWeightedExcludingPlus
             let withNoise = mix randomNoise str
             return (withNoise, expected)
         } |> Arb.fromGen
-
-// type EmptyOrWhitespaceString
-                

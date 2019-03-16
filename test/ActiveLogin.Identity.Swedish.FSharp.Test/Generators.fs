@@ -87,39 +87,37 @@ let invalidBirthNumber =
 
 let validPin = gen { return SwedishPersonalIdentityNumberTestData.getRandom() }
 
-let printableAsciiChar =
-    let chars =
-        [ 32..47 ] @ [ 58..126 ]
-        |> Array.ofList
-        |> Array.map char
-    chooseFromArray chars
+let private printableAsciiCharsExcludingPlus = [ 32..42 ] @ [ 44..47 ] @ [ 58..126 ] |> List.map char |> Array.ofList |> chooseFromArray
 
-let printableAscii =
+// There are some "noise" characters that I want to weigh heavier when generating test values
+let private weightedIncludingPlus = [| ' '; '-'; '+'; ';'; '.'; '_'; |] |> chooseFromArray
+let private weightedExcludingPlus = [| ' '; '-'; ';'; '.'; '_'; |] |> chooseFromArray
+
+let private noiseCharWeighted =
+    Gen.frequency [ (2, weightedIncludingPlus); (1, printableAsciiCharsExcludingPlus) ]
+
+let noiseStringWeighted =
     gen {
-        let! charsGen = Gen.listOf printableAsciiChar
-        return charsGen
+        let! noiseChars = Gen.listOf noiseCharWeighted
+        return noiseChars
                |> Array.ofList
                |> String
     }
 
-let printableAsciiCharWithoutPlus =
-    let chars =
-        [ 32..42 ] @ [ 44..47 ] @ [ 58..126 ]
-        |> Array.ofList
-        |> Array.map char
-    chooseFromArray chars
+let noiseCharWeightedExcludingPlus =
+    Gen.frequency [ (2, weightedExcludingPlus); (1 ,printableAsciiCharsExcludingPlus) ]
 
-let singlePrintableAsciiString =
+let noiseDelimiterWeighted =
     gen {
-        let! char = printableAsciiChar
+        let! char = noiseCharWeighted
         return char
                |> Array.singleton
                |> String
     }
 
-let printableAsciiExceptPlus =
+let noiseDelimiterWeightedExcludingPlus =
     gen {
-        let! charsGen = Gen.listOf printableAsciiCharWithoutPlus
+        let! charsGen = Gen.listOf noiseCharWeightedExcludingPlus
         return charsGen
                |> Array.ofList
                |> String

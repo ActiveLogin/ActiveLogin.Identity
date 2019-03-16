@@ -48,7 +48,7 @@ let tests = testList "parse" [
                 let pin = input |> SwedishPersonalIdentityNumber.parseInSpecificYear (yearTurning100 expected)
                 pin |> Expect.equalPin expected
 
-    testProp [ typeof<Valid10DigitStringWithAnyDelimiterExceptPlus> ] 
+    testProp [ typeof<Valid10DigitStringWithAnyDelimiterExcludingPlus> ] 
         "Cannot correctly parse 10-digit string when person is turning 100 and delimiter is anything else than plus" <| 
             fun (input, expected: SwedishPersonalIdentityNumberValues) ->
                 let yearTurning100 = yearTurning100 expected
@@ -74,7 +74,7 @@ let tests = testList "parse" [
             let pin = input |> SwedishPersonalIdentityNumber.parse
             pin |> Expect.equalPin expected
 
-    testProp [ typeof<Valid10DigitStringWithAnyDelimiterExceptPlus> ] 
+    testProp [ typeof<Valid10DigitStringWithAnyDelimiterExcludingPlus> ] 
         "Can parse 10-digit string for person < 100 years of age with any delimiter as long as it is not plus" <|
             fun (input, expected) ->
                 let pin = input |> SwedishPersonalIdentityNumber.parse
