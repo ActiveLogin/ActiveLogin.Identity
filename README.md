@@ -194,7 +194,7 @@ Unforentunately the term "social security number" or SSN is often used even for 
 
 To comply with GDPR and not no expose any real PINs, we are using the official test data for Swedish Personal Identity Numbers [provided by Skatteverket](https://skatteverket.entryscape.net/catalog/9/datasets/147).
 
-If you need to use test numbers yourself, for example if you need to write tests using personal identity numbers, but want to avoid violating GDPR, we provide a nuget package with a simple api to get random test numbers or strings. You can also check if a personal identity number is a test number.
+If you need to use test numbers yourself, for example if you need to write tests using personal identity numbers, but want to avoid violating GDPR, we provide a [nuget package](https://www.nuget.org/packages/ActiveLogin.Identity.Swedish.TestData/) with a simple api to get random test numbers or strings. You can also check if a personal identity number is a test number.
 
 #### C#
 ```csharp
