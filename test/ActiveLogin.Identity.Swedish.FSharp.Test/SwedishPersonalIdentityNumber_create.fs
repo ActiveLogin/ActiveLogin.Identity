@@ -6,65 +6,100 @@ module ActiveLogin.Identity.Swedish.FSharp.Test.SwedishPersonalIdentityNumber_cr
 
 open Swensen.Unquote
 open Expecto
+open Expecto.Flip
+open FsCheck
 open ActiveLogin.Identity.Swedish.FSharp
 open System.Reflection
-open Arbitraries
 open ActiveLogin.Identity.Swedish.FSharp.TestData
 open PinTestHelpers
 
-let config = FsCheckConfig.defaultConfig
-let testProp arbTypes name = testPropertyWithConfig (addToConfig config arbTypes) name
-let ftestProp arbTypes name = ftestPropertyWithConfig (addToConfig config arbTypes) name
-let ptestProp arbTypes name = ptestPropertyWithConfig (addToConfig config arbTypes) name
+let arbTypes = 
+    [ typeof<Gen.ValidNumberValuesGen> 
+      typeof<Gen.InvalidYearGen>
+      typeof<Gen.ValidYearGen>
+      typeof<Gen.InvalidMonthGen>
+      typeof<Gen.ValidMonthGen>
+      typeof<Gen.WithInvalidDayGen>
+      typeof<Gen.WithValidDayGen>
+      typeof<Gen.InvalidBirthNumberGen> 
+      typeof<Gen.ValidBirthNumberGen> ]
+
+let config = 
+    { FsCheckConfig.defaultConfig with arbitrary = arbTypes @ FsCheckConfig.defaultConfig.arbitrary }
+let testProp name = testPropertyWithConfig config name
+let ftestProp name = ftestPropertyWithConfig config name
+let testPropWithMaxTest maxTest name = testPropertyWithConfig { config with maxTest = maxTest } name
+let ftestPropWithMaxTest maxTest name = ftestPropertyWithConfig { config with maxTest = maxTest } name
 
 [<Tests>]
-let tests = testList "create" [ 
-    testProp [ typeof<ValidValuesGen> ] "valid pin" <| fun values ->
-        let result = values |> SwedishPersonalIdentityNumber.create
-        result |> Expect.equalPin values
+let tests =
+    testList "create" [
+        testProp "valid values returns Ok Result" <| fun (Gen.ValidValues input) ->
+            let result = SwedishPersonalIdentityNumber.create input
+            Expect.isOk "should be Result.Ok" result 
 
-    testProp [ typeof<InvalidYearGen> ] "Invalid year" <| fun values ->
-        let result = values |> SwedishPersonalIdentityNumber.create
-        result =! Error(InvalidYear values.Year)
+        testPropWithMaxTest 20000 "invalid year returns InvalidYear Error" <| 
+            fun (Gen.ValidValues validValues, Gen.InvalidYear invalidYear) ->
+                let input = { validValues with Year = invalidYear }
+                let result = SwedishPersonalIdentityNumber.create input
+                result =! Error(InvalidYear invalidYear)
 
-    testProp [ typeof<InvalidMonthGen> ] "Invalid month" <| fun values ->
-        let result = values |> SwedishPersonalIdentityNumber.create
-        result =! Error(InvalidMonth values.Month)
+        testPropWithMaxTest 20000 "valid year does not return InvalidYear Error" <| 
+            fun (Gen.ValidValues values, Gen.ValidYear validYear) ->
+                let input = { values with Year = validYear }
+                let result = SwedishPersonalIdentityNumber.create input
+                result <>! (Error(InvalidYear validYear))
 
-    testProp [ typeof<InvalidDayGen> ] "Invalid day" <| fun values ->
-        let result = values |> SwedishPersonalIdentityNumber.create
-        result =! Error(InvalidDayAndCoordinationDay values.Day)
+        testProp "invalid month returns InvalidMonth Error" <| 
+            fun (Gen.ValidValues validValues, Gen.InvalidMonth invalidMonth) ->
+                let input = { validValues with Month = invalidMonth }
+                let result = SwedishPersonalIdentityNumber.create input
+                result =! Error(InvalidMonth invalidMonth)
 
-    testProp [ typeof<ValidValuesGen> ] "Possible coordination-number day" <| fun values ->
-        let coordinationDay = values.Day + 60
-        let result = { values with Day = coordinationDay } |> SwedishPersonalIdentityNumber.create
-        result =! Error(InvalidDay coordinationDay)
+        testProp "valid month does not return InvalidMonth Error" <| 
+            fun (Gen.ValidValues values, Gen.ValidMonth validMonth) ->
+                let input = { values with Month = validMonth }
+                let result = SwedishPersonalIdentityNumber.create input
+                result <>! (Error(InvalidMonth validMonth))
 
-    testProp [ typeof<InvalidBirthNumberGen> ] "Invalid birthnumber" <| fun values ->
-        let result = values |> SwedishPersonalIdentityNumber.create
-        result =! Error(InvalidBirthNumber values.BirthNumber)
+        testProp "invalid day returns InvalidDay Error" <| fun (Gen.WithInvalidDay input) ->
+            let result = SwedishPersonalIdentityNumber.create input
+            result =! Error(InvalidDayAndCoordinationDay input.Day )
 
-    testProp [ typeof<ValidValuesGen> ]
-        "With all other values valid only 1 out of 10 checksums is valid" <| fun values ->
-        let isValid x =
-            match x with
-            | Ok _ -> true
-            | Error _ -> false
+        testProp "valid day does not return InvalidDay Error" <| fun (Gen.WithValidDay input) ->
+            let result = SwedishPersonalIdentityNumber.create input
+            result <>! Error(InvalidDayAndCoordinationDay input.Day)
+            result <>! Error(InvalidDay input.Day)
+        
+        testProp "invalid birth number returns InvalidBirthNumber Error" <| 
+            fun (Gen.ValidValues validValues, Gen.InvalidBirthNumber invalidBirthnumber) ->
+                let input = { validValues with BirthNumber = invalidBirthnumber }
+                let result = SwedishPersonalIdentityNumber.create input
+                result =! Error(InvalidBirthNumber invalidBirthnumber)
 
-        let results =
-            [ 0..9 ]
-            |> List.map
-                   (fun checksum ->
-                   { values with SwedishPersonalIdentityNumberValues.Checksum = checksum }
-                   |> SwedishPersonalIdentityNumber.create)
+        testPropWithMaxTest 3000 "valid birth number does not return InvalidBirthNumber Error" <|
+            fun (Gen.ValidValues validValues, Gen.ValidBirthNumber validBirthNumber) ->
+                let input = { validValues with BirthNumber = validBirthNumber}
+                let result = SwedishPersonalIdentityNumber.create input
+                result <>! Error(InvalidBirthNumber validBirthNumber)
 
-        let numValid =
-            results
-            |> List.filter isValid
-            |> List.length
-        numValid =! 1
+        testProp "with all other values valid, only 1 of 10 checksums can be valid" <| 
+            fun (Gen.ValidValues values) ->
+                let withChecksum values checksum = { values with SwedishPersonalIdentityNumberValues.Checksum = checksum }
+                let hasInvalidChecksum = function Error(InvalidChecksum _) -> true | _ -> false
+                let numberOfInvalidPins =
+                    [ 0..9 ]
+                    |> List.map (withChecksum values >> SwedishPersonalIdentityNumber.create)
+                    |> List.filter hasInvalidChecksum
+                    |> List.length
+                numberOfInvalidPins =! 9
 
-    testCase "FSharp should have no public constructor" <| fun () ->
-        let typ = typeof<SwedishPersonalIdentityNumber>
-        let numConstructors = typ.GetConstructors(BindingFlags.Public) |> Array.length
-        numConstructors =! 0 ]
+        testProp "Possible coordination-number day" <| fun (Gen.ValidValues values) ->
+            let coordinationDay = values.Day + 60
+            let result = { values with Day = coordinationDay } |> SwedishPersonalIdentityNumber.create
+            result =! Error(InvalidDay coordinationDay)
+
+        testCase "FSharp should have no public constructor" <| fun () ->
+            let typ = typeof<SwedishPersonalIdentityNumber>
+            let numConstructors = typ.GetConstructors(BindingFlags.Public) |> Array.length
+            numConstructors =! 0 ]
