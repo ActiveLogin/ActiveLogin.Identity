@@ -6,12 +6,12 @@ module ActiveLogin.Identity.Swedish.FSharp.Test.SwedishPersonalIdentityNumber_eq
 
 open Swensen.Unquote
 open Expecto
-open ActiveLogin.Identity.Swedish.FSharp
 open FsCheck
 
 let arbTypes = 
     [ typeof<Gen.TwoEqualPinsGen> 
-      typeof<Gen.TwoPinsGen> ]
+      typeof<Gen.TwoPinsGen> 
+      typeof<Gen.ValidPinGen> ]
 
 
 let config = 
@@ -41,15 +41,15 @@ let tests = testList "equality" [
             pin1 <> pin2 ==> lazy 
             pin1 <> pin2 =! true
             pin2 <> pin1 =! true
-    testProp [ typeof<TwoPins> ] "Different pins are not equal using .Equals()" <|
-        fun (pin1: SwedishPersonalIdentityNumber, pin2: SwedishPersonalIdentityNumber) ->
+    testProp "Different pins are not equal using .Equals()" <|
+        fun (Gen.TwoPins (pin1, pin2)) ->
             pin1 <> pin2 ==> lazy
             pin1.Equals(pin2) =! false
             pin2.Equals(pin1) =! false
-    testProp [ typeof<ValidPin> ] "A pin is not equal to null using .Equals()" <|
-        fun (pin:SwedishPersonalIdentityNumber) ->
+    testProp "A pin is not equal to null using .Equals()" <|
+        fun (Gen.ValidPin pin) ->
             pin.Equals(null) =! false
-    testProp [ typeof<ValidPin> ] "A pin is not equal to object null using .Equals()" <|
-        fun (pin: SwedishPersonalIdentityNumber) ->
+    testProp "A pin is not equal to object null using .Equals()" <|
+        fun (Gen.ValidPin pin) ->
             let nullObject = null :> obj
             pin.Equals(nullObject) =! false ]

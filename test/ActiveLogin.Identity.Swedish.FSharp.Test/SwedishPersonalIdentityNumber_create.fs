@@ -14,7 +14,7 @@ open ActiveLogin.Identity.Swedish.FSharp.TestData
 open PinTestHelpers
 
 let arbTypes = 
-    [ typeof<Gen.ValidNumberValuesGen> 
+    [ typeof<Gen.ValidValuesGen> 
       typeof<Gen.InvalidYearGen>
       typeof<Gen.ValidYearGen>
       typeof<Gen.InvalidMonthGen>

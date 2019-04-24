@@ -4,23 +4,20 @@
 /// </remarks>
 module ActiveLogin.Identity.Swedish.FSharp.Test.SwedishPersonalIdentityNumber_hash
 open Expecto
-open Arbitraries
 open Swensen.Unquote
-open ActiveLogin.Identity.Swedish.FSharp
 
-let config = FsCheckConfig.defaultConfig
+let arbTypes = [ typeof<Gen.TwoEqualPinsGen> ]
 
-let addToConfig arbTypes = { config with arbitrary = arbTypes @ config.arbitrary }
 
-let testProp arbTypes name =
-    testPropertyWithConfig (addToConfig arbTypes) name
-let fTestProp arbTypes name = 
-    ftestPropertyWithConfig (addToConfig arbTypes) name
-let pTestProp arbTypes name = 
-    ptestPropertyWithConfig (addToConfig arbTypes) name
+let config = 
+    { FsCheckConfig.defaultConfig with arbitrary = arbTypes @ FsCheckConfig.defaultConfig.arbitrary }
+let testProp name = testPropertyWithConfig config name
+let ftestProp name = ftestPropertyWithConfig config name
+let testPropWithMaxTest maxTest name = testPropertyWithConfig { config with maxTest = maxTest } name
+let ftestPropWithMaxTest maxTest name = ftestPropertyWithConfig { config with maxTest = maxTest } name
 
 [<Tests>]
 let tests = testList "hash" [ 
-    testProp [ typeof<TwoEqualPins> ] "Identical pins have the same hash code" <|
-        fun (pin1: SwedishPersonalIdentityNumber, pin2: SwedishPersonalIdentityNumber) ->
+    testProp "Identical pins have the same hash code" <|
+        fun (Gen.TwoEqualPins (pin1, pin2)) ->
             hash pin1 =! hash pin2 ]
