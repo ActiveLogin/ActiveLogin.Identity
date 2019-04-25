@@ -9,7 +9,8 @@ open PinTestHelpers
 open FsCheck
 
 let arbTypes = 
-    [ typeof<Gen.Valid12DigitGen> ]
+    [ typeof<Gen.Valid12DigitGen> 
+      typeof<Gen.Valid10DigitGen> ]
 
 let config = 
     { FsCheckConfig.defaultConfig with arbitrary = arbTypes @ FsCheckConfig.defaultConfig.arbitrary }
@@ -32,9 +33,9 @@ let tests = testList "parse" [
                 // pin |> Expect.equalPin expected
 
     // this does not include 10 digit strings without delimiter
-    // testProp [ typeof<Valid10Digit> ] "Can parse any valid 10-digit string" <| fun (input, expected) ->
-    //     let pin = input |> SwedishPersonalIdentityNumber.parse
-    //     pin |> Expect.equalPin expected
+    testProp [ typeof<Valid10Digit> ] "Can parse any valid 10-digit string" <| fun (input, expected) ->
+        let pin = input |> SwedishPersonalIdentityNumber.parse
+        pin |> Expect.equalPin expected
 
     // testProp [ typeof<Valid10DigitWithPlusDelimiter> ] 
     //     "Can parse valid 10-digit string with plus delimiter for person the year they turn 100" <| 
