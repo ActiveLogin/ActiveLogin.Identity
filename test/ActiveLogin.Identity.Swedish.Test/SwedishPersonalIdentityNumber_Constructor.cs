@@ -11,10 +11,19 @@ namespace ActiveLogin.Identity.Swedish.Test
     {
         [Theory]
         [InlineData(-1, 01, 01, 239, 2)]
+        [InlineData(1839, 01, 01, 239, 2)]
         [InlineData(int.MaxValue, 01, 01, 239, 2)]
         public void Throws_When_Invalid_Year(int year, int month, int day, int birthNumber, int checksum)
         {
             var ex = Assert.Throws<ArgumentOutOfRangeException>(() => new SwedishPersonalIdentityNumber(year, month, day, birthNumber, checksum));
+            Assert.Contains("Invalid year.", ex.Message);
+        }
+
+        [Fact]
+        public void Throws_WhenYearIsMoreThan199YearsInTheFuture()
+        {
+            var year = DateTime.Now.AddYears(200).Year;
+            var ex = Assert.Throws<ArgumentOutOfRangeException>(() => new SwedishPersonalIdentityNumber(year, 01, 01, 239, 2));
             Assert.Contains("Invalid year.", ex.Message);
         }
 

@@ -59,8 +59,12 @@ module Error =
 type Year = private Year of int
 
 module Year =
+    [<Literal>] 
+    let private MinYear = 1840 // Pins were introduced in 1947 
+    let private maxYear = DateTime.Now.Year + 199
+
     let create year =
-        let isValidYear = year >= DateTime.MinValue.Year && year <= DateTime.MaxValue.Year
+        let isValidYear = year >= MinYear && year <= maxYear
         if isValidYear then
             year
             |> Year
