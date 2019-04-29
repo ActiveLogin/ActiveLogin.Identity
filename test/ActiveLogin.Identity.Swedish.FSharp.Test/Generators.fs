@@ -18,10 +18,10 @@ let stringToValues (pin : string) =
       Checksum = pin.[11..11] |> int }
 
 let valid12Digit = chooseFromArray SwedishPersonalIdentityNumberTestData.raw12DigitStrings
-type Valid12Digit = Valid12Digit of String: string * Expected: SwedishPersonalIdentityNumber
+type Valid12Digit = Valid12Digit of string
 type Valid12DigitGen() =
     static member Gen() : Arbitrary<Valid12Digit> =
-        valid12Digit |> Gen.map (fun str -> (str,  str |> stringToValues |> SwedishPersonalIdentityNumber.createOrFail) |> Valid12Digit) |> Arb.fromGen
+        valid12Digit |> Gen.map Valid12Digit |> Arb.fromGen
 
 type ValidValues = ValidValues of SwedishPersonalIdentityNumberValues
 
@@ -44,6 +44,11 @@ type InvalidYearGen() =
         ||> outsideRange
         |> Gen.map InvalidYear
         |> Arb.fromGen
+
+type Max200 = Max200 of int
+type Max200Gen() =
+    static member Gen() : Arbitrary<Max200> =
+        Gen.choose(-100, 200) |> Gen.map Max200 |> Arb.fromGen
 
 type ValidYear = ValidYear of int
 

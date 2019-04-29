@@ -2,15 +2,14 @@ module ActiveLogin.Identity.Swedish.FSharp.Test.SwedishPersonalIdentityNumber_pa
 
 open Swensen.Unquote
 open Expecto
-open Expecto.Flip
 open ActiveLogin.Identity.Swedish.FSharp
 open ActiveLogin.Identity.Swedish.FSharp.TestData
 open PinTestHelpers
 open FsCheck
 
 let arbTypes = 
-    [ typeof<Gen.Valid12DigitGen> 
-      typeof<Gen.Valid10DigitGen> ]
+    [ typeof<Gen.Valid12DigitGen>
+      typeof<Gen.Max200Gen> ]
 
 let config = 
     { FsCheckConfig.defaultConfig with arbitrary = arbTypes @ FsCheckConfig.defaultConfig.arbitrary }
@@ -21,21 +20,57 @@ let ftestPropWithMaxTest maxTest name = ftestPropertyWithConfig { config with ma
 
 let yearTurning100 = Year.map ((+) 100) 
 
+let tee f x = f x |> ignore; x
+
 type RandomLessThan100() =
     static member RandomLessThan100() : Arbitrary<int> = 
         Gen.choose(1, 99) |> Arb.fromGen
 
 [<Tests>]
 let tests = testList "parse" [ 
-    testProp "Can parse any valid 12-digit string" <| fun (Gen.Valid12Digit (input, expected)) ->
-                let pin = input |> SwedishPersonalIdentityNumber.parse
-                pin =! Ok expected
-                // pin |> Expect.equalPin expected
+    testProp "str |> parse |> to12DigitString = str" <| fun (Gen.Valid12Digit str) ->
+        str
+        |> SwedishPersonalIdentityNumber.parse
+        |> Result.map SwedishPersonalIdentityNumber.to12DigitString = Ok str
+
 
     // this does not include 10 digit strings without delimiter
-    testProp [ typeof<Valid10Digit> ] "Can parse any valid 10-digit string" <| fun (input, expected) ->
-        let pin = input |> SwedishPersonalIdentityNumber.parse
-        pin |> Expect.equalPin expected
+    testProp "str |> parse |> to10DigitString |> parse |> to12DigitString = str" <| fun (Gen.Valid12Digit str) ->
+        str
+        |> SwedishPersonalIdentityNumber.parse
+        |> Result.map SwedishPersonalIdentityNumber.to10DigitString
+        |> Result.bind SwedishPersonalIdentityNumber.parse
+        |> Result.map SwedishPersonalIdentityNumber.to12DigitString = Ok str
+
+    testProp "str |> parse |> to10DigitString |> (remove hyphen delimiter) |> parse |> to12DigitString = str" <| fun (Gen.Valid12Digit str) ->
+        let removeHyphen (str:string) = 
+            if str.[6] = '-' then 
+                str.[0..5] + str.[7..10] 
+            else 
+                str
+        str
+        |> SwedishPersonalIdentityNumber.parse
+        |> Result.map SwedishPersonalIdentityNumber.to10DigitString
+        |> Result.map removeHyphen
+        |> Result.bind SwedishPersonalIdentityNumber.parse
+        |> Result.map SwedishPersonalIdentityNumber.to12DigitString = Ok str
+
+    testPropWithMaxTest 400 "str |> parseInSpecificYear |> to12DigitStringInSpecificYear = str" <| fun (Gen.Valid12Digit str, Gen.Max200 num) -> 
+        let year = str.[0..3] |> int |> (+) num |> Year.createOrFail
+        str
+        |> SwedishPersonalIdentityNumber.parseInSpecificYear year
+        |> Result.map SwedishPersonalIdentityNumber.to12DigitString = Ok str
+
+    testPropWithMaxTest 500 "str |> parseInSpecificYear |> to10DigitStringInSpecificYear |> parseInSpecificYear |> 1012DigitString = str" <| fun (Gen.Valid12Digit str, Gen.Max200 num) -> 
+        let year = str.[0..3] |> int |> (+) -1 |> Year.createOrFail
+        str
+        |> SwedishPersonalIdentityNumber.parseInSpecificYear year
+        |> Result.map (tee (printfn "%s:%A:%A" str year))
+        |> Result.map (SwedishPersonalIdentityNumber.to10DigitStringInSpecificYear year)
+        |> Result.map (tee (printfn "%s:%A:%s" str year))
+        |> Result.bind (SwedishPersonalIdentityNumber.parseInSpecificYear year)
+        |> Result.map (tee (printfn "%s:%A:%A" str year))
+        |> Result.map SwedishPersonalIdentityNumber.to12DigitString =! Ok str
 
     // testProp [ typeof<Valid10DigitWithPlusDelimiter> ] 
     //     "Can parse valid 10-digit string with plus delimiter for person the year they turn 100" <| 
