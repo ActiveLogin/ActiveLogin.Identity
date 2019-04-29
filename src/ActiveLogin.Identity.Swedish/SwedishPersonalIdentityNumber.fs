@@ -27,6 +27,19 @@ let private extractValues (pin : SwedishPersonalIdentityNumber) : SwedishPersona
       BirthNumber = pin.BirthNumber |> BirthNumber.value
       Checksum = pin.Checksum |> Checksum.value }
 
+let private validateSerializationYear (serializationYear: Year) (pinYear: Year) =
+    if serializationYear < pinYear 
+    then 
+        "Serialization cannot be a year before the person was born" 
+        |> ArgumentOutOfRangeException 
+        |> raise 
+
+    if (serializationYear |> Year.value) > ((pinYear |> Year.value) + 199)
+    then 
+        "Serialization cannot be a more than 199 years after the person was born" 
+        |> ArgumentOutOfRangeException 
+        |> raise 
+
 /// <summary>
 /// Converts a SwedishPersonalIdentityNumber to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars. 
 /// </summary>
@@ -38,6 +51,7 @@ let private extractValues (pin : SwedishPersonalIdentityNumber) : SwedishPersona
 /// </param>
 /// <param name="pin">A SwedishPersonalIdentityNumber</param>
 let to10DigitStringInSpecificYear serializationYear (pin : SwedishPersonalIdentityNumber) =
+    validateSerializationYear serializationYear pin.Year
     let delimiter =
         if (serializationYear |> Year.value) - (pin.Year |> Year.value) >= 100 then "+"
         else "-"
