@@ -13,7 +13,7 @@ let parse parseYear =
     let requireNotEmpty str =
         match String.IsNullOrWhiteSpace str with
         | false -> str |> Ok
-        | true when str = null ->
+        | true when isNull str ->
             Null
             |> ArgumentError
             |> Error
