@@ -6,121 +6,144 @@ open ActiveLogin.Identity.Swedish.FSharp
 open ActiveLogin.Identity.Swedish.FSharp.TestData
 open PinTestHelpers
 open FsCheck
+open System
+open System.Threading
 
-let arbTypes = 
+let arbTypes =
     [ typeof<Gen.Valid12DigitGen>
+      typeof<Gen.ValidPinGen>
       typeof<Gen.Max200Gen> ]
 
-let config = 
+let config =
     { FsCheckConfig.defaultConfig with arbitrary = arbTypes @ FsCheckConfig.defaultConfig.arbitrary }
 let testProp name = testPropertyWithConfig config name
 let ftestProp name = ftestPropertyWithConfig config name
 let testPropWithMaxTest maxTest name = testPropertyWithConfig { config with maxTest = maxTest } name
 let ftestPropWithMaxTest maxTest name = ftestPropertyWithConfig { config with maxTest = maxTest } name
 
-let yearTurning100 = Year.map ((+) 100) 
+let yearTurning100 = Year.map ((+) 100)
 
 let tee f x = f x |> ignore; x
 
-type RandomLessThan100() =
-    static member RandomLessThan100() : Arbitrary<int> = 
-        Gen.choose(1, 99) |> Arb.fromGen
+let private rng =
+    // this thread-safe implementation is required to handle running lots of invocations of getRandom in parallel
+    let seedGenerator = Random()
+    let localGenerator = new ThreadLocal<Random>(fun _ ->
+        lock seedGenerator (fun _ ->
+            let seed = seedGenerator.Next()
+            Random()))
+    fun (min, max) -> localGenerator.Value.Next(min, max)
+
+let printableAsciiExcludingPlus = [ 32..42 ] @ [ 44..47 ] @ [ 58..126 ] |> List.map char |> Array.ofList
+let printableAscii = [ 32..47 ] @ [ 58..126 ] |> List.map char |> Array.ofList
+
+let randomFromArray arr =
+    let randomIndex() = (0, arr |> Array.length) |> rng
+    arr.[randomIndex()]
+
+
+let mixWith noiseSource (pin:string) =
+    let chars = [ for c in pin -> c ]
+    let result = ResizeArray<char>()
+    noiseSource |> randomFromArray |> result.Add
+    for char in chars do
+        char |> result.Add
+        noiseSource |> randomFromArray |> result.Add
+    result |> Array.ofSeq |> String
+
+
 
 [<Tests>]
-let tests = testList "parse" [ 
-    testProp "str |> parse |> to12DigitString = str" <| fun (Gen.Valid12Digit str) ->
-        str
-        |> SwedishPersonalIdentityNumber.parse
-        |> Result.map SwedishPersonalIdentityNumber.to12DigitString = Ok str
+let tests = testList "parse" [
+    testProp "roundtrip for 12 digit string" <| fun (Gen.ValidPin pin) ->
+        pin
+        |> SwedishPersonalIdentityNumber.to12DigitString
+        |> SwedishPersonalIdentityNumber.parse = Ok pin
 
+    testProp "roundtrip for 10 digit string with delimiter" <| fun (Gen.ValidPin pin) ->
+        pin
+        |> SwedishPersonalIdentityNumber.to10DigitString
+        |> SwedishPersonalIdentityNumber.parse = Ok pin
 
-    // this does not include 10 digit strings without delimiter
-    testProp "str |> parse |> to10DigitString |> parse |> to12DigitString = str" <| fun (Gen.Valid12Digit str) ->
-        str
-        |> SwedishPersonalIdentityNumber.parse
-        |> Result.map SwedishPersonalIdentityNumber.to10DigitString
-        |> Result.bind SwedishPersonalIdentityNumber.parse
-        |> Result.map SwedishPersonalIdentityNumber.to12DigitString = Ok str
-
-    testProp "str |> parse |> to10DigitString |> (remove hyphen delimiter) |> parse |> to12DigitString = str" <| fun (Gen.Valid12Digit str) ->
-        let removeHyphen (str:string) = 
-            if str.[6] = '-' then 
-                str.[0..5] + str.[7..10] 
-            else 
+    testProp "roundtrip for 10 digit string without hyphen-delimiter" <| fun (Gen.ValidPin pin) ->
+        let removeHyphen (str:string) =
+            if str.[6] = '-' then
+                str.[0..5] + str.[7..10]
+            else
                 str
-        str
-        |> SwedishPersonalIdentityNumber.parse
-        |> Result.map SwedishPersonalIdentityNumber.to10DigitString
-        |> Result.map removeHyphen
-        |> Result.bind SwedishPersonalIdentityNumber.parse
-        |> Result.map SwedishPersonalIdentityNumber.to12DigitString = Ok str
 
-    testPropWithMaxTest 400 "str |> parseInSpecificYear |> to12DigitStringInSpecificYear = str" <| fun (Gen.Valid12Digit str, Gen.Max200 num) -> 
-        let year = str.[0..3] |> int |> (+) num |> Year.createOrFail
-        str
-        |> SwedishPersonalIdentityNumber.parseInSpecificYear year
-        |> Result.map SwedishPersonalIdentityNumber.to12DigitString = Ok str
+        pin
+        |> SwedishPersonalIdentityNumber.to10DigitString
+        |> removeHyphen
+        |> SwedishPersonalIdentityNumber.parse = Ok pin
 
-    testPropWithMaxTest 500 "str |> parseInSpecificYear |> to10DigitStringInSpecificYear |> parseInSpecificYear |> 1012DigitString = str" <| fun (Gen.Valid12Digit str, Gen.Max200 num) -> 
-        let year = str.[0..3] |> int |> (+) -1 |> Year.createOrFail
-        str
-        |> SwedishPersonalIdentityNumber.parseInSpecificYear year
-        |> Result.map (tee (printfn "%s:%A:%A" str year))
-        |> Result.map (SwedishPersonalIdentityNumber.to10DigitStringInSpecificYear year)
-        |> Result.map (tee (printfn "%s:%A:%s" str year))
-        |> Result.bind (SwedishPersonalIdentityNumber.parseInSpecificYear year)
-        |> Result.map (tee (printfn "%s:%A:%A" str year))
-        |> Result.map SwedishPersonalIdentityNumber.to12DigitString =! Ok str
+    testPropWithMaxTest 400 "roundtrip for 10 digit string 'in specific year'" <| fun (Gen.ValidPin pin) ->
+        let offset = rng (0, 199)
+        let year = pin.Year |> Year.map ((+) offset)
 
-    // testProp [ typeof<Valid10DigitWithPlusDelimiter> ] 
-    //     "Can parse valid 10-digit string with plus delimiter for person the year they turn 100" <| 
-    //         fun (input, expected: SwedishPersonalIdentityNumberValues) ->
-    //             let pin = input |> SwedishPersonalIdentityNumber.parseInSpecificYear (yearTurning100 expected)
-    //             pin |> Expect.equalPin expected
+        pin
+        |> SwedishPersonalIdentityNumber.to10DigitStringInSpecificYear year
+        |> SwedishPersonalIdentityNumber.parseInSpecificYear year = Ok pin
 
-    // testProp [ typeof<Valid10DigitStringWithAnyDelimiterExcludingPlus> ] 
-    //     "Cannot correctly parse 10-digit string when person is turning 100 and delimiter is anything else than plus" <| 
+    testPropWithMaxTest 400 "roundtrip for 12 digit string 'in specific year'" <| fun (Gen.ValidPin pin) ->
+        let offset = rng (0, 199)
+        let year = pin.Year |> Year.map ((+) offset)
+
+        pin
+        |> SwedishPersonalIdentityNumber.to12DigitString
+        |> SwedishPersonalIdentityNumber.parseInSpecificYear year = Ok pin
+
+    testProp "roundtrip for 12 digit string with added noise characters" <| fun (Gen.ValidPin pin) ->
+        pin
+        |> SwedishPersonalIdentityNumber.to12DigitString
+        |> mixWith printableAscii
+        |> tee (printfn "with noise: %s")
+        |> SwedishPersonalIdentityNumber.parse = Ok pin
+
+
+    // testProp [ typeof<Valid10DigitStringWithAnyDelimiterExcludingPlus> ]
+    //     "Cannot correctly parse 10-digit string when person is turning 100 and delimiter is anything else than plus" <|
     //         fun (input, expected: SwedishPersonalIdentityNumberValues) ->
     //             let yearTurning100 = yearTurning100 expected
     //             let pin = input |> SwedishPersonalIdentityNumber.parseInSpecificYear yearTurning100
     //             pin |> Expect.isOk "should be ok"
     //             pin |> Result.iter (fun p -> p.Year |> Year.value <>! expected.Year)
 
-    // testProp [ typeof<Valid10DigitWithPlusDelimiter>; typeof<RandomLessThan100> ] 
-    //     "Cannot correctly parse 10-digit string with plus delimiter when parseYear is before person turned 100" <| 
+    // testProp [ typeof<Valid10DigitWithPlusDelimiter>; typeof<RandomLessThan100> ]
+    //     "Cannot correctly parse 10-digit string with plus delimiter when parseYear is before person turned 100" <|
     //         fun ((input, expected: SwedishPersonalIdentityNumberValues), lessThan100) ->
-    //             let yearWhenNotTurned100 = 
-    //                 expected.Year - lessThan100 
-    //                 |> Year.create 
-    //                 |> function 
-    //                 | Ok y -> y 
+    //             let yearWhenNotTurned100 =
+    //                 expected.Year - lessThan100
+    //                 |> Year.create
+    //                 |> function
+    //                 | Ok y -> y
     //                 | Error _ -> failwith "test setup error"
     //             let pin = input |> SwedishPersonalIdentityNumber.parseInSpecificYear yearWhenNotTurned100
     //             pin |> Expect.isOk "should be ok"
     //             pin |> Result.iter (fun p -> p.Year |> Year.value <>! expected.Year)
 
-    // testProp [ typeof<Valid12DigitStringWithAnyDelimiter> ] "Can parse 12-digit string with any delimiter" <| 
+    // testProp [ typeof<Valid12DigitStringWithAnyDelimiter> ] "Can parse 12-digit string with any delimiter" <|
     //     fun (input, expected) ->
     //         let pin = input |> SwedishPersonalIdentityNumber.parse
     //         pin |> Expect.equalPin expected
 
-    // testProp [ typeof<Valid10DigitStringWithAnyDelimiterExcludingPlus> ] 
+    // testProp [ typeof<Valid10DigitStringWithAnyDelimiterExcludingPlus> ]
     //     "Can parse 10-digit string for person < 100 years of age with any delimiter as long as it is not plus" <|
     //         fun (input, expected) ->
     //             let pin = input |> SwedishPersonalIdentityNumber.parse
     //             pin |> Expect.equalPin expected
 
-    // testProp [ typeof<Valid12DigitStringMixedWithCharacters> ] 
-    //     "Can parse valid 12 digit string even if it has leading-, trailing- and characters mixed into it" <| 
+    // testProp [ typeof<Valid12DigitStringMixedWithCharacters> ]
+    //     "Can parse valid 12 digit string even if it has leading-, trailing- and characters mixed into it" <|
     //         fun (input, expected) ->
     //             let pin = input |> SwedishPersonalIdentityNumber.parse
     //             pin |> Expect.equalPin expected
 
-    // testProp [ typeof<Valid10DigitStringMixedWithCharacters> ] 
-    //     "Can parse valid 10 digit string even if it has leading-, trailing- and characters mixed into it" <| 
+    // testProp [ typeof<Valid10DigitStringMixedWithCharacters> ]
+    //     "Can parse valid 10 digit string even if it has leading-, trailing- and characters mixed into it" <|
     //         fun (input, expected) ->
     //             let pin = input |> SwedishPersonalIdentityNumber.parse
-    //             pin |> Expect.equalPin expected 
+    //             pin |> Expect.equalPin expected
     // testProp [ typeof<EmptyOrWhitespaceString> ] "Parse with empty or whitespace string returns error" <| fun input ->
     //     let result = SwedishPersonalIdentityNumber.parse input
     //     result =! (Empty |> ParsingError |> Error)
