@@ -10,6 +10,25 @@ let chooseFromArray xs =
     gen { let! index = Gen.choose (0, (Array.length xs) - 1)
           return xs.[index] }
 
+type Whitespace = Whitespace of string
+type WhitespaceGen() =
+    static member Gen() : Arbitrary<Whitespace> =
+        Gen.sized(fun s -> Gen.choose(0,s) |> Gen.map (fun length -> String.replicate length " "))
+        |> Gen.map Whitespace |> Arb.fromGen
+
+type Max200 = Max200 of int
+type Max200Gen() =
+    static member Gen() : Arbitrary<Max200> =
+        Gen.choose(-100, 200) |> Gen.map Max200 |> Arb.fromGen
+
+let digits =
+    let digit = Gen.choose(0,9) |> Gen.map (sprintf "%i")
+    Gen.listOf digit |> Gen.map (String.concat "")
+type Digits = Digits of string
+type DigitsGen() =
+    static member Gen() : Arbitrary<Digits> =
+        digits |> Gen.map Digits |> Arb.fromGen
+
 let stringToValues (pin : string) =
     { Year = pin.[0..3] |> int
       Month = pin.[4..5] |> int
@@ -26,7 +45,7 @@ type Valid12DigitGen() =
 type ValidValues = ValidValues of SwedishPersonalIdentityNumberValues
 
 let validValues =
-    valid12Digit |> Gen.map (stringToValues >> ValidValues) 
+    valid12Digit |> Gen.map (stringToValues >> ValidValues)
 
 type ValidValuesGen() =
     static member Gen() : Arbitrary<ValidValues> = validValues |> Arb.fromGen
@@ -45,16 +64,12 @@ type InvalidYearGen() =
         |> Gen.map InvalidYear
         |> Arb.fromGen
 
-type Max200 = Max200 of int
-type Max200Gen() =
-    static member Gen() : Arbitrary<Max200> =
-        Gen.choose(-100, 200) |> Gen.map Max200 |> Arb.fromGen
-
+let validYear = Gen.choose (1, 9999)
 type ValidYear = ValidYear of int
 
 type ValidYearGen() =
     static member Gen() : Arbitrary<ValidYear> =
-        Gen.choose (1, 9999)
+        validYear
         |> Gen.map ValidYear
         |> Arb.fromGen
 
@@ -159,3 +174,34 @@ type ValidPinGen() =
                |> SwedishPersonalIdentityNumber.createOrFail
                |> ValidPin)
         |> Arb.fromGen
+
+type InvalidPinString = InvalidPinString of string
+
+type InvalidPinStringGen() =
+    static member Gen() : Arbitrary<InvalidPinString> =
+            gen {
+                let! valid = valid12Digit
+                let withInvalidMonth =
+                    gen {
+                        let! month = Gen.choose(13,99) |> Gen.map (sprintf "%i")
+                        return valid.[ 0..3 ] + month + valid.[ 6.. ]
+                    }
+
+                let withInvalidDay =
+                    gen {
+                        let! day = Gen.choose(32, 99) |> Gen.map (sprintf "%i")
+                        return valid.[ 0..5 ] + day + valid.[ 8.. ]
+                    }
+                let withInvalidBirthNumber =
+                    gen {
+                        return valid.[ 0..7 ] + "000" + valid.[ 11.. ]
+                    }
+                let withInvalidChecksum =
+                    let checksum = valid.[ 11.. ]
+                    let invalid =
+                        match checksum with
+                        | "9" -> "0"
+                        | x -> x |> int |> (+) 1 |> sprintf "%i"
+                    valid.[ 0..10 ] + invalid
+                return! Gen.oneof [ withInvalidMonth; withInvalidDay; withInvalidBirthNumber ]
+            } |> Gen.map InvalidPinString |> Arb.fromGen

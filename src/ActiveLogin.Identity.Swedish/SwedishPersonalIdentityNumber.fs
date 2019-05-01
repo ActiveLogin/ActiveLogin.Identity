@@ -100,7 +100,7 @@ let internal toParsingError err =
     | InvalidChecksum c ->
         c |> invalidWithMsg "Invalid checksum:"
     | ParsingError err -> ParsingError err
-    | ArgumentError err -> ArgumentError err
+    | ArgumentNullError -> ArgumentNullError
     | InvalidSerializationYear msg -> InvalidSerializationYear msg
 
 /// <summary>

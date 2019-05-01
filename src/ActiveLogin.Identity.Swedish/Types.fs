@@ -3,9 +3,6 @@ module ActiveLogin.Identity.Swedish.FSharp.Types
 
 open System
 
-type ArgumentError =
-    | Null
-
 type ParsingError =
     | Empty
     | Length
@@ -18,7 +15,7 @@ type Error =
     | InvalidDay of int
     | InvalidBirthNumber of int
     | InvalidChecksum of int
-    | ArgumentError of ArgumentError
+    | ArgumentNullError
     | ParsingError of ParsingError
     | InvalidSerializationYear of string
 
@@ -40,11 +37,9 @@ module Error =
                 raise
                     (ArgumentOutOfRangeException("birthNumber", s, "Invalid birth number. Must be in the range 0 to 999."))
             | InvalidChecksum _ -> raise (ArgumentException("Invalid checksum.", "checksum"))
-            | ArgumentError a ->
-                match a with
-                | Null ->
-                    raise
-                        (ArgumentNullException("personalIdentityNumber"))
+            | ArgumentNullError ->
+                raise
+                    (ArgumentNullException("personalIdentityNumber"))
             | ParsingError p ->
                 match p with
                 | Empty ->

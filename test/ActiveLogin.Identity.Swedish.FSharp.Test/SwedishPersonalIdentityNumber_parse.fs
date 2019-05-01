@@ -12,7 +12,11 @@ open System.Threading
 let arbTypes =
     [ typeof<Gen.Valid12DigitGen>
       typeof<Gen.ValidPinGen>
-      typeof<Gen.Max200Gen> ]
+      typeof<Gen.Max200Gen>
+      typeof<Gen.WhitespaceGen>
+      typeof<Gen.ValidYearGen>
+      typeof<Gen.DigitsGen>
+      typeof<Gen.InvalidPinStringGen> ]
 
 let config =
     { FsCheckConfig.defaultConfig with arbitrary = arbTypes @ FsCheckConfig.defaultConfig.arbitrary }
@@ -58,27 +62,25 @@ let tests = testList "parse" [
     testProp "roundtrip for 12 digit string" <| fun (Gen.ValidPin pin) ->
         pin
         |> SwedishPersonalIdentityNumber.to12DigitString
-        |> SwedishPersonalIdentityNumber.parse = Ok pin
+        |> SwedishPersonalIdentityNumber.parse =! Ok pin
 
     testProp "roundtrip for 10 digit string with delimiter" <| fun (Gen.ValidPin pin) ->
         pin
         |> SwedishPersonalIdentityNumber.to10DigitString
-        |> SwedishPersonalIdentityNumber.parse = Ok pin
+        |> SwedishPersonalIdentityNumber.parse =! Ok pin
 
     testProp "roundtrip for 10 digit string without hyphen-delimiter" <| fun (Gen.ValidPin pin) ->
         let removeHyphen (str:string) =
-            if str.[6] = '-' then
-                str.[0..5] + str.[7..10]
-            else
-                str
+            if str.[6] = '-' then str.[0..5] + str.[7..10]
+            else str
 
         pin
         |> SwedishPersonalIdentityNumber.to10DigitString
         |> removeHyphen
-        |> SwedishPersonalIdentityNumber.parse = Ok pin
+        |> SwedishPersonalIdentityNumber.parse =! Ok pin
 
     testPropWithMaxTest 400 "roundtrip for 10 digit string 'in specific year'" <| fun (Gen.ValidPin pin) ->
-        let offset = rng (0, 199)
+        let offset = rng (0, 200)
         let year = pin.Year |> Year.map ((+) offset)
 
         pin
@@ -86,192 +88,54 @@ let tests = testList "parse" [
         |> SwedishPersonalIdentityNumber.parseInSpecificYear year = Ok pin
 
     testPropWithMaxTest 400 "roundtrip for 12 digit string 'in specific year'" <| fun (Gen.ValidPin pin) ->
-        let offset = rng (0, 199)
+        let offset = rng (0, 200)
         let year = pin.Year |> Year.map ((+) offset)
 
         pin
         |> SwedishPersonalIdentityNumber.to12DigitString
-        |> SwedishPersonalIdentityNumber.parseInSpecificYear year = Ok pin
+        |> SwedishPersonalIdentityNumber.parseInSpecificYear year =! Ok pin
 
-    testProp "roundtrip for 12 digit string with added noise characters" <| fun (Gen.ValidPin pin) ->
+    testProp "roundtrip for 12 digit string mixed with random characters" <| fun (Gen.ValidPin pin) ->
         pin
         |> SwedishPersonalIdentityNumber.to12DigitString
         |> mixWith printableAscii
-        |> tee (printfn "with noise: %s")
-        |> SwedishPersonalIdentityNumber.parse = Ok pin
+        |> SwedishPersonalIdentityNumber.parse =! Ok pin
 
+    testProp "roundtrip for 10 digit string mixed with random characters except plus" <| fun (Gen.ValidPin pin) ->
+        pin
+        |> SwedishPersonalIdentityNumber.to10DigitString
+        |> mixWith printableAsciiExcludingPlus
+        |> SwedishPersonalIdentityNumber.parse =! Ok pin
 
-    // testProp [ typeof<Valid10DigitStringWithAnyDelimiterExcludingPlus> ]
-    //     "Cannot correctly parse 10-digit string when person is turning 100 and delimiter is anything else than plus" <|
-    //         fun (input, expected: SwedishPersonalIdentityNumberValues) ->
-    //             let yearTurning100 = yearTurning100 expected
-    //             let pin = input |> SwedishPersonalIdentityNumber.parseInSpecificYear yearTurning100
-    //             pin |> Expect.isOk "should be ok"
-    //             pin |> Result.iter (fun p -> p.Year |> Year.value <>! expected.Year)
+    testProp "parse with empty string returns parsing error" <| fun (Gen.Whitespace str) ->
+        str
+        |> SwedishPersonalIdentityNumber.parse =! Error (ParsingError Empty)
 
-    // testProp [ typeof<Valid10DigitWithPlusDelimiter>; typeof<RandomLessThan100> ]
-    //     "Cannot correctly parse 10-digit string with plus delimiter when parseYear is before person turned 100" <|
-    //         fun ((input, expected: SwedishPersonalIdentityNumberValues), lessThan100) ->
-    //             let yearWhenNotTurned100 =
-    //                 expected.Year - lessThan100
-    //                 |> Year.create
-    //                 |> function
-    //                 | Ok y -> y
-    //                 | Error _ -> failwith "test setup error"
-    //             let pin = input |> SwedishPersonalIdentityNumber.parseInSpecificYear yearWhenNotTurned100
-    //             pin |> Expect.isOk "should be ok"
-    //             pin |> Result.iter (fun p -> p.Year |> Year.value <>! expected.Year)
+    test "parse null string returns argument null error" {
+        null
+        |> SwedishPersonalIdentityNumber.parse =! Error ArgumentNullError
+    }
 
-    // testProp [ typeof<Valid12DigitStringWithAnyDelimiter> ] "Can parse 12-digit string with any delimiter" <|
-    //     fun (input, expected) ->
-    //         let pin = input |> SwedishPersonalIdentityNumber.parse
-    //         pin |> Expect.equalPin expected
+    testProp "parseInSpecificYear with empty string returns parsing error" <| fun (Gen.Whitespace str, Gen.ValidYear year) ->
+        let y = Year.createOrFail year
+        str
+        |> SwedishPersonalIdentityNumber.parseInSpecificYear y =! Error (ParsingError Empty)
 
-    // testProp [ typeof<Valid10DigitStringWithAnyDelimiterExcludingPlus> ]
-    //     "Can parse 10-digit string for person < 100 years of age with any delimiter as long as it is not plus" <|
-    //         fun (input, expected) ->
-    //             let pin = input |> SwedishPersonalIdentityNumber.parse
-    //             pin |> Expect.equalPin expected
+    testProp "parseInSpecificYear null string returns argument null error" <| fun (Gen.ValidYear year) ->
+        let y = Year.createOrFail year
+        null
+        |> SwedishPersonalIdentityNumber.parseInSpecificYear y =! Error ArgumentNullError
 
-    // testProp [ typeof<Valid12DigitStringMixedWithCharacters> ]
-    //     "Can parse valid 12 digit string even if it has leading-, trailing- and characters mixed into it" <|
-    //         fun (input, expected) ->
-    //             let pin = input |> SwedishPersonalIdentityNumber.parse
-    //             pin |> Expect.equalPin expected
+    testProp "invalid number of digits returns parsing error" <| fun (Gen.Digits digits) ->
+        (not (isNull digits) && digits.Length > 0 && digits.Length <> 10 && digits.Length <> 12) ==>
+            lazy (digits
+                  |> SwedishPersonalIdentityNumber.parse =! Error (ParsingError Length))
 
-    // testProp [ typeof<Valid10DigitStringMixedWithCharacters> ]
-    //     "Can parse valid 10 digit string even if it has leading-, trailing- and characters mixed into it" <|
-    //         fun (input, expected) ->
-    //             let pin = input |> SwedishPersonalIdentityNumber.parse
-    //             pin |> Expect.equalPin expected
-    // testProp [ typeof<EmptyOrWhitespaceString> ] "Parse with empty or whitespace string returns error" <| fun input ->
-    //     let result = SwedishPersonalIdentityNumber.parse input
-    //     result =! (Empty |> ParsingError |> Error)
+    testProp "invalid pin returns parsing error" <| fun (Gen.InvalidPinString str) ->
+        let result =
+            str
+            |> SwedishPersonalIdentityNumber.parse
+        match result with
+        | Error (ParsingError (Invalid _)) -> true
+        | _ -> failwith "Did not return expected error"
     ]
-
-        // [Fact]
-        // public void Same_Number_Will_Use_Different_Delimiter_When_Parsed_On_Or_After_Person_Turns_100()
-        // {
-        //     var withHyphen = "120211-9986";
-        //     var withPlus = "120211+9986";
-
-        //     var pinBeforeTurning100 = SwedishPersonalIdentityNumber.ParseInSpecificYear(withHyphen, 2011);
-        //     var pinOnYearTurning100 = SwedishPersonalIdentityNumber.ParseInSpecificYear(withPlus, 2012);
-        //     var pinAfterTurning100 = SwedishPersonalIdentityNumber.ParseInSpecificYear(withPlus, 2013);
-
-        //     var expected = new SwedishPersonalIdentityNumber(1912, 02, 11, 998, 6);
-        //     Assert.Equal(expected, pinBeforeTurning100);
-        //     Assert.Equal(expected, pinOnYearTurning100);
-        //     Assert.Equal(expected, pinAfterTurning100);
-        // }
-
-
-
-
-
-        // [Fact]
-        // public void Parse_Throws_FormatException_When_Empty_String()
-        // {
-        //     var ex = Assert.Throws<FormatException>(() => SwedishPersonalIdentityNumber.Parse(""));
-
-        //     Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
-        //     Assert.Contains("Cannot be empty string or whitespace", ex.Message);
-        // }
-
-        // [Fact]
-        // public void Parse_Throws_ArgumentException_When_Whitespace_String()
-        // {
-        //     var ex = Assert.Throws<FormatException>(() => SwedishPersonalIdentityNumber.Parse(" "));
-
-        //     Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
-        //     Assert.Contains("Cannot be empty string or whitespace", ex.Message);
-        // }
-
-        // [Fact]
-        // public void Parse_Throws_ArgumentNullException_When_Null()
-        // {
-        //     var ex = Assert.Throws<ArgumentNullException>(() => SwedishPersonalIdentityNumber.Parse(null));
-
-        //     Assert.Contains("personalIdentityNumber", ex.Message);
-        // }
-
-        // [Fact]
-        // public void ParseInSpecificYear_Throws_FormatException_When_Empty_String()
-        // {
-        //     var ex = Assert.Throws<FormatException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear("", 2018));
-
-        //     Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
-        //     Assert.Contains("Cannot be empty string or whitespace", ex.Message);
-        // }
-
-        // [Fact]
-        // public void ParseInSpecificYear_Throws_FormatException_When_Whitespace_String()
-        // {
-        //     var ex = Assert.Throws<FormatException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(" ", 2018));
-
-        //     Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
-        //     Assert.Contains("Cannot be empty string or whitespace", ex.Message);
-        // }
-
-        // [Fact]
-        // public void ParseInSpecificYear_Throws_ArgumentNullException_When_Null()
-        // {
-        //     var ex = Assert.Throws<ArgumentNullException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(null, 2018));
-
-        //     Assert.Contains("personalIdentityNumber", ex.Message);
-        // }
-
-        // [Theory]
-        // [InlineData("99-09-13+980-1", "189909139801")]
-        // [InlineData("18-99-09-13-980-1", "189909139801")]
-        // [InlineData("99.09.13-+980.1", "189909139801")]
-        // [InlineData("18.99.09.13.980.1", "189909139801")]
-        // [InlineData("1899-09-13-980-1", "189909139801")]
-        // [InlineData("18 99 09 13 980 1", "189909139801")]
-        // [InlineData("18A99B09C13D980E1", "189909139801")]
-        // [InlineData("+18990913+9801+", "189909139801")]
-        // [InlineData("ABC189909139801ABC", "189909139801")]
-        // [InlineData("\"18\"\"99\"09\"13\"980\"1", "189909139801")]
-        // [InlineData("**18*99***09*13*980**1*", "189909139801")]
-        // [InlineData("\\18//99/;09\n13\t980\r1\n\r", "189909139801")]
-        // [InlineData("ü18ü99ù09ę13é980á1ö", "189909139801")]
-        // [InlineData("18----------------------------------------------------------------99-09-13-980-1", "189909139801")]
-        // [InlineData("18--DROP TABLE USERS; 99-09-13-980-1", "189909139801")]
-        // [InlineData("9909+13+9801", "189909139801")]
-        // [InlineData("189909+13+9801", "189909139801")]
-        // [InlineData("18+99+09+13+9801", "189909139801")]
-        // [InlineData("18+99+09+13+98+01", "189909139801")]
-        // [InlineData("1+8+9+9+0+9+1+3+9+8+0+1", "189909139801")]
-        // [InlineData("19990807+2391", "199908072391")]
-        // [InlineData("990807+2391", "189908072391")]
-        // [InlineData("990913�9801", "199909139801")]
-        // [InlineData("19990913�9801", "199909139801")]
-        // [InlineData("990913_9801", "199909139801")]
-        // [InlineData("19990913_9801", "199909139801")]
-        // [InlineData("990913.9801", "199909139801")]
-        // [InlineData("19990913.9801", "199909139801")]
-        // public void Parses_When_Contains_Chars(string personalIdentityNumberString, string expectedPersonalIdentityNumberString)
-        // {
-        //     var personalIdentityNumber = SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018);
-        //     Assert.Equal(expectedPersonalIdentityNumberString, personalIdentityNumber.To12DigitString());
-        // }
-
-        // [Theory]
-        // [InlineData("123")]
-        // [InlineData("12345678901")]
-        // [InlineData("1234567890123")]
-        // public void Throws_FormatException_When_Invalid_Number_Of_Digits(string personalIdentityNumberString)
-        // {
-        //     var ex = Assert.Throws<FormatException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018));
-        //     Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
-        // }
-
-        // [Theory]
-        // // [InlineData("199913139801")]
-        // // [InlineData("199909139802")]
-        // [InlineData("199909329801")]
-        // public void Throws_FormatException_When_Invalid_Pin(string personalIdentityNumberString)
-        // {
-        //     var ex = Assert.Throws<FormatException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(personalIdentityNumberString, 2018));
-        //     Assert.Contains(InvalidSwedishPersonalIdentityNumberErrorMessage, ex.Message);
-        // }
