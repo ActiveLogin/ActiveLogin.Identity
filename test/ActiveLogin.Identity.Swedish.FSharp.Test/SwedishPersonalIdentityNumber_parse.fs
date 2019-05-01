@@ -67,7 +67,7 @@ let tests = testList "parse" [
     testProp "roundtrip for 10 digit string with delimiter" <| fun (Gen.ValidPin pin) ->
         pin
         |> SwedishPersonalIdentityNumber.to10DigitString
-        |> SwedishPersonalIdentityNumber.parse =! Ok pin
+        |> Result.bind SwedishPersonalIdentityNumber.parse =! Ok pin
 
     testProp "roundtrip for 10 digit string without hyphen-delimiter" <| fun (Gen.ValidPin pin) ->
         let removeHyphen (str:string) =
@@ -76,8 +76,8 @@ let tests = testList "parse" [
 
         pin
         |> SwedishPersonalIdentityNumber.to10DigitString
-        |> removeHyphen
-        |> SwedishPersonalIdentityNumber.parse =! Ok pin
+        |> Result.map removeHyphen
+        |> Result.bind SwedishPersonalIdentityNumber.parse =! Ok pin
 
     testPropWithMaxTest 400 "roundtrip for 10 digit string 'in specific year'" <| fun (Gen.ValidPin pin) ->
         let offset = rng (0, 200)
@@ -85,7 +85,7 @@ let tests = testList "parse" [
 
         pin
         |> SwedishPersonalIdentityNumber.to10DigitStringInSpecificYear year
-        |> SwedishPersonalIdentityNumber.parseInSpecificYear year = Ok pin
+        |> Result.bind (SwedishPersonalIdentityNumber.parseInSpecificYear year) = Ok pin
 
     testPropWithMaxTest 400 "roundtrip for 12 digit string 'in specific year'" <| fun (Gen.ValidPin pin) ->
         let offset = rng (0, 200)
@@ -104,8 +104,8 @@ let tests = testList "parse" [
     testProp "roundtrip for 10 digit string mixed with random characters except plus" <| fun (Gen.ValidPin pin) ->
         pin
         |> SwedishPersonalIdentityNumber.to10DigitString
-        |> mixWith printableAsciiExcludingPlus
-        |> SwedishPersonalIdentityNumber.parse =! Ok pin
+        |> Result.map (mixWith printableAsciiExcludingPlus)
+        |> Result.bind SwedishPersonalIdentityNumber.parse =! Ok pin
 
     testProp "parse with empty string returns parsing error" <| fun (Gen.Whitespace str) ->
         str
