@@ -20,13 +20,14 @@ type Error =
     | InvalidChecksum of int
     | ArgumentError of ArgumentError
     | ParsingError of ParsingError
+    | InvalidSerializationYear of string
 
 module Error =
     /// This function will raise the most fitting Exceptions for the Error type provided.
     let handle result =
         match result with
-        | Ok res -> res 
-        | Error e -> 
+        | Ok res -> res
+        | Error e ->
             match e with
             | InvalidYear y -> raise (ArgumentOutOfRangeException("year", y, "Invalid year."))
             | InvalidMonth m ->
@@ -44,7 +45,7 @@ module Error =
                 | Null ->
                     raise
                         (ArgumentNullException("personalIdentityNumber"))
-            | ParsingError p -> 
+            | ParsingError p ->
                 match p with
                 | Empty ->
                     raise
@@ -55,6 +56,7 @@ module Error =
                 | Invalid msg ->
                     raise
                         (FormatException(sprintf "String was not recognized as a valid SwedishPersonalIdentityNumber. %s" msg))
+            | InvalidSerializationYear msg -> raise (ArgumentOutOfRangeException msg)
 
 type Year = private Year of int
 
@@ -168,7 +170,7 @@ module Checksum =
 /// Represents a Swedish Personal Identity Number (Svenskt Personnummer).
 /// https://en.wikipedia.org/wiki/Personal_identity_number_(Sweden)
 /// https://sv.wikipedia.org/wiki/Personnummer_i_Sverige
-type SwedishPersonalIdentityNumber = 
+type SwedishPersonalIdentityNumber =
     { /// The year for date of birth.
       Year : Year
       /// The month for date of birth.

@@ -14,7 +14,7 @@ let parseAndPrintPersonalIdentityNumber str =
     let print10DigitString pin =
         pin
         |> SwedishPersonalIdentityNumber.to10DigitString
-        |> printfn "SwedishPersonalIdentityNumber.to10DigitString: %s"
+        |> printfn "SwedishPersonalIdentityNumber.to10DigitString: %A"
 
     let print12DigitString pin =
         pin
@@ -34,7 +34,7 @@ let parseAndPrintPersonalIdentityNumber str =
     let printGenderHint pin =
         let gender = pin |> SwedishPersonalIdentityNumber.Hints.getGenderHint
         gender.ToString() |> printfn "SwedishPersonalIdentityNumber.Hints.getGenderHint: %s"
-    
+
     let printIsTestNumber pin =
         // isTestNumber is an extension from the package ActiveLogin.Identity.Swedish.FSharp.TestData
         pin
@@ -65,7 +65,7 @@ let main argv =
     printfn "Here is a valid 10 digit string that can be used for testing:\n----------------------"
     SwedishPersonalIdentityNumberTestData.getRandom()
     |> SwedishPersonalIdentityNumber.to10DigitString
-    |> printfn "%s"
+    |> printfn "%A"
     printf "\n\n"
 
     printfn "Here is a valid 12 digit string that can be used for testing:\n----------------------"
