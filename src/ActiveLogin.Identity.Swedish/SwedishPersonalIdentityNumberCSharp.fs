@@ -26,7 +26,7 @@ type SwedishPersonalIdentityNumberCSharp private(pin : SwedishPersonalIdentityNu
     /// <exception cref="ArgumentOutOfRangeException">Thrown when any of the range arguments is invalid.</exception>
     /// <exception cref="ArgumentException">Thrown when checksum is invalid.</exception>
     new(year, month, day, birthNumber, checksum) =
-        let pin = 
+        let pin =
             create { Year = year
                      Month = month
                      Day = day
@@ -138,13 +138,13 @@ type SwedishPersonalIdentityNumberCSharp private(pin : SwedishPersonalIdentityNu
     member __.To10DigitStringInSpecificYear(serializationYear : int) =
         match serializationYear |> Year.create with
         | Error _ -> raise (ArgumentOutOfRangeException("year", serializationYear, "Invalid year."))
-        | Ok year -> to10DigitStringInSpecificYear year identityNumber
+        | Ok year -> to10DigitStringInSpecificYear year identityNumber |> Error.handle
 
     /// <summary>
     /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent short string representation.
     /// Format is YYMMDDXBBBC, for example <example>990807-2391</example> or <example>120211+9986</example>.
     /// </summary>
-    member __.To10DigitString() = to10DigitString identityNumber
+    member __.To10DigitString() = to10DigitString identityNumber |> Error.handle
 
     /// <summary>
     /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent 12 digit string representation.
