@@ -137,6 +137,9 @@ module BirthNumber =
 
     let value (BirthNumber num) = num
 
+type BirthNumber with
+    member this.Value = BirthNumber.value this
+
 type Checksum = private Checksum of int
 
 module Checksum =

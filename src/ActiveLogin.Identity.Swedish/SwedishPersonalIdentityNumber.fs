@@ -135,7 +135,7 @@ module Hints =
     /// </summary>
     /// <param name="pin">A SwedishPersonalIdentityNumber</param>
     let getDateOfBirthHint (pin : SwedishPersonalIdentityNumber) =
-        DateTime(pin.Year |> Year.value, pin.Month |> Month.value, pin.Day |> Day.value, 0, 0, 0, DateTimeKind.Utc)
+        DateTime(pin.Year.Value, pin.Month.Value, pin.Day.Value, 0, 0, 0, DateTimeKind.Utc)
 
     /// <summary>
     /// Get the age of the person according to the date in the personal identity number.
