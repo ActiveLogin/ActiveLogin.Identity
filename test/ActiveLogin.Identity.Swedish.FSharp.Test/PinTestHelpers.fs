@@ -3,24 +3,26 @@ open ActiveLogin.Identity.Swedish.FSharp
 open ActiveLogin.Identity.Swedish.FSharp.TestData
 open Swensen.Unquote
 open Expecto.Flip
+open System
+open System.Threading
 
 
-let quickParseR (str:string) = 
-    let values = 
+let quickParseR (str:string) =
+    let values =
         { Year = str.[ 0..3 ] |> int
-          Month = str.[ 4..5 ] |> int 
+          Month = str.[ 4..5 ] |> int
           Day = str.[ 6..7 ] |> int
           BirthNumber = str.[ 8..10 ] |> int
           Checksum = str.[ 11..11 ] |> int }
     SwedishPersonalIdentityNumber.create values
 
-let quickParse str = 
-    match quickParseR str with 
-    | Ok p -> p 
+let quickParse str =
+    match quickParseR str with
+    | Ok p -> p
     | Error e -> e.ToString() |> failwithf "Test setup error %s"
 
 let pinToValues (pin:SwedishPersonalIdentityNumber) =
-    { Year = pin.Year |> Year.value 
+    { Year = pin.Year |> Year.value
       Month = pin.Month |> Month.value
       Day = pin.Day |> Day.value
       BirthNumber = pin.BirthNumber |> BirthNumber.value
@@ -39,11 +41,11 @@ module Expect =
             pin.Checksum |> Checksum.value =! expected.Checksum
 
 module Result =
-    let iter f res = 
+    let iter f res =
         match res with
         | Ok r -> f r
         | Error e -> ()
-    
+
     let OkValue =
         function
         | Ok value -> value
@@ -59,3 +61,16 @@ module Year =
     let createOrFail = Year.create >> Result.OkValue
     let map f y = y |> Year.value |> f |> createOrFail
 
+type Rng =
+    { Next: int * int -> int
+      NextDouble: unit -> float }
+let rng =
+
+    // this thread-safe implementation is required to handle running lots of invocations of getRandom in parallel
+    let seedGenerator = Random()
+    let localGenerator = new ThreadLocal<Random>(fun _ ->
+        lock seedGenerator (fun _ ->
+            let seed = seedGenerator.Next()
+            Random()))
+    { Next = fun (min, max) -> localGenerator.Value.Next(min, max)
+      NextDouble = localGenerator.Value.NextDouble }

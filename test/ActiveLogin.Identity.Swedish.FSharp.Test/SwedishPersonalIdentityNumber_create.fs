@@ -6,7 +6,6 @@ module ActiveLogin.Identity.Swedish.FSharp.Test.SwedishPersonalIdentityNumber_cr
 
 open Swensen.Unquote
 open Expecto
-open Expecto.Flip
 open FsCheck
 open ActiveLogin.Identity.Swedish.FSharp
 open System.Reflection
@@ -35,7 +34,7 @@ let ftestPropWithMaxTest maxTest name = ftestPropertyWithConfig { config with ma
 [<Tests>]
 let tests =
     testList "create" [
-        testProp "str |> create |> to12DigitString = str" <| fun (Gen.Valid12Digit str) ->
+        testProp "roundtrip 12DigitString -> create -> to12DigitString" <| fun (Gen.Valid12Digit str) ->
             str
             |> Gen.stringToValues
             |> SwedishPersonalIdentityNumber.create

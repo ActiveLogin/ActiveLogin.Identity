@@ -7,7 +7,6 @@ open ActiveLogin.Identity.Swedish.FSharp.TestData
 open PinTestHelpers
 open FsCheck
 open System
-open System.Threading
 
 let arbTypes =
     [ typeof<Gen.Valid12DigitGen>
@@ -29,20 +28,11 @@ let yearTurning100 = Year.map ((+) 100)
 
 let tee f x = f x |> ignore; x
 
-let private rng =
-    // this thread-safe implementation is required to handle running lots of invocations of getRandom in parallel
-    let seedGenerator = Random()
-    let localGenerator = new ThreadLocal<Random>(fun _ ->
-        lock seedGenerator (fun _ ->
-            let seed = seedGenerator.Next()
-            Random()))
-    fun (min, max) -> localGenerator.Value.Next(min, max)
-
 let printableAsciiExcludingPlus = [ 32..42 ] @ [ 44..47 ] @ [ 58..126 ] |> List.map char |> Array.ofList
 let printableAscii = [ 32..47 ] @ [ 58..126 ] |> List.map char |> Array.ofList
 
 let randomFromArray arr =
-    let randomIndex() = (0, arr |> Array.length) |> rng
+    let randomIndex() = (0, arr |> Array.length) |> rng.Next
     arr.[randomIndex()]
 
 
@@ -80,7 +70,7 @@ let tests = testList "parse" [
         |> Result.bind SwedishPersonalIdentityNumber.parse =! Ok pin
 
     testPropWithMaxTest 400 "roundtrip for 10 digit string 'in specific year'" <| fun (Gen.ValidPin pin) ->
-        let offset = rng (0, 200)
+        let offset = rng.Next (0, 200)
         let year = pin.Year |> Year.map ((+) offset)
 
         pin
@@ -88,7 +78,7 @@ let tests = testList "parse" [
         |> Result.bind (SwedishPersonalIdentityNumber.parseInSpecificYear year) = Ok pin
 
     testPropWithMaxTest 400 "roundtrip for 12 digit string 'in specific year'" <| fun (Gen.ValidPin pin) ->
-        let offset = rng (0, 200)
+        let offset = rng.Next (0, 200)
         let year = pin.Year |> Year.map ((+) offset)
 
         pin

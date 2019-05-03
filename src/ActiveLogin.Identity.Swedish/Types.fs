@@ -69,6 +69,9 @@ module Year =
 
     let value (Year year) = year
 
+type Year with
+    member this.Value = Year.value this
+
 type Month = private Month of int
 
 module Month =
@@ -84,6 +87,9 @@ module Month =
             |> Error
 
     let value (Month month) = month
+
+type Month with
+    member this.Value = Month.value this
 
 type Day = private Day of int
 
@@ -111,6 +117,9 @@ module Day =
             |> Error
 
     let value (Day day) = day
+
+type Day with
+    member this.Value = Day.value this
 
 type BirthNumber = private BirthNumber of int
 

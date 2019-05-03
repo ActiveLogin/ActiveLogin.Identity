@@ -16,6 +16,7 @@
     <Compile Include="SwedishPersonalIdentityNumber_equality.fs" />
     <Compile Include="SwedishPersonalIdentityNumber_hash.fs" />
     <Compile Include="SwedishPersonalIdentityNumber_parse.fs" />
+    <Compile Include="SwedishPersonalIdentityNumber_getAgeHint.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
