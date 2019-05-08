@@ -202,6 +202,6 @@ type InvalidPinStringGen() =
                         match checksum with
                         | "9" -> "0"
                         | x -> x |> int |> (+) 1 |> sprintf "%i"
-                    valid.[ 0..10 ] + invalid
-                return! Gen.oneof [ withInvalidMonth; withInvalidDay; withInvalidBirthNumber ]
+                    gen { return valid.[ 0..10 ] + invalid }
+                return! Gen.oneof [ withInvalidMonth; withInvalidDay; withInvalidBirthNumber; withInvalidChecksum ]
             } |> Gen.map InvalidPinString |> Arb.fromGen

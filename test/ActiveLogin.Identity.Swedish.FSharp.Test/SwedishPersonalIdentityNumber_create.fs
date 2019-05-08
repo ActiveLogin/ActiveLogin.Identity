@@ -12,6 +12,7 @@ open System.Reflection
 open ActiveLogin.Identity.Swedish.FSharp.TestData
 open PinTestHelpers
 
+
 let arbTypes =
     [ typeof<Gen.Valid12DigitGen>
       typeof<Gen.ValidValuesGen>
