@@ -8,21 +8,9 @@ open Swensen.Unquote
 open Expecto
 open FsCheck
 
-let arbTypes = 
-    [ typeof<Gen.TwoEqualPinsGen> 
-      typeof<Gen.TwoPinsGen> 
-      typeof<Gen.ValidPinGen> ]
-
-
-let config = 
-    { FsCheckConfig.defaultConfig with arbitrary = arbTypes @ FsCheckConfig.defaultConfig.arbitrary }
-let testProp name = testPropertyWithConfig config name
-let ftestProp name = ftestPropertyWithConfig config name
-let testPropWithMaxTest maxTest name = testPropertyWithConfig { config with maxTest = maxTest } name
-let ftestPropWithMaxTest maxTest name = ftestPropertyWithConfig { config with maxTest = maxTest } name
 
 [<Tests>]
-let tests = testList "equality" [ 
+let tests = testList "equality" [
     testProp "Identical pins are equal when using operator" <|
         fun (Gen.TwoEqualPins (pin1, pin2)) ->
             pin1 = pin2 =! true
@@ -38,7 +26,7 @@ let tests = testList "equality" [
             pin2.Equals(pin1) =! true
     testProp "Different pins are not equal" <|
         fun (Gen.TwoPins (pin1, pin2)) ->
-            pin1 <> pin2 ==> lazy 
+            pin1 <> pin2 ==> lazy
             pin1 <> pin2 =! true
             pin2 <> pin1 =! true
     testProp "Different pins are not equal using .Equals()" <|

@@ -4,29 +4,10 @@ open Swensen.Unquote
 open Expecto
 open ActiveLogin.Identity.Swedish.FSharp
 open ActiveLogin.Identity.Swedish.FSharp.TestData
-open PinTestHelpers
 open FsCheck
 open System
 
-let arbTypes =
-    [ typeof<Gen.Valid12DigitGen>
-      typeof<Gen.ValidPinGen>
-      typeof<Gen.Max200Gen>
-      typeof<Gen.WhitespaceGen>
-      typeof<Gen.ValidYearGen>
-      typeof<Gen.DigitsGen>
-      typeof<Gen.InvalidPinStringGen> ]
-
-let config =
-    { FsCheckConfig.defaultConfig with arbitrary = arbTypes @ FsCheckConfig.defaultConfig.arbitrary }
-let testProp name = testPropertyWithConfig config name
-let ftestProp name = ftestPropertyWithConfig config name
-let testPropWithMaxTest maxTest name = testPropertyWithConfig { config with maxTest = maxTest } name
-let ftestPropWithMaxTest maxTest name = ftestPropertyWithConfig { config with maxTest = maxTest } name
-
 let yearTurning100 = Year.map ((+) 100)
-
-let tee f x = f x |> ignore; x
 
 let printableAsciiExcludingPlus = [ 32..42 ] @ [ 44..47 ] @ [ 58..126 ] |> List.map char |> Array.ofList
 let printableAscii = [ 32..47 ] @ [ 58..126 ] |> List.map char |> Array.ofList
@@ -97,7 +78,7 @@ let tests = testList "parse" [
         |> Result.map (mixWith printableAsciiExcludingPlus)
         |> Result.bind SwedishPersonalIdentityNumber.parse =! Ok pin
 
-    testProp "parse with empty string returns parsing error" <| fun (Gen.Whitespace str) ->
+    testProp "parse with empty string returns parsing error" <| fun (Gen.EmptyString str) ->
         str
         |> SwedishPersonalIdentityNumber.parse =! Error (ParsingError Empty)
 
@@ -106,7 +87,7 @@ let tests = testList "parse" [
         |> SwedishPersonalIdentityNumber.parse =! Error ArgumentNullError
     }
 
-    testProp "parseInSpecificYear with empty string returns parsing error" <| fun (Gen.Whitespace str, Gen.ValidYear year) ->
+    testProp "parseInSpecificYear with empty string returns parsing error" <| fun (Gen.EmptyString str, Gen.ValidYear year) ->
         let y = Year.createOrFail year
         str
         |> SwedishPersonalIdentityNumber.parseInSpecificYear y =! Error (ParsingError Empty)

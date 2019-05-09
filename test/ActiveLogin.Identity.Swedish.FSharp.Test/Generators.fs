@@ -4,30 +4,28 @@ open FsCheck
 open ActiveLogin.Identity.Swedish.FSharp
 open ActiveLogin.Identity.Swedish.FSharp.TestData
 open System
-open PinTestHelpers
 
-let chooseFromArray xs =
+let private chooseFromArray xs =
     gen { let! index = Gen.choose (0, (Array.length xs) - 1)
           return xs.[index] }
 
-type Whitespace = Whitespace of string
-type WhitespaceGen() =
-    static member Gen() : Arbitrary<Whitespace> =
-        Gen.sized(fun s -> Gen.choose(0,s) |> Gen.map (fun length -> String.replicate length " "))
-        |> Gen.map Whitespace |> Arb.fromGen
-
-type Max200 = Max200 of int
-type Max200Gen() =
-    static member Gen() : Arbitrary<Max200> =
-        Gen.choose(-100, 200) |> Gen.map Max200 |> Arb.fromGen
-
-let digits =
-    let digit = Gen.choose(0,9) |> Gen.map (sprintf "%i")
-    Gen.listOf digit |> Gen.map (String.concat "")
+type EmptyString = EmptyString of string
 type Digits = Digits of string
-type DigitsGen() =
-    static member Gen() : Arbitrary<Digits> =
-        digits |> Gen.map Digits |> Arb.fromGen
+type Max200 = Max200 of int
+type Valid12Digit = Valid12Digit of string
+type ValidValues = ValidValues of SwedishPersonalIdentityNumberValues
+type InvalidYear = InvalidYear of int
+type InvalidMonth = InvalidMonth of int
+type ValidYear = ValidYear of int
+type InvalidPinString = InvalidPinString of string
+type ValidPin = ValidPin of SwedishPersonalIdentityNumber
+type ValidMonth = ValidMonth of int
+type WithInvalidDay = WithInvalidDay of SwedishPersonalIdentityNumberValues
+type WithValidDay = WithValidDay of SwedishPersonalIdentityNumberValues
+type InvalidBirthNumber = InvalidBirthNumber of int
+type ValidBirthNumber = ValidBirthNumber of int
+type TwoEqualPins = TwoEqualPins of SwedishPersonalIdentityNumber * SwedishPersonalIdentityNumber
+type TwoPins = TwoPins of SwedishPersonalIdentityNumber * SwedishPersonalIdentityNumber
 
 let stringToValues (pin : string) =
     { Year = pin.[0..3] |> int
@@ -36,109 +34,95 @@ let stringToValues (pin : string) =
       BirthNumber = pin.[8..10] |> int
       Checksum = pin.[11..11] |> int }
 
-let valid12Digit = chooseFromArray SwedishPersonalIdentityNumberTestData.raw12DigitStrings
-type Valid12Digit = Valid12Digit of string
-type Valid12DigitGen() =
-    static member Gen() : Arbitrary<Valid12Digit> =
-        valid12Digit |> Gen.map Valid12Digit |> Arb.fromGen
+module Generators =
 
-type ValidValues = ValidValues of SwedishPersonalIdentityNumberValues
+    let max200Gen() = Gen.choose(-100, 200) |> Gen.map Max200 |> Arb.fromGen
 
-let validValues =
-    valid12Digit |> Gen.map (stringToValues >> ValidValues)
+    let emptyStringGen() =
+        Gen.sized(fun s -> Gen.choose(0,s) |> Gen.map (fun length -> String.replicate length " "))
+        |> Gen.map EmptyString |> Arb.fromGen
 
-type ValidValuesGen() =
-    static member Gen() : Arbitrary<ValidValues> = validValues |> Arb.fromGen
+    let digits =
+        let digit = Gen.choose(0,9) |> Gen.map (sprintf "%i")
+        Gen.listOf digit |> Gen.map (String.concat "")
+    let digitsGen() = digits |> Gen.map Digits |> Arb.fromGen
 
-let outsideRange min max =
-    let low = Gen.choose (Int32.MinValue, min - 1)
-    let high = Gen.choose (max + 1, Int32.MaxValue)
-    Gen.oneof [ low; high ]
+    let valid12Digit = chooseFromArray SwedishPersonalIdentityNumberTestData.raw12DigitStrings
+    let valid12DigitGen() = valid12Digit |> Gen.map Valid12Digit |> Arb.fromGen
 
-type InvalidYear = InvalidYear of int
 
-type InvalidYearGen() =
-    static member Gen() : Arbitrary<InvalidYear> =
+    let validValues = valid12Digit |> Gen.map (stringToValues >> ValidValues)
+    let validValuesGen() = validValues |> Arb.fromGen
+
+    let outsideRange min max =
+        let low = Gen.choose (Int32.MinValue, min - 1)
+        let high = Gen.choose (max + 1, Int32.MaxValue)
+        Gen.oneof [ low; high ]
+
+    let invalidYearGen() =
         (1, 9999)
         ||> outsideRange
         |> Gen.map InvalidYear
         |> Arb.fromGen
 
-let validYear = Gen.choose (1, 9999)
-type ValidYear = ValidYear of int
+    let validYear = Gen.choose (1, 9999)
 
-type ValidYearGen() =
-    static member Gen() : Arbitrary<ValidYear> =
+    let validYearGen() =
         validYear
         |> Gen.map ValidYear
         |> Arb.fromGen
 
-type InvalidMonth = InvalidMonth of int
-
-type InvalidMonthGen() =
-    static member Gen() : Arbitrary<InvalidMonth> =
+    let invalidMonthGen() =
         (1, 12)
         ||> outsideRange
         |> Gen.map InvalidMonth
         |> Arb.fromGen
 
-type ValidMonth = ValidMonth of int
 
-type ValidMonthGen() =
-    static member Gen() : Arbitrary<ValidMonth> =
+    let validMonthGen() =
         (1, 12)
         |> Gen.choose
         |> Gen.map ValidMonth
         |> Arb.fromGen
 
-type WithInvalidDay = WithInvalidDay of SwedishPersonalIdentityNumberValues
 
-let withInvalidDay =
-    gen {
-        let! (ValidValues validValues) = validValues
-        let daysInMonth = DateTime.DaysInMonth(validValues.Year, validValues.Month)
-        let! invalidDay = outsideRange 1 daysInMonth
-        return { validValues with Day = invalidDay } |> WithInvalidDay
-    }
+    let withInvalidDay =
+        gen {
+            let! (ValidValues validValues) = validValues
+            let daysInMonth = DateTime.DaysInMonth(validValues.Year, validValues.Month)
+            let! invalidDay = outsideRange 1 daysInMonth
+            return { validValues with Day = invalidDay } |> WithInvalidDay
+        }
 
-type WithInvalidDayGen() =
-    static member Gen() : Arbitrary<WithInvalidDay> = withInvalidDay |> Arb.fromGen
+    let withInvalidDayGen() = withInvalidDay |> Arb.fromGen
 
-type WithValidDay = WithValidDay of SwedishPersonalIdentityNumberValues
 
-let withValidDay =
-    gen {
-        let! (ValidValues validValues) = validValues
-        let daysInMonth = DateTime.DaysInMonth(validValues.Year, validValues.Month)
-        let! validDay = Gen.choose (1, daysInMonth)
-        return { validValues with Day = validDay } |> WithValidDay
-    }
+    let withValidDay =
+        gen {
+            let! (ValidValues validValues) = validValues
+            let daysInMonth = DateTime.DaysInMonth(validValues.Year, validValues.Month)
+            let! validDay = Gen.choose (1, daysInMonth)
+            return { validValues with Day = validDay } |> WithValidDay
+        }
 
-type WithValidDayGen() =
-    static member Gen() : Arbitrary<WithValidDay> = withValidDay |> Arb.fromGen
+    let withValidDayGen() = withValidDay |> Arb.fromGen
 
-type InvalidBirthNumber = InvalidBirthNumber of int
 
-type InvalidBirthNumberGen() =
-    static member Gen() : Arbitrary<InvalidBirthNumber> =
+    let invalidBirthNumberGen() =
         (1, 999)
         ||> outsideRange
         |> Gen.map InvalidBirthNumber
         |> Arb.fromGen
 
-type ValidBirthNumber = ValidBirthNumber of int
 
-type ValidBirthNumberGen() =
-    static member Gen() : Arbitrary<ValidBirthNumber> =
+    let validBirthNumberGen() =
         (1, 999)
         |> Gen.choose
         |> Gen.map ValidBirthNumber
         |> Arb.fromGen
 
-type TwoEqualPins = TwoEqualPins of SwedishPersonalIdentityNumber * SwedishPersonalIdentityNumber
 
-type TwoEqualPinsGen() =
-    static member Gen() : Arbitrary<TwoEqualPins> =
+    let twoEqualPinsGen() =
         gen {
             let! (ValidValues values) = validValues
             let pin1 =
@@ -153,10 +137,8 @@ type TwoEqualPinsGen() =
         }
         |> Arb.fromGen
 
-type TwoPins = TwoPins of SwedishPersonalIdentityNumber * SwedishPersonalIdentityNumber
 
-type TwoPinsGen() =
-    static member Gen() : Arbitrary<TwoPins> =
+    let twoPinsGen() =
         gen {
             let pin1 = SwedishPersonalIdentityNumberTestData.getRandom()
             let pin2 = SwedishPersonalIdentityNumberTestData.getRandom()
@@ -164,44 +146,56 @@ type TwoPinsGen() =
         }
         |> Arb.fromGen
 
-type ValidPin = ValidPin of SwedishPersonalIdentityNumber
 
-type ValidPinGen() =
-    static member Gen() : Arbitrary<ValidPin> =
-        validValues
-        |> Gen.map (fun (ValidValues values) ->
-               values
-               |> SwedishPersonalIdentityNumber.createOrFail
-               |> ValidPin)
+    let validPinGen() =
+        gen { return SwedishPersonalIdentityNumberTestData.getRandom() }
         |> Arb.fromGen
 
-type InvalidPinString = InvalidPinString of string
 
-type InvalidPinStringGen() =
-    static member Gen() : Arbitrary<InvalidPinString> =
-            gen {
-                let! valid = valid12Digit
-                let withInvalidMonth =
-                    gen {
-                        let! month = Gen.choose(13,99) |> Gen.map (sprintf "%i")
-                        return valid.[ 0..3 ] + month + valid.[ 6.. ]
-                    }
+    let invalidPinStringGen() =
+        gen {
+            let! valid = valid12Digit
+            let withInvalidMonth =
+                gen {
+                    let! month = Gen.choose(13,99) |> Gen.map (sprintf "%i")
+                    return valid.[ 0..3 ] + month + valid.[ 6.. ]
+                }
 
-                let withInvalidDay =
-                    gen {
-                        let! day = Gen.choose(32, 99) |> Gen.map (sprintf "%i")
-                        return valid.[ 0..5 ] + day + valid.[ 8.. ]
-                    }
-                let withInvalidBirthNumber =
-                    gen {
-                        return valid.[ 0..7 ] + "000" + valid.[ 11.. ]
-                    }
-                let withInvalidChecksum =
-                    let checksum = valid.[ 11.. ]
-                    let invalid =
-                        match checksum with
-                        | "9" -> "0"
-                        | x -> x |> int |> (+) 1 |> sprintf "%i"
-                    gen { return valid.[ 0..10 ] + invalid }
-                return! Gen.oneof [ withInvalidMonth; withInvalidDay; withInvalidBirthNumber; withInvalidChecksum ]
-            } |> Gen.map InvalidPinString |> Arb.fromGen
+            let withInvalidDay =
+                gen {
+                    let! day = Gen.choose(32, 99) |> Gen.map (sprintf "%i")
+                    return valid.[ 0..5 ] + day + valid.[ 8.. ]
+                }
+            let withInvalidBirthNumber =
+                gen {
+                    return valid.[ 0..7 ] + "000" + valid.[ 11.. ]
+                }
+            let withInvalidChecksum =
+                let checksum = valid.[ 11.. ]
+                let invalid =
+                    match checksum with
+                    | "9" -> "0"
+                    | x -> x |> int |> (+) 1 |> sprintf "%i"
+                gen { return valid.[ 0..10 ] + invalid }
+            return! Gen.oneof [ withInvalidMonth; withInvalidDay; withInvalidBirthNumber; withInvalidChecksum ]
+        } |> Gen.map InvalidPinString |> Arb.fromGen
+open Generators
+
+type PinGenerators() =
+    static member EmptyString() = emptyStringGen()
+    static member Digits() = digitsGen()
+    static member Max200() = max200Gen()
+    static member Valid12Digit() = valid12DigitGen()
+    static member ValidValues() = validValuesGen()
+    static member InvalidYear() = invalidYearGen()
+    static member InvalidMonth() = invalidMonthGen()
+    static member ValidYear() = validYearGen()
+    static member InvalidPinString() = invalidPinStringGen()
+    static member ValidPin() = validPinGen()
+    static member ValidMonth() = validMonthGen()
+    static member WithInvalidDay() = withInvalidDayGen()
+    static member WithValidDay() = withValidDayGen()
+    static member InvalidBirthNumber() = invalidBirthNumberGen()
+    static member ValidBirthNumber() = validBirthNumberGen()
+    static member TwoEqualPins() = twoEqualPinsGen()
+    static member TwoPins() = twoPinsGen()

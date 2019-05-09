@@ -9,8 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="PinTestHelpers.fs" />
+    <Compile Include="TestExtensions.fs" />
     <Compile Include="Generators.fs" />
+    <Compile Include="PinTestHelpers.fs" />
     <Compile Include="TestDataTests.fs" />
     <Compile Include="SwedishPersonalIdentityNumber_create.fs" />
     <Compile Include="SwedishPersonalIdentityNumber_equality.fs" />

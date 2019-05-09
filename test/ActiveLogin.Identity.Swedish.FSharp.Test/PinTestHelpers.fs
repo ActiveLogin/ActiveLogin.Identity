@@ -1,11 +1,20 @@
+[<AutoOpen>]
 module ActiveLogin.Identity.Swedish.FSharp.Test.PinTestHelpers
 open ActiveLogin.Identity.Swedish.FSharp
 open ActiveLogin.Identity.Swedish.FSharp.TestData
-open Swensen.Unquote
-open Expecto.Flip
+open Expecto
 open System
 open System.Threading
 
+let private arbTypes = [ typeof<Gen.PinGenerators> ]
+let private config =
+    { FsCheckConfig.defaultConfig with arbitrary = arbTypes @ FsCheckConfig.defaultConfig.arbitrary }
+let testProp name = testPropertyWithConfig config name
+let ftestProp name = ftestPropertyWithConfig config name
+let testPropWithMaxTest maxTest name = testPropertyWithConfig { config with maxTest = maxTest } name
+let ftestPropWithMaxTest maxTest name = ftestPropertyWithConfig { config with maxTest = maxTest } name
+
+let tee f x = f x |> ignore; x
 
 let quickParseR (str:string) =
     let values =
@@ -28,38 +37,6 @@ let pinToValues (pin:SwedishPersonalIdentityNumber) =
       BirthNumber = pin.BirthNumber |> BirthNumber.value
       Checksum = pin.Checksum |> Checksum.value }
 
-module Expect =
-    let equalPin (expected: SwedishPersonalIdentityNumberValues) (actual: Result<SwedishPersonalIdentityNumber,_>) =
-        actual |> Expect.isOk "should be ok"
-        match actual with
-        | Error _ -> failwith "test error"
-        | Ok pin ->
-            pin.Year |> Year.value =! expected.Year
-            pin.Month |> Month.value =! expected.Month
-            pin.Day |> Day.value =! expected.Day
-            pin.BirthNumber |> BirthNumber.value =! expected.BirthNumber
-            pin.Checksum |> Checksum.value =! expected.Checksum
-
-module Result =
-    let iter f res =
-        match res with
-        | Ok r -> f r
-        | Error e -> ()
-
-    let OkValue =
-        function
-        | Ok value -> value
-        | Result.Error e ->
-            e.ToString()
-            |> sprintf "test setup error: %s"
-            |> failwith
-
-module SwedishPersonalIdentityNumber =
-    let createOrFail = SwedishPersonalIdentityNumber.create >> Result.OkValue
-
-module Year =
-    let createOrFail = Year.create >> Result.OkValue
-    let map f y = y |> Year.value |> f |> createOrFail
 
 type Rng =
     { Next: int * int -> int

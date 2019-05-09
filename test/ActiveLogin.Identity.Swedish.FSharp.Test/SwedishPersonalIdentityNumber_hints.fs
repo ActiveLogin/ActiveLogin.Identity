@@ -12,19 +12,8 @@ open ActiveLogin.Identity.Swedish.FSharp.SwedishPersonalIdentityNumber
 open System
 open ActiveLogin.Identity.Swedish.FSharp
 open ActiveLogin.Identity.Swedish.FSharp.Test.PinTestHelpers
-open ActiveLogin.Identity.Swedish.FSharp.TestData
 open ActiveLogin.Identity.Swedish
 
-let arbTypes =
-    [ typeof<Gen.ValidPinGen> ]
-
-
-let config =
-    { FsCheckConfig.defaultConfig with arbitrary = arbTypes @ FsCheckConfig.defaultConfig.arbitrary }
-let testProp name = testPropertyWithConfig config name
-let ftestProp name = ftestPropertyWithConfig config name
-let testPropWithMaxTest maxTest name = testPropertyWithConfig { config with maxTest = maxTest } name
-let ftestPropWithMaxTest maxTest name = ftestPropertyWithConfig { config with maxTest = maxTest } name
 
 let getDateOfBirth (pin: SwedishPersonalIdentityNumber) =
     {| Date = DateTime(pin.Year.Value, pin.Month.Value, pin.Day.Value)
