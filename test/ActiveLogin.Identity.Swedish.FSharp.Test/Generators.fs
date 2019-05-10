@@ -148,7 +148,7 @@ module Generators =
 
 
     let validPinGen() =
-        gen { return SwedishPersonalIdentityNumberTestData.getRandom() }
+        gen { return SwedishPersonalIdentityNumberTestData.getRandom() |> ValidPin }
         |> Arb.fromGen
 
 
