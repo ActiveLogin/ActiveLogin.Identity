@@ -30,13 +30,13 @@ let private extractValues (pin : SwedishPersonalIdentityNumber) : SwedishPersona
 let private validSerializationYear (serializationYear: Year) (pinYear: Year) =
     if serializationYear < pinYear
     then
-        "Serialization cannot be a year before the person was born"
+        "SerializationYear cannot be a year before the person was born"
         |> InvalidSerializationYear
         |> Error
 
     elif (serializationYear |> Year.value) > ((pinYear |> Year.value) + 199)
     then
-        "Serialization cannot be a more than 199 years after the person was born"
+        "SerializationYear cannot be a more than 199 years after the person was born"
         |> InvalidSerializationYear
         |> Error
     else

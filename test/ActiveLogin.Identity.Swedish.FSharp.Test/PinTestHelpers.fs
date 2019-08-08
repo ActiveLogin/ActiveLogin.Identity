@@ -42,7 +42,6 @@ type Rng =
     { Next: int * int -> int
       NextDouble: unit -> float }
 let rng =
-
     // this thread-safe implementation is required to handle running lots of invocations of getRandom in parallel
     let seedGenerator = Random()
     let localGenerator = new ThreadLocal<Random>(fun _ ->

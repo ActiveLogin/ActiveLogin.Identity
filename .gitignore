@@ -290,6 +290,7 @@ __pycache__/
 
 # VSCode configuration
 .vscode
+.ionide
 
 .DS_Store
 

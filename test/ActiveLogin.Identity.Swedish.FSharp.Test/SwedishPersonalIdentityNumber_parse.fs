@@ -5,31 +5,34 @@ open Expecto
 open ActiveLogin.Identity.Swedish.FSharp
 open ActiveLogin.Identity.Swedish.FSharp.TestData
 open FsCheck
-open System
 
-let yearTurning100 = Year.map ((+) 100)
+let private getRandomFromArray arr =
+    fun () ->
+        let index = rng.Next(0, Array.length arr - 1)
+        arr.[index]
 
-let printableAsciiExcludingPlus = [ 32..42 ] @ [ 44..47 ] @ [ 58..126 ] |> List.map char |> Array.ofList
-let printableAscii = [ 32..47 ] @ [ 58..126 ] |> List.map char |> Array.ofList
+let private removeHyphen (str:string) =
+    let isHyphen (c:char) = "-".Contains(c)
+    String.filter (isHyphen >> not) str
 
-let randomFromArray arr =
-    let randomIndex() = (0, arr |> Array.length) |> rng.Next
-    arr.[randomIndex()]
+let private surroundEachChar (chars:char[]) (pin:string) =
+    let rnd = getRandomFromArray chars
+    let surroundWith c = [| rnd(); c; rnd() |]
 
+    Seq.collect surroundWith pin
+    |> Array.ofSeq
+    |> System.String
 
-let mixWith noiseSource (pin:string) =
-    let chars = [ for c in pin -> c ]
-    let result = ResizeArray<char>()
-    noiseSource |> randomFromArray |> result.Add
-    for char in chars do
-        char |> result.Add
-        noiseSource |> randomFromArray |> result.Add
-    result |> Array.ofSeq |> String
+let private isDigit (c:char) = "0123456789".Contains(c)
 
+let private isInvalidNumberOfDigits (str: string) =
+    if System.String.IsNullOrWhiteSpace str then false
+    else
+        str
+        |> String.filter isDigit
+        |> (fun s -> s.Length <> 10 && s.Length <> 12)
 
-
-[<Tests>]
-let tests = testList "parse" [
+let private validPinTests = testList "valid pins" [
     testProp "roundtrip for 12 digit string" <| fun (Gen.ValidPin pin) ->
         pin
         |> SwedishPersonalIdentityNumber.to12DigitString
@@ -41,22 +44,48 @@ let tests = testList "parse" [
         |> Result.bind SwedishPersonalIdentityNumber.parse =! Ok pin
 
     testProp "roundtrip for 10 digit string without hyphen-delimiter" <| fun (Gen.ValidPin pin) ->
-        let removeHyphen (str:string) =
-            if str.[6] = '-' then str.[0..5] + str.[7..10]
-            else str
-
         pin
         |> SwedishPersonalIdentityNumber.to10DigitString
         |> Result.map removeHyphen
         |> Result.bind SwedishPersonalIdentityNumber.parse =! Ok pin
 
-    testPropWithMaxTest 400 "roundtrip for 10 digit string 'in specific year'" <| fun (Gen.ValidPin pin) ->
-        let offset = rng.Next (0, 200)
-        let year = pin.Year |> Year.map ((+) offset)
+    testProp "roundtrip for 12 digit string mixed with 'non-digits'"
+        <| fun (Gen.ValidPin pin, Gen.Char100 charArray) ->
+            let charsWithoutDigits =
+                charArray
+                |> Array.filter (isDigit >> not)
 
-        pin
-        |> SwedishPersonalIdentityNumber.to10DigitStringInSpecificYear year
-        |> Result.bind (SwedishPersonalIdentityNumber.parseInSpecificYear year) = Ok pin
+            pin
+            |> SwedishPersonalIdentityNumber.to12DigitString
+            |> surroundEachChar charsWithoutDigits
+            |> SwedishPersonalIdentityNumber.parse =! Ok pin
+
+    testProp "roundtrip for 10 digit string mixed with 'non-digits' except plus"
+        <| fun (Gen.ValidPin pin, Gen.Char100 charArray) ->
+            let charsWithoutPlus =
+                let isDigitOrPlus (c:char) = "0123456789+".Contains c
+
+                charArray
+                |> Array.filter (isDigitOrPlus >> not)
+
+            pin
+            |> SwedishPersonalIdentityNumber.to10DigitString
+            |> Result.map (surroundEachChar charsWithoutPlus)
+            |> Result.bind SwedishPersonalIdentityNumber.parse =! Ok pin
+
+    testProp "roundtrip for 10 digit string without hyphen delimiter, mixed with 'non-digits' except plus"
+        <| fun (Gen.ValidPin pin, Gen.Char100 charArray) ->
+            let charsWithoutPlus =
+                let isDigitOrPlus (c:char) = "0123456789+".Contains c
+
+                charArray
+                |> Array.filter (isDigitOrPlus >> not)
+
+            pin
+            |> SwedishPersonalIdentityNumber.to10DigitString
+            |> Result.map removeHyphen
+            |> Result.map (surroundEachChar charsWithoutPlus)
+            |> Result.bind SwedishPersonalIdentityNumber.parse =! Ok pin
 
     testPropWithMaxTest 400 "roundtrip for 12 digit string 'in specific year'" <| fun (Gen.ValidPin pin) ->
         let offset = rng.Next (0, 200)
@@ -66,47 +95,71 @@ let tests = testList "parse" [
         |> SwedishPersonalIdentityNumber.to12DigitString
         |> SwedishPersonalIdentityNumber.parseInSpecificYear year =! Ok pin
 
-    testProp "roundtrip for 12 digit string mixed with random characters" <| fun (Gen.ValidPin pin) ->
-        pin
-        |> SwedishPersonalIdentityNumber.to12DigitString
-        |> mixWith printableAscii
-        |> SwedishPersonalIdentityNumber.parse =! Ok pin
+    testPropWithMaxTest 400 "roundtrip for 10 digit string 'in specific year'" <| fun (Gen.ValidPin pin) ->
+        let offset = rng.Next (0, 200)
+        let year = pin.Year |> Year.map ((+) offset)
 
-    testProp "roundtrip for 10 digit string mixed with random characters except plus" <| fun (Gen.ValidPin pin) ->
         pin
-        |> SwedishPersonalIdentityNumber.to10DigitString
-        |> Result.map (mixWith printableAsciiExcludingPlus)
-        |> Result.bind SwedishPersonalIdentityNumber.parse =! Ok pin
+        |> SwedishPersonalIdentityNumber.to10DigitStringInSpecificYear year
+        |> Result.bind (SwedishPersonalIdentityNumber.parseInSpecificYear year) = Ok pin
 
-    testProp "parse with empty string returns parsing error" <| fun (Gen.EmptyString str) ->
+    testPropWithMaxTest 400 "roundtrip for 10 digit string without hyphen delimeter 'in specific year'"
+        <| fun (Gen.ValidPin pin) ->
+            let offset = rng.Next (0, 200)
+            let year = pin.Year |> Year.map ((+) offset)
+
+            pin
+            |> SwedishPersonalIdentityNumber.to10DigitStringInSpecificYear year
+            |> Result.map removeHyphen
+            |> Result.bind (SwedishPersonalIdentityNumber.parseInSpecificYear year) = Ok pin
+    ]
+
+let invalidPinTests = testList "invalid pins" [
+    test "null string returns argument null error" {
+        null
+        |> SwedishPersonalIdentityNumber.parse =! Error ArgumentNullError }
+
+    testProp "empty string returns parsing error" <| fun (Gen.EmptyString str) ->
         str
         |> SwedishPersonalIdentityNumber.parse =! Error (ParsingError Empty)
 
-    test "parse null string returns argument null error" {
-        null
-        |> SwedishPersonalIdentityNumber.parse =! Error ArgumentNullError
-    }
+    testProp "invalid number of digits returns parsing error" <| fun (Gen.Digits digits) ->
+        isInvalidNumberOfDigits digits ==>
+            lazy (digits
+                  |> SwedishPersonalIdentityNumber.parse =! Error (ParsingError Length))
+
+    testProp "invalid pin returns parsing error" <| fun (Gen.InvalidPinString str) ->
+        match SwedishPersonalIdentityNumber.parse str with
+        | Error (ParsingError (Invalid _)) -> true
+        | _ -> failwith "Did not return expected error"
 
     testProp "parseInSpecificYear with empty string returns parsing error" <| fun (Gen.EmptyString str, Gen.ValidYear year) ->
         let y = Year.createOrFail year
         str
         |> SwedishPersonalIdentityNumber.parseInSpecificYear y =! Error (ParsingError Empty)
 
-    testProp "parseInSpecificYear null string returns argument null error" <| fun (Gen.ValidYear year) ->
+    testProp "parseInSpecificYear with null string returns argument null error" <| fun (Gen.ValidYear year) ->
         let y = Year.createOrFail year
         null
         |> SwedishPersonalIdentityNumber.parseInSpecificYear y =! Error ArgumentNullError
 
-    testProp "invalid number of digits returns parsing error" <| fun (Gen.Digits digits) ->
-        (not (isNull digits) && digits.Length > 0 && digits.Length <> 10 && digits.Length <> 12) ==>
-            lazy (digits
-                  |> SwedishPersonalIdentityNumber.parse =! Error (ParsingError Length))
+    testPropWithMaxTest 400 "cannot convert a pin to 10 digit string in a specific year when the person would be 200 years or older"
+        <| fun (Gen.ValidPin pin) ->
+            let offset =
+                let maxYear = System.DateTime.MaxValue.Year - pin.Year.Value
+                rng.Next(200, maxYear)
+            let year = pin.Year |> Year.map ((+) offset)
 
-    testProp "invalid pin returns parsing error" <| fun (Gen.InvalidPinString str) ->
-        let result =
-            str
-            |> SwedishPersonalIdentityNumber.parse
-        match result with
-        | Error (ParsingError (Invalid _)) -> true
-        | _ -> failwith "Did not return expected error"
-    ]
+            pin
+            |> SwedishPersonalIdentityNumber.to10DigitStringInSpecificYear year =! Error (InvalidSerializationYear "SerializationYear cannot be a more than 199 years after the person was born")
+
+    testPropWithMaxTest 400 "cannot convert a pin to 10 digit string in a specific year before the person was born"
+        <| fun (Gen.ValidPin pin) ->
+            let offset = rng.Next(0, pin.Year.Value)
+            let year = pin.Year |> Year.map ((+) -offset)
+
+            pin
+            |> SwedishPersonalIdentityNumber.to10DigitStringInSpecificYear year =! Error (InvalidSerializationYear "SerializationYear cannot be a year before the person was born") ]
+
+[<Tests>]
+let tests = testList "parse" [ validPinTests ; invalidPinTests ]

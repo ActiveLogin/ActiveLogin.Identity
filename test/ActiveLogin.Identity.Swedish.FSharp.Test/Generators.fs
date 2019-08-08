@@ -26,6 +26,7 @@ type InvalidBirthNumber = InvalidBirthNumber of int
 type ValidBirthNumber = ValidBirthNumber of int
 type TwoEqualPins = TwoEqualPins of SwedishPersonalIdentityNumber * SwedishPersonalIdentityNumber
 type TwoPins = TwoPins of SwedishPersonalIdentityNumber * SwedishPersonalIdentityNumber
+type Char100 = Char100 of char[]
 
 let stringToValues (pin : string) =
     { Year = pin.[0..3] |> int
@@ -39,13 +40,18 @@ module Generators =
     let max200Gen() = Gen.choose(-100, 200) |> Gen.map Max200 |> Arb.fromGen
 
     let emptyStringGen() =
-        Gen.sized(fun s -> Gen.choose(0,s) |> Gen.map (fun length -> String.replicate length " "))
-        |> Gen.map EmptyString |> Arb.fromGen
+        let emptyStringWithLength length = String.replicate length " "
+        Gen.sized(fun s -> Gen.choose(0,s) |> Gen.map emptyStringWithLength)
+        |> Gen.map EmptyString
+        |> Arb.fromGen
 
-    let digits =
-        let digit = Gen.choose(0,9) |> Gen.map (sprintf "%i")
-        Gen.listOf digit |> Gen.map (String.concat "")
-    let digitsGen() = digits |> Gen.map Digits |> Arb.fromGen
+    let digitsGen() =
+        let createDigits = String.concat "" >> Digits
+        Gen.choose(0,9)
+        |> Gen.map string
+        |> Gen.listOf
+        |> Gen.map createDigits
+        |> Arb.fromGen
 
     let valid12Digit = chooseFromArray SwedishPersonalIdentityNumberTestData.raw12DigitStrings
     let valid12DigitGen() = valid12Digit |> Gen.map Valid12Digit |> Arb.fromGen
@@ -84,7 +90,6 @@ module Generators =
         |> Gen.choose
         |> Gen.map ValidMonth
         |> Arb.fromGen
-
 
     let withInvalidDay =
         gen {
@@ -151,19 +156,24 @@ module Generators =
         gen { return SwedishPersonalIdentityNumberTestData.getRandom() |> ValidPin }
         |> Arb.fromGen
 
-
     let invalidPinStringGen() =
         gen {
             let! valid = valid12Digit
+            let withInvalidYear =
+                gen {
+                    return "0000" + valid.[ 4.. ]
+                }
             let withInvalidMonth =
                 gen {
-                    let! month = Gen.choose(13,99) |> Gen.map (sprintf "%i")
+                    let! month = Gen.choose(13,99) |> Gen.map string
                     return valid.[ 0..3 ] + month + valid.[ 6.. ]
                 }
-
             let withInvalidDay =
                 gen {
-                    let! day = Gen.choose(32, 99) |> Gen.map (sprintf "%i")
+                    let year = valid.[ 0..3 ] |> int
+                    let month = valid.[ 4..5 ] |> int
+                    let daysInMonth = DateTime.DaysInMonth(year, month)
+                    let! day = Gen.choose(daysInMonth + 1, 99) |> Gen.map string
                     return valid.[ 0..5 ] + day + valid.[ 8.. ]
                 }
             let withInvalidBirthNumber =
@@ -172,13 +182,16 @@ module Generators =
                 }
             let withInvalidChecksum =
                 let checksum = valid.[ 11.. ]
-                let invalid =
-                    match checksum with
-                    | "9" -> "0"
-                    | x -> x |> int |> (+) 1 |> sprintf "%i"
+                let invalid = checksum |> int |> fun i -> (i + 1) % 10 |> string
                 gen { return valid.[ 0..10 ] + invalid }
-            return! Gen.oneof [ withInvalidMonth; withInvalidDay; withInvalidBirthNumber; withInvalidChecksum ]
+            return! Gen.oneof [ withInvalidYear; withInvalidMonth; withInvalidDay; withInvalidBirthNumber; withInvalidChecksum ]
         } |> Gen.map InvalidPinString |> Arb.fromGen
+
+    let char100() =
+        Gen.arrayOfLength 100 Arb.generate<char>
+        |> Gen.map Char100
+        |> Arb.fromGen
+
 open Generators
 
 type PinGenerators() =
@@ -199,3 +212,4 @@ type PinGenerators() =
     static member ValidBirthNumber() = validBirthNumberGen()
     static member TwoEqualPins() = twoEqualPinsGen()
     static member TwoPins() = twoPinsGen()
+    static member Char100() = char100()
