@@ -46,7 +46,9 @@ module Generators =
         |> Arb.fromGen
 
     let digitsGen() =
-        let createDigits = String.concat "" >> Digits
+        let createDigits (strs: string list) =
+            System.String.Join("", strs)
+            |> Digits
         Gen.choose(0,9)
         |> Gen.map string
         |> Gen.listOf

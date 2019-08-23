@@ -66,16 +66,21 @@ let tests =
                 let result = SwedishPersonalIdentityNumber.create input
                 result <>! Error(InvalidBirthNumber validBirthNumber)
 
-        testProp "with all other values valid, only 1 of 10 checksums can be valid" <|
+        testProp "invalid checksum returns InvalidChecksum Error" <|
             fun (Gen.ValidValues values) ->
-                let withChecksum values checksum = { values with SwedishPersonalIdentityNumberValues.Checksum = checksum }
-                let hasInvalidChecksum = function Error(InvalidChecksum _) -> true | _ -> false
-                let numberOfInvalidPins =
+                let invalidChecksums =
                     [ 0..9 ]
-                    |> List.map (withChecksum values >> SwedishPersonalIdentityNumber.create)
-                    |> List.filter hasInvalidChecksum
-                    |> List.length
-                numberOfInvalidPins =! 9
+                    |> List.except [ values.Checksum ]
+
+                let withInvalidChecksums =
+                    invalidChecksums
+                    |> List.map (fun checksum -> { values with Checksum = checksum })
+
+                withInvalidChecksums
+                |> List.map (fun values -> values.Checksum, SwedishPersonalIdentityNumber.create values)
+                |> List.iter (function
+                | (expected, (Error(InvalidChecksum actual))) -> expected =! actual
+                | _ -> failwith "Expected InvalidChecksum Error")
 
         testProp "Possible coordination-number day" <| fun (Gen.ValidValues values) ->
             let coordinationDay = values.Day + 60
