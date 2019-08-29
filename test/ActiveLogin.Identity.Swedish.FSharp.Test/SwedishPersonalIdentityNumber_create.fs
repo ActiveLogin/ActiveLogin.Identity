@@ -76,11 +76,15 @@ let tests =
                     invalidChecksums
                     |> List.map (fun checksum -> { values with Checksum = checksum })
 
-                withInvalidChecksums
-                |> List.map (fun values -> values.Checksum, SwedishPersonalIdentityNumber.create values)
-                |> List.iter (function
-                | (expected, (Error(InvalidChecksum actual))) -> expected =! actual
-                | _ -> failwith "Expected InvalidChecksum Error")
+                let invalidChecksumsAndResults =
+                    withInvalidChecksums
+                    |> List.map (fun values -> values.Checksum, SwedishPersonalIdentityNumber.create values)
+
+                invalidChecksumsAndResults
+                |> List.iter (fun (invalidChecksum, result) ->
+                    match result with
+                    | Error (InvalidChecksum actual) -> invalidChecksum =! actual
+                    | _ -> failwith "Expected InvalidChecksum Error")
 
         testProp "Possible coordination-number day" <| fun (Gen.ValidValues values) ->
             let coordinationDay = values.Day + 60

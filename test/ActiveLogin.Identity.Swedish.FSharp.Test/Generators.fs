@@ -58,7 +58,6 @@ module Generators =
     let valid12Digit = chooseFromArray SwedishPersonalIdentityNumberTestData.raw12DigitStrings
     let valid12DigitGen() = valid12Digit |> Gen.map Valid12Digit |> Arb.fromGen
 
-
     let validValues = valid12Digit |> Gen.map (stringToValues >> ValidValues)
     let validValuesGen() = validValues |> Arb.fromGen
 
