@@ -32,6 +32,7 @@ module Result =
 
 module SwedishPersonalIdentityNumber =
     let createOrFail = SwedishPersonalIdentityNumber.create >> Result.OkValue
+    let parseOrFail = SwedishPersonalIdentityNumber.parse >> Result.OkValue
 
 module Year =
     let createOrFail = Year.create >> Result.OkValue

@@ -27,6 +27,10 @@ type ValidBirthNumber = ValidBirthNumber of int
 type TwoEqualPins = TwoEqualPins of SwedishPersonalIdentityNumber * SwedishPersonalIdentityNumber
 type TwoPins = TwoPins of SwedishPersonalIdentityNumber * SwedishPersonalIdentityNumber
 type Char100 = Char100 of char[]
+type Age = Age of Years: int * Months : int * Days: double
+type LeapDayPin = LeapDayPin of SwedishPersonalIdentityNumber
+
+
 
 let stringToValues (pin : string) =
     { Year = pin.[0..3] |> int
@@ -86,9 +90,12 @@ module Generators =
         |> Arb.fromGen
 
 
-    let validMonthGen() =
-        (1, 12)
+    let private validMonth =
+        (1,12)
         |> Gen.choose
+
+    let validMonthGen() =
+        validMonth
         |> Gen.map ValidMonth
         |> Arb.fromGen
 
@@ -103,11 +110,14 @@ module Generators =
     let withInvalidDayGen() = withInvalidDay |> Arb.fromGen
 
 
+    let private validDay year month =
+        let daysInMonth = DateTime.DaysInMonth(year, month)
+        Gen.choose (1, daysInMonth)
+
     let withValidDay =
         gen {
             let! (ValidValues validValues) = validValues
-            let daysInMonth = DateTime.DaysInMonth(validValues.Year, validValues.Month)
-            let! validDay = Gen.choose (1, daysInMonth)
+            let! validDay = validDay validValues.Year validValues.Month
             return { validValues with Day = validDay } |> WithValidDay
         }
 
@@ -193,6 +203,30 @@ module Generators =
         |> Gen.map Char100
         |> Arb.fromGen
 
+    let age() =
+        gen {
+            let! years = Gen.choose(0, 199)
+            let! months = Gen.choose(0, 11)
+            let! days = Gen.choose(0,27) |> Gen.map float
+
+            return Age (Years = years, Months = months,Days = days)
+        } |> Arb.fromGen
+
+    let private leapDayPins =
+        let isLeapDay (pin: SwedishPersonalIdentityNumber) =
+            pin.Month.Value = 2 && pin.Day.Value = 29
+
+        SwedishPersonalIdentityNumberTestData.allPinsShuffled()
+        |> Seq.filter isLeapDay
+        |> Seq.toArray
+
+    let leapDayPinGen() =
+        leapDayPins
+        |> chooseFromArray
+        |> Gen.map LeapDayPin
+        |> Arb.fromGen
+
+
 open Generators
 
 type PinGenerators() =
@@ -214,3 +248,5 @@ type PinGenerators() =
     static member TwoEqualPins() = twoEqualPinsGen()
     static member TwoPins() = twoPinsGen()
     static member Char100() = char100()
+    static member Age() = age()
+    static member LeapDayPin() = leapDayPinGen()

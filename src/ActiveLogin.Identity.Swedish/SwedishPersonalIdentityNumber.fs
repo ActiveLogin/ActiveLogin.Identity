@@ -145,15 +145,14 @@ module Hints =
     /// <param name="pin">A SwedishPersonalIdentityNumber</param>
     let getAgeHintOnDate (date : DateTime) pin =
         let dateOfBirth = getDateOfBirthHint pin
-        match date >= dateOfBirth with
-        | true ->
+        if date >= dateOfBirth then
             let months = 12 * (date.Year - dateOfBirth.Year) + (date.Month - dateOfBirth.Month)
             match date.Day < dateOfBirth.Day with
             | true ->
                 let years = (months - 1) / 12
                 years |> Some
             | false -> months / 12 |> Some
-        | false -> None
+        else None
 
     /// <summary>
     /// Get the age of the person according to the date in the personal identity number.

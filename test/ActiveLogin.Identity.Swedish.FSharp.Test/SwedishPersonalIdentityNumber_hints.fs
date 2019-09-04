@@ -28,18 +28,24 @@ let (|Even|Odd|) (num:BirthNumber) =
 let tests =
     testList "hints" [
         testList "getAgeHint" [
-            testPropWithMaxTest 2000 "A person ages by years counting from their date of birth" <| fun (Gen.ValidPin pin) ->
-                let dateOfBirth = getDateOfBirth pin
-                let yearsSinceDOB = rng.Next(0,200)
-                let checkDate =
-                    let date = dateOfBirth.Date.AddYears(yearsSinceDOB)
-                    if dateOfBirth.IsLeapDay then
-                        date.AddDays(1.)
-                    else
-                        date
-                let checkDate = if dateOfBirth.IsLeapDay then checkDate.AddDays(1.) else checkDate
-                pin
-                |> Hints.getAgeHintOnDate checkDate =! Some yearsSinceDOB
+            testProp "A person ages by years counting from their date of birth"
+                <| fun (Gen.ValidPin pin, Gen.Age (years, months, days)) ->
+                    (pin.Month.Value = 2 && pin.Day.Value = 29) |> not ==>
+                    lazy
+                        let dateOfBirth = getDateOfBirth pin
+                        let checkDate =
+                            dateOfBirth.Date.AddYears(years).AddMonths(months).AddDays(days)
+                        pin
+                        |> Hints.getAgeHintOnDate checkDate =! Some years
+
+            testProp "A person born on a leap day also ages by years counting from their date of birth"
+                <| fun (Gen.LeapDayPin pin, Gen.Age (years, months, days)) ->
+                    let dateOfBirth = getDateOfBirth pin
+                    // Since there isn't a leap day every year we need to add 1 day to the checkdate
+                    let checkDate =
+                        dateOfBirth.Date.AddYears(years).AddMonths(months).AddDays(days + 1.)
+                    pin
+                    |> Hints.getAgeHintOnDate checkDate =! Some years
 
             testProp "Cannot get age for date before person was born" <| fun (Gen.ValidPin pin) ->
                 let dateOfBirth = getDateOfBirth pin
