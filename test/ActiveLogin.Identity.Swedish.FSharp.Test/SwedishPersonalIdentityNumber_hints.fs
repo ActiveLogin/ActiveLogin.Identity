@@ -30,22 +30,28 @@ let tests =
         testList "getAgeHint" [
             testProp "A person ages by years counting from their date of birth"
                 <| fun (Gen.ValidPin pin, Gen.Age (years, months, days)) ->
-                    (pin.Month.Value = 2 && pin.Day.Value = 29) |> not ==>
+                    not (pin.Month.Value = 2 && pin.Day.Value = 29) ==>
                     lazy
                         let dateOfBirth = getDateOfBirth pin
                         let checkDate =
-                            dateOfBirth.Date.AddYears(years).AddMonths(months).AddDays(days)
-                        pin
-                        |> Hints.getAgeHintOnDate checkDate =! Some years
+                            dateOfBirth.Date
+                                .AddYears(years)
+                                .AddMonths(months)
+                                .AddDays(days)
+
+                        Hints.getAgeHintOnDate checkDate pin =! Some years
 
             testProp "A person born on a leap day also ages by years counting from their date of birth"
                 <| fun (Gen.LeapDayPin pin, Gen.Age (years, months, days)) ->
                     let dateOfBirth = getDateOfBirth pin
                     // Since there isn't a leap day every year we need to add 1 day to the checkdate
                     let checkDate =
-                        dateOfBirth.Date.AddYears(years).AddMonths(months).AddDays(days + 1.)
-                    pin
-                    |> Hints.getAgeHintOnDate checkDate =! Some years
+                        dateOfBirth.Date
+                            .AddYears(years)
+                            .AddMonths(months)
+                            .AddDays(days + 1.)
+
+                    Hints.getAgeHintOnDate checkDate pin =! Some years
 
             testProp "Cannot get age for date before person was born" <| fun (Gen.ValidPin pin) ->
                 let dateOfBirth = getDateOfBirth pin

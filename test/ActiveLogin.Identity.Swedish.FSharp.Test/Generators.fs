@@ -31,7 +31,6 @@ type Age = Age of Years: int * Months : int * Days: double
 type LeapDayPin = LeapDayPin of SwedishPersonalIdentityNumber
 
 
-
 let stringToValues (pin : string) =
     { Year = pin.[0..3] |> int
       Month = pin.[4..5] |> int
