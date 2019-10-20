@@ -15,7 +15,7 @@
 
         <VersionPrefix>1.0.1</VersionPrefix>
         <!--<VersionSuffix>beta-1</VersionSuffix>-->
-        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <AssemblyVersion>1.0.0</AssemblyVersion>
         <FileVersion Condition="'$(BUILD_BUILDNUMBER)' != ''">$(VersionPrefix).$(BUILD_BUILDNUMBER)</FileVersion>
 
         <SignAssembly>true</SignAssembly>
