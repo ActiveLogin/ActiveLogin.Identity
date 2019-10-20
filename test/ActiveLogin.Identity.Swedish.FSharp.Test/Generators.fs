@@ -27,7 +27,7 @@ type ValidBirthNumber = ValidBirthNumber of int
 type TwoEqualPins = TwoEqualPins of SwedishPersonalIdentityNumber * SwedishPersonalIdentityNumber
 type TwoPins = TwoPins of SwedishPersonalIdentityNumber * SwedishPersonalIdentityNumber
 type Char100 = Char100 of char[]
-type Age = Age of Years: int * Months : int * Days: double
+type Age = Age of Years : int * Months : int * Days: double
 type LeapDayPin = LeapDayPin of SwedishPersonalIdentityNumber
 
 
