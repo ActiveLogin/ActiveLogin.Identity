@@ -1,55 +1,61 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks Condition="'$(LibraryFrameworks)'==''">netstandard2.0</TargetFrameworks>
-    <TargetFrameworks Condition="'$(LibraryFrameworks)'!=''">$(LibraryFrameworks)</TargetFrameworks>
-    <TargetFrameworkIdentifier Condition="'$(_ShortFrameworkIdentifier)'=='net'">.NETFramework</TargetFrameworkIdentifier>
-    <TargetFrameworkIdentifier Condition="'$(_ShortFrameworkIdentifier)'=='netstandard'">.NETStandard</TargetFrameworkIdentifier>
-    <LangVersion>latest</LangVersion>
-    <NeutralLanguage>en</NeutralLanguage>
-    <NoWarn>CS7035</NoWarn>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <PropertyGroup>
+        <TargetFrameworks Condition="'$(LibraryFrameworks)'==''">netstandard2.0</TargetFrameworks>
+        <TargetFrameworks Condition="'$(LibraryFrameworks)'!=''">$(LibraryFrameworks)</TargetFrameworks>
+        <TargetFrameworkIdentifier Condition="'$(_ShortFrameworkIdentifier)'=='net'">.NETFramework</TargetFrameworkIdentifier>
+        <TargetFrameworkIdentifier Condition="'$(_ShortFrameworkIdentifier)'=='netstandard'">.NETStandard</TargetFrameworkIdentifier>
+        <LangVersion>latest</LangVersion>
+        <NeutralLanguage>en</NeutralLanguage>
+        <NoWarn>CS7035</NoWarn>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
-    <AssemblyName>ActiveLogin.Identity.Swedish.AspNetCore</AssemblyName>
-    <PackageId>ActiveLogin.Identity.Swedish.AspNetCore</PackageId>
+        <AssemblyName>ActiveLogin.Identity.Swedish.AspNetCore</AssemblyName>
+        <PackageId>ActiveLogin.Identity.Swedish.AspNetCore</PackageId>
 
-    <VersionPrefix>2.0.2</VersionPrefix>
-    <!--<VersionSuffix>beta-1</VersionSuffix>-->
-    <AssemblyVersion>2.0.0</AssemblyVersion>
-    <FileVersion Condition="'$(BUILD_BUILDNUMBER)' != ''">$(VersionPrefix).$(BUILD_BUILDNUMBER)</FileVersion>
+        <VersionPrefix>2.0.2</VersionPrefix>
+        <!--<VersionSuffix>beta-1</VersionSuffix>-->
+        <AssemblyVersion>2.0.0</AssemblyVersion>
+        <FileVersion Condition="'$(BUILD_BUILDNUMBER)' != ''">$(VersionPrefix).$(BUILD_BUILDNUMBER)</FileVersion>
 
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>StrongNameKey.snk</AssemblyOriginatorKeyFile>
+        <SignAssembly>true</SignAssembly>
+        <AssemblyOriginatorKeyFile>StrongNameKey.snk</AssemblyOriginatorKeyFile>
 
-    <Description>Validation attributes that enables an application to validate Swedish identities such as Personal Identity Number (svenskt personnummer) in ASP.NET Core.</Description>
-    <PackageTags>aspnetcore;PersonalIdentityNumber;PIN;personnummer;Sweden;validation;validate;parse</PackageTags>
+        <Description>Validation attributes that enables an application to validate Swedish identities such as Personal Identity Number (svenskt personnummer) in ASP.NET Core.</Description>
+        <PackageTags>aspnetcore;PersonalIdentityNumber;PIN;personnummer;Sweden;validation;validate;parse</PackageTags>
 
-    <Authors>Peter Örneholm;Nikolay Krondev;Elin Ohlsson;Robert Folkesson;Jakob Ehn</Authors>
-    <Copyright>Copyright © ActiveLogin</Copyright>
+        <Authors>Peter Örneholm;Nikolay Krondev;Elin Ohlsson;Robert Folkesson;Jakob Ehn</Authors>
+        <Copyright>Copyright © ActiveLogin</Copyright>
 
-    <PackageProjectUrl>https://github.com/ActiveLogin/ActiveLogin.Identity</PackageProjectUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/ActiveLogin/ActiveLogin.Identity/master/docs/images/active-login-logo-fingerprint-blue-v2-256x256.png</PackageIconUrl>
+        <PackageProjectUrl>https://github.com/ActiveLogin/ActiveLogin.Identity</PackageProjectUrl>
+        <PackageIcon>icon.png</PackageIcon>
+        <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+        <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
 
-    <PackageLicenseUrl>https://raw.githubusercontent.com/ActiveLogin/ActiveLogin.Identity/master/LICENSE.md</PackageLicenseUrl>
-    <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/ActiveLogin/ActiveLogin.Identity.git</RepositoryUrl>
 
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/ActiveLogin/ActiveLogin.Identity.git</RepositoryUrl>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-  </PropertyGroup>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ActiveLogin.Identity.Swedish\ActiveLogin.Identity.Swedish.fsproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\ActiveLogin.Identity.Swedish\ActiveLogin.Identity.Swedish.fsproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\..\docs\images\active-login-logo-fingerprint-blue-v2-256x256.png" Pack="True" PackagePath="icon.png" />
+        <None Include="..\..\LICENSE.md" Pack="True" PackagePath="LICENSE.md" />
+        <None Include="..\..\README.md" Pack="True" PackagePath="README.md" />
+    </ItemGroup>
 </Project>
