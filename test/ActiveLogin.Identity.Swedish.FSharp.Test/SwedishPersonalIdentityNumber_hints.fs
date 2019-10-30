@@ -60,7 +60,7 @@ let tests =
                 let result = Hints.getAgeHintOnDate checkDate pin
                 result |> Expect.isNone "age should be None"
 
-            testProp "getAgeHint uses DateTime.Now as checkYear" <| fun (Gen.ValidPin pin) ->
+            testProp "getAgeHint uses DateTime.UtcNow as checkYear" <| fun (Gen.ValidPin pin) ->
                 let age1 = Hints.getAgeHintOnDate DateTime.UtcNow pin
                 let age2 = Hints.getAgeHint pin
                 age1 =! age2 ]
