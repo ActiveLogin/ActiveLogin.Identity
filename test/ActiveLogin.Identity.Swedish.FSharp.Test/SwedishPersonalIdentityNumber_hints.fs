@@ -28,7 +28,7 @@ let (|Even|Odd|) (num:BirthNumber) =
 let tests =
     testList "hints" [
         testList "getAgeHint" [
-            testProp "A person ages by years counting from their date of birth"
+            testProp "a person ages by years counting from their date of birth"
                 <| fun (Gen.ValidPin pin, Gen.Age (years, months, days)) ->
                     not (pin.Month.Value = 2 && pin.Day.Value = 29) ==>
                     lazy
@@ -41,7 +41,7 @@ let tests =
 
                         Hints.getAgeHintOnDate checkDate pin =! Some years
 
-            testProp "A person born on a leap day also ages by years counting from their date of birth"
+            testProp "a person born on a leap day also ages by years counting from their date of birth"
                 <| fun (Gen.LeapDayPin pin, Gen.Age (years, months, days)) ->
                     let dateOfBirth = getDateOfBirth pin
                     // Since there isn't a leap day every year we need to add 1 day to the checkdate
@@ -53,7 +53,7 @@ let tests =
 
                     Hints.getAgeHintOnDate checkDate pin =! Some years
 
-            testProp "Cannot get age for date before person was born" <| fun (Gen.ValidPin pin) ->
+            testProp "cannot get age for date before person was born" <| fun (Gen.ValidPin pin) ->
                 let dateOfBirth = getDateOfBirth pin
                 let checkOffset = rng.NextDouble() * 199. * 365.
                 let checkDate = dateOfBirth.Date.AddDays -checkOffset

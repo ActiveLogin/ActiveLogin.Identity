@@ -86,12 +86,12 @@ let tests =
                     | Error (InvalidChecksum actual) -> invalidChecksum =! actual
                     | _ -> failwith "Expected InvalidChecksum Error")
 
-        testProp "Possible coordination-number day" <| fun (Gen.ValidValues values) ->
+        testProp "possible coordination-number day" <| fun (Gen.ValidValues values) ->
             let coordinationDay = values.Day + 60
             let result = { values with Day = coordinationDay } |> SwedishPersonalIdentityNumber.create
             result =! Error(InvalidDay coordinationDay)
 
-        testCase "FSharp should have no public constructor" <| fun () ->
+        testCase "fsharp should have no public constructor" <| fun () ->
             let typ = typeof<SwedishPersonalIdentityNumber>
             let numConstructors = typ.GetConstructors(BindingFlags.Public) |> Array.length
             numConstructors =! 0 ]

@@ -8,6 +8,6 @@ open Swensen.Unquote
 
 [<Tests>]
 let tests = testList "hash" [
-    testProp "Identical pins have the same hash code" <|
+    testProp "identical pins have the same hash code" <|
         fun (Gen.TwoEqualPins (pin1, pin2)) ->
             hash pin1 =! hash pin2 ]
