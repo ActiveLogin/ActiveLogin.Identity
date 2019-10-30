@@ -148,15 +148,15 @@ let invalidPinTests = testList "invalid pins" [
             let offset =
                 let maxYear = System.DateTime.MaxValue.Year - pin.Year.Value
                 rng.Next(200, maxYear)
-            let year = pin.Year |> Year.map ((+) offset)
+            let year = pin.Year |> Year.map (fun year -> year + offset)
 
             pin
             |> SwedishPersonalIdentityNumber.to10DigitStringInSpecificYear year =! Error (InvalidSerializationYear "SerializationYear cannot be a more than 199 years after the person was born")
 
     testPropWithMaxTest 400 "cannot convert a pin to 10 digit string in a specific year before the person was born"
         <| fun (Gen.ValidPin pin) ->
-            let offset = rng.Next(0, pin.Year.Value)
-            let year = pin.Year |> Year.map ((+) -offset)
+            let offset = rng.Next(1, pin.Year.Value)
+            let year = pin.Year |> Year.map (fun year -> year - offset)
 
             pin
             |> SwedishPersonalIdentityNumber.to10DigitStringInSpecificYear year =! Error (InvalidSerializationYear "SerializationYear cannot be a year before the person was born") ]
