@@ -9,8 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="TestExtensions.fs" />
+    <Compile Include="Generators.fs" />
     <Compile Include="PinTestHelpers.fs" />
     <Compile Include="TestDataTests.fs" />
+    <Compile Include="SwedishPersonalIdentityNumber_create.fs" />
+    <Compile Include="SwedishPersonalIdentityNumber_equality.fs" />
+    <Compile Include="SwedishPersonalIdentityNumber_hash.fs" />
+    <Compile Include="SwedishPersonalIdentityNumber_parse.fs" />
+    <Compile Include="SwedishPersonalIdentityNumber_hints.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

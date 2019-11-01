@@ -13,9 +13,8 @@ let parse parseYear =
     let requireNotEmpty str =
         match String.IsNullOrWhiteSpace str with
         | false -> str |> Ok
-        | true when str = null ->
-            Null
-            |> ArgumentError
+        | true when isNull str ->
+            ArgumentNullError
             |> Error
         | true ->
             Empty
@@ -83,9 +82,10 @@ let parse parseYear =
                 let parseCentury = getCentury parseYear
                 let fullYearGuess = parseCentury + shortYear
                 let lastDigitsParseYear = parseYear % 100
+                let delimiter = str.[6]
 
                 let! fullYear =
-                    match str.[6] with
+                    match delimiter with
                     | '-' when shortYear <= lastDigitsParseYear -> fullYearGuess |> Ok
                     | '-' -> fullYearGuess - 100 |> Ok
                     | '+' when shortYear <= lastDigitsParseYear -> fullYearGuess - 100 |> Ok

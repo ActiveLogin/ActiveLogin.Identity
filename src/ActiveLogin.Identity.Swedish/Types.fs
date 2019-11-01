@@ -3,9 +3,6 @@ module ActiveLogin.Identity.Swedish.FSharp.Types
 
 open System
 
-type ArgumentError =
-    | Null
-
 type ParsingError =
     | Empty
     | Length
@@ -18,15 +15,16 @@ type Error =
     | InvalidDay of int
     | InvalidBirthNumber of int
     | InvalidChecksum of int
-    | ArgumentError of ArgumentError
+    | ArgumentNullError
     | ParsingError of ParsingError
+    | InvalidSerializationYear of string
 
 module Error =
     /// This function will raise the most fitting Exceptions for the Error type provided.
     let handle result =
         match result with
-        | Ok res -> res 
-        | Error e -> 
+        | Ok res -> res
+        | Error e ->
             match e with
             | InvalidYear y -> raise (ArgumentOutOfRangeException("year", y, "Invalid year."))
             | InvalidMonth m ->
@@ -39,12 +37,10 @@ module Error =
                 raise
                     (ArgumentOutOfRangeException("birthNumber", s, "Invalid birth number. Must be in the range 0 to 999."))
             | InvalidChecksum _ -> raise (ArgumentException("Invalid checksum.", "checksum"))
-            | ArgumentError a ->
-                match a with
-                | Null ->
-                    raise
-                        (ArgumentNullException("personalIdentityNumber"))
-            | ParsingError p -> 
+            | ArgumentNullError ->
+                raise
+                    (ArgumentNullException("personalIdentityNumber"))
+            | ParsingError p ->
                 match p with
                 | Empty ->
                     raise
@@ -55,6 +51,7 @@ module Error =
                 | Invalid msg ->
                     raise
                         (FormatException(sprintf "String was not recognized as a valid SwedishPersonalIdentityNumber. %s" msg))
+            | InvalidSerializationYear msg -> raise (ArgumentOutOfRangeException msg)
 
 type Year = private Year of int
 
@@ -72,6 +69,9 @@ module Year =
 
     let value (Year year) = year
 
+type Year with
+    member this.Value = Year.value this
+
 type Month = private Month of int
 
 module Month =
@@ -87,6 +87,9 @@ module Month =
             |> Error
 
     let value (Month month) = month
+
+type Month with
+    member this.Value = Month.value this
 
 type Day = private Day of int
 
@@ -115,6 +118,9 @@ module Day =
 
     let value (Day day) = day
 
+type Day with
+    member this.Value = Day.value this
+
 type BirthNumber = private BirthNumber of int
 
 module BirthNumber =
@@ -130,6 +136,9 @@ module BirthNumber =
             |> Error
 
     let value (BirthNumber num) = num
+
+type BirthNumber with
+    member this.Value = BirthNumber.value this
 
 type Checksum = private Checksum of int
 
@@ -168,7 +177,7 @@ module Checksum =
 /// Represents a Swedish Personal Identity Number (Svenskt Personnummer).
 /// https://en.wikipedia.org/wiki/Personal_identity_number_(Sweden)
 /// https://sv.wikipedia.org/wiki/Personnummer_i_Sverige
-type SwedishPersonalIdentityNumber = 
+type SwedishPersonalIdentityNumber =
     { /// The year for date of birth.
       Year : Year
       /// The month for date of birth.

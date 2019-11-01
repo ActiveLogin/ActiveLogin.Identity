@@ -90,5 +90,25 @@ namespace ActiveLogin.Identity.Swedish.Test
             var personalIdentityNumber = new SwedishPersonalIdentityNumber(2017, 1, 22, 238, 0);
             Assert.Throws<ArgumentOutOfRangeException>(() => personalIdentityNumber.To10DigitStringInSpecificYear(-1));
         }
+
+        [Theory]
+        [InlineData("120211+9986", 1912)]
+        [InlineData("990807-2391", 1999)]
+        public void To10DigitString_WhenParseYearIs200YearsAfterPersonWasBorn_ThrowsArgumentException(string str, int birthYear)
+        {
+            var serializationYear = birthYear + 200;
+            var pin = SwedishPersonalIdentityNumber.Parse(str);
+            Assert.Throws<ArgumentOutOfRangeException>(() => pin.To10DigitStringInSpecificYear(serializationYear ));
+        }
+
+        [Theory]
+        [InlineData("120211+9986", 1912)]
+        [InlineData("990807-2391", 1999)]
+        public void To10DigitString_WhenParseYearIsBeforePersonIsBorn_ThrowsArgumentException(string str, int birthYear)
+        {
+            var serializationYear = birthYear - 1;
+            var pin = SwedishPersonalIdentityNumber.Parse(str);
+            Assert.Throws<ArgumentOutOfRangeException>(() => pin.To10DigitStringInSpecificYear(serializationYear));
+        }
     }
 }

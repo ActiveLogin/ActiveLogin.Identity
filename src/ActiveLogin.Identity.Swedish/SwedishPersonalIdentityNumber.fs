@@ -27,8 +27,23 @@ let private extractValues (pin : SwedishPersonalIdentityNumber) : SwedishPersona
       BirthNumber = pin.BirthNumber |> BirthNumber.value
       Checksum = pin.Checksum |> Checksum.value }
 
+let private validSerializationYear (serializationYear: Year) (pinYear: Year) =
+    if serializationYear < pinYear
+    then
+        "SerializationYear cannot be a year before the person was born"
+        |> InvalidSerializationYear
+        |> Error
+
+    elif (serializationYear |> Year.value) > ((pinYear |> Year.value) + 199)
+    then
+        "SerializationYear cannot be a more than 199 years after the person was born"
+        |> InvalidSerializationYear
+        |> Error
+    else
+        serializationYear |> Ok
+
 /// <summary>
-/// Converts a SwedishPersonalIdentityNumber to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars. 
+/// Converts a SwedishPersonalIdentityNumber to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars.
 /// </summary>
 /// <param name="serializationYear">
 /// The specific year to use when checking if the person has turned / will turn 100 years old.
@@ -38,15 +53,18 @@ let private extractValues (pin : SwedishPersonalIdentityNumber) : SwedishPersona
 /// </param>
 /// <param name="pin">A SwedishPersonalIdentityNumber</param>
 let to10DigitStringInSpecificYear serializationYear (pin : SwedishPersonalIdentityNumber) =
-    let delimiter =
-        if (serializationYear |> Year.value) - (pin.Year |> Year.value) >= 100 then "+"
-        else "-"
+    result {
+        let! validYear = validSerializationYear serializationYear pin.Year
+        let delimiter =
+            if (validYear |> Year.value) - (pin.Year |> Year.value) >= 100 then "+"
+            else "-"
 
-    let vs = extractValues pin
-    sprintf "%02i%02i%02i%s%03i%1i" (vs.Year % 100) vs.Month vs.Day delimiter vs.BirthNumber vs.Checksum
+        let vs = extractValues pin
+        return sprintf "%02i%02i%02i%s%03i%1i" (vs.Year % 100) vs.Month vs.Day delimiter vs.BirthNumber vs.Checksum
+    }
 
 /// <summary>
-/// Converts a SwedishPersonalIdentityNumber to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars. 
+/// Converts a SwedishPersonalIdentityNumber to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars.
 /// </summary>
 /// <param name="pin">A SwedishPersonalIdentityNumber</param>
 let to10DigitString (pin : SwedishPersonalIdentityNumber) =
@@ -67,23 +85,24 @@ let to12DigitString pin =
     let vs = extractValues pin
     sprintf "%02i%02i%02i%03i%1i" vs.Year vs.Month vs.Day vs.BirthNumber vs.Checksum
 
-let internal toParsingError err = 
+let internal toParsingError err =
     let invalidWithMsg msg i =
-        i |> sprintf "%s %i" msg |> Invalid |> ParsingError 
+        i |> sprintf "%s %i" msg |> Invalid |> ParsingError
     match err with
     | InvalidYear y ->
         y |> invalidWithMsg "InvalidYear:"
     | InvalidMonth m ->
-        m |> invalidWithMsg "Invalid month:" 
+        m |> invalidWithMsg "Invalid month:"
     | InvalidDay d | InvalidDayAndCoordinationDay d ->
         d |> invalidWithMsg "Invalid day:"
     | InvalidBirthNumber b ->
-        b |> invalidWithMsg "Invalid birthnumber:" 
+        b |> invalidWithMsg "Invalid birthnumber:"
     | InvalidChecksum c ->
         c |> invalidWithMsg "Invalid checksum:"
     | ParsingError err -> ParsingError err
-    | ArgumentError err -> ArgumentError err
-    
+    | ArgumentNullError -> ArgumentNullError
+    | InvalidSerializationYear msg -> InvalidSerializationYear msg
+
 /// <summary>
 /// Converts the string representation of the Swedish personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent.
 /// </summary>
@@ -96,7 +115,7 @@ let internal toParsingError err =
 /// <param name="str">A string representation of the Swedish personal identity number to parse.</param>
 let parseInSpecificYear parseYear str =
     match Parse.parse parseYear str with
-    | Ok pinValues -> create pinValues 
+    | Ok pinValues -> create pinValues
     | Error error -> Error error
     |> Result.mapError toParsingError
 
@@ -116,7 +135,7 @@ module Hints =
     /// </summary>
     /// <param name="pin">A SwedishPersonalIdentityNumber</param>
     let getDateOfBirthHint (pin : SwedishPersonalIdentityNumber) =
-        DateTime(pin.Year |> Year.value, pin.Month |> Month.value, pin.Day |> Day.value, 0, 0, 0, DateTimeKind.Utc)
+        DateTime(pin.Year.Value, pin.Month.Value, pin.Day.Value, 0, 0, 0, DateTimeKind.Utc)
 
     /// <summary>
     /// Get the age of the person according to the date in the personal identity number.
@@ -126,15 +145,14 @@ module Hints =
     /// <param name="pin">A SwedishPersonalIdentityNumber</param>
     let getAgeHintOnDate (date : DateTime) pin =
         let dateOfBirth = getDateOfBirthHint pin
-        match date >= dateOfBirth with
-        | true ->
+        if date >= dateOfBirth then
             let months = 12 * (date.Year - dateOfBirth.Year) + (date.Month - dateOfBirth.Month)
             match date.Day < dateOfBirth.Day with
             | true ->
                 let years = (months - 1) / 12
                 years |> Some
             | false -> months / 12 |> Some
-        | false -> None
+        else None
 
     /// <summary>
     /// Get the age of the person according to the date in the personal identity number.
