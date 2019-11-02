@@ -33,7 +33,7 @@ let private isInvalidNumberOfDigits (str: string) =
         |> (fun s -> s.Length <> 10 && s.Length <> 12)
 
 let private validPinTests = testList "valid pins" [
-    testProp "roundtrip for 12 digit string" <| fun (Gen.ValidPin pin) ->
+    ftestProp "roundtrip for 12 digit string" <| fun (Gen.ValidPin pin) ->
         pin
         |> SwedishPersonalIdentityNumber.to12DigitString
         |> SwedishPersonalIdentityNumber.parse =! Ok pin
