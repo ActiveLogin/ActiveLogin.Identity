@@ -14,10 +14,15 @@
     <Compile Include="PinTestHelpers.fs" />
     <Compile Include="TestDataTests.fs" />
     <Compile Include="SwedishPersonalIdentityNumber_create.fs" />
+    <Compile Include="SwedishCoordinationNumber_create.fs" />
     <Compile Include="SwedishPersonalIdentityNumber_equality.fs" />
+    <Compile Include="SwedishCoordinationNumber_equality.fs" />
     <Compile Include="SwedishPersonalIdentityNumber_hash.fs" />
+    <Compile Include="SwedishCoordinationNumber_hash.fs" />
     <Compile Include="SwedishPersonalIdentityNumber_parse.fs" />
+    <Compile Include="SwedishCoordinationNumber_parse.fs" />
     <Compile Include="SwedishPersonalIdentityNumber_hints.fs" />
+    <Compile Include="SwedishCoordinationNumber_hints.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

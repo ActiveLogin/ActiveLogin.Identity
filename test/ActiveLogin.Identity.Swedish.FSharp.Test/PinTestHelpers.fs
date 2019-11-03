@@ -6,7 +6,7 @@ open Expecto
 open System
 open System.Threading
 
-let private arbTypes = [ typeof<Gen.PinGenerators> ]
+let private arbTypes = [ typeof<Gen.ValueGenerators> ]
 let private config =
     { FsCheckConfig.defaultConfig with arbitrary = arbTypes @ FsCheckConfig.defaultConfig.arbitrary }
 let testProp name = testPropertyWithConfig config name
@@ -50,3 +50,24 @@ let rng =
             Random()))
     { Next = fun (min, max) -> localGenerator.Value.Next(min, max)
       NextDouble = localGenerator.Value.NextDouble }
+
+
+let getRandomFromArray arr =
+    fun () ->
+        let index = rng.Next(0, Array.length arr - 1)
+        arr.[index]
+
+let removeHyphen (str:string) =
+    let isHyphen (c:char) = "-".Contains(c)
+    String.filter (isHyphen >> not) str
+
+let surroundEachChar (chars:char[]) (pin:string) =
+    let rnd = getRandomFromArray chars
+    let surroundWith c = [| rnd(); c; rnd() |]
+
+    Seq.collect surroundWith pin
+    |> Array.ofSeq
+    |> System.String
+
+
+let isDigit (c:char) = "0123456789".Contains(c)

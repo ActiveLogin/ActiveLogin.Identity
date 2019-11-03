@@ -18,7 +18,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [Fact]
         public void ToString_Returns_Native_FSharp_ToString()
         {
-            var values = new FSharp.Types.SwedishPersonalIdentityNumberValues(1999, 08, 07, 239, 1);
+            var values = new FSharp.Types.IdentityNumberValues(1999, 08, 07, 239, 1);
             var personalIdentityNumber = FSharp.SwedishPersonalIdentityNumber.create(values).ResultValue;
             var str = personalIdentityNumber.ToString();
             Assert.Contains("Year 1999", str);
