@@ -1,22 +1,17 @@
-module ActiveLogin.Identity.Swedish.FSharp.SwedishPersonalIdentityNumber
-
-open ActiveLogin.Identity.Swedish
+module ActiveLogin.Identity.Swedish.FSharp.SwedishCoordinationNumber
+open ActiveLogin.Identity.Swedish.FSharp
 open System
 
-/// <summary>
-/// Creates a <see cref="SwedishPersonalIdentityNumber"/> out of the individual parts.
-/// </summary>
-/// <param name="values">SwedishPersonalIdentityNumberValues containing all the number parts</param>
 let create (values : IdentityNumberValues) =
     result {
         let! y = values.Year |> Year.create
         let! m = values.Month |> Month.create
-        let! d = values.Day |> Day.create y m
+        let! d = values.Day |> CoordinationDay.create y m
         let! s = values.BirthNumber |> BirthNumber.create
-        let! c = values.Checksum |> Checksum.create y m (Day d) s
-        return { SwedishPersonalIdentityNumber.Year = y
+        let! c = values.Checksum |> Checksum.create y m (CoordinationDay d) s
+        return { SwedishCoordinationNumber.Year = y
                  Month = m
-                 Day = d
+                 CoordinationDay = d
                  BirthNumber = s
                  Checksum = c }
     }
@@ -31,18 +26,18 @@ let create (values : IdentityNumberValues) =
 /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
 /// </param>
 /// <param name="pin">A SwedishPersonalIdentityNumber</param>
-let to10DigitStringInSpecificYear serializationYear pin =
-    pin
-    |> Personal
+let to10DigitStringInSpecificYear serializationYear (num: SwedishCoordinationNumber) =
+    num
+    |> Coordination
     |> StringHelpers.to10DigitStringInSpecificYear serializationYear
 
 /// <summary>
 /// Converts a SwedishPersonalIdentityNumber to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars.
 /// </summary>
 /// <param name="pin">A SwedishPersonalIdentityNumber</param>
-let to10DigitString pin =
-    pin
-    |> Personal
+let to10DigitString (num : SwedishCoordinationNumber) =
+    num
+    |> Coordination
     |> StringHelpers.to10DigitString
 
 /// <summary>
@@ -52,7 +47,7 @@ let to10DigitString pin =
 /// <param name="pin">A SwedishPersonalIdentityNumber</param>
 let to12DigitString pin =
     pin
-    |> Personal
+    |> Coordination
     |> StringHelpers.to12DigitString
 
 /// <summary>
@@ -86,7 +81,7 @@ module Hints =
     /// Not always the actual date of birth due to the limited quantity of personal identity numbers per day.
     /// </summary>
     /// <param name="pin">A SwedishPersonalIdentityNumber</param>
-    let getDateOfBirthHint pin = HintsHelper.getDateOfBirthHint (Personal pin)
+    let getDateOfBirthHint num = HintsHelper.getDateOfBirthHint (Coordination num)
 
     /// <summary>
     /// Get the age of the person according to the date in the personal identity number.
@@ -94,14 +89,14 @@ module Hints =
     /// </summary>
     /// <param name="date">The date when to calculate the age.</param>
     /// <param name="pin">A SwedishPersonalIdentityNumber</param>
-    let getAgeHintOnDate date pin = HintsHelper.getAgeHintOnDate date (Personal pin)
+    let getAgeHintOnDate date num = HintsHelper.getAgeHintOnDate date (Coordination num)
 
     /// <summary>
     /// Get the age of the person according to the date in the personal identity number.
     /// Not always the actual date of birth due to the limited quantity of personal identity numbers per day.
     /// </summary>
     /// <param name="pin">A SwedishPersonalIdentityNumber</param>
-    let getAgeHint pin = HintsHelper.getAgeHint (Personal pin)
+    let getAgeHint num = HintsHelper.getAgeHint (Coordination num)
 
     /// <summary>
     /// Gender (juridiskt kön) in Sweden according to the last digit of the birth number in the personal identity number.
@@ -109,4 +104,4 @@ module Hints =
     /// Even number: Female
     /// </summary>
     /// <param name="pin">A SwedishPersonalIdentityNumber</param>
-    let getGenderHint pin = HintsHelper.getGenderHint (Personal pin)
+    let getGenderHint num = HintsHelper.getGenderHint (Coordination num)

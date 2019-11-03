@@ -50,6 +50,8 @@
         <Compile Include="Gender.fs" />
         <Compile Include="Types.fs" />
         <Compile Include="Parse.fs" />
+        <Compile Include="StringHelpers.fs" />
+        <Compile Include="HintsHelper.fs" />
         <Compile Include="SwedishPersonalIdentityNumber.fs" />
         <Compile Include="SwedishPersonalIdentityNumberCSharp.fs" />
         <Compile Include="SwedishPersonalIdentityNumberCSharpHintExtensions.fs" />
@@ -59,5 +61,7 @@
         <None Include="..\..\docs\images\active-login-logo-fingerprint-blue-v2-256x256.png" Pack="True" PackagePath="icon.png" />
         <None Include="..\..\LICENSE.md" Pack="True" PackagePath="LICENSE.md" />
         <None Include="..\..\README.md" Pack="True" PackagePath="README.md" />
+        <Compile Include="SwedishCoordinationNumber.fs" />
+        <Compile Include="IdentityNumber.fs" />
     </ItemGroup>
 </Project>
