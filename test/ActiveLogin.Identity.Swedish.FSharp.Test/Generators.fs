@@ -241,7 +241,7 @@ module Generators =
                 pin.Day.Value + 60
                 |> CoordinationDay.createOrFail pin.Year pin.Month
 
-            let checksum = Checksum.getCheckSum pin.Year pin.Month (CoordinationDay coordDay) pin.BirthNumber
+            let checksum = Checksum.getChecksum pin.Year pin.Month (CoordinationDay coordDay) pin.BirthNumber
             { SwedishCoordinationNumber.Year = pin.Year
               Month = pin.Month
               CoordinationDay = coordDay
