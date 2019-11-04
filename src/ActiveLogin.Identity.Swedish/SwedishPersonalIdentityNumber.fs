@@ -1,7 +1,5 @@
 module ActiveLogin.Identity.Swedish.FSharp.SwedishPersonalIdentityNumber
 
-open ActiveLogin.Identity.Swedish
-open System
 
 /// <summary>
 /// Creates a <see cref="SwedishPersonalIdentityNumber"/> out of the individual parts.
