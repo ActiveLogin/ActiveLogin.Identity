@@ -6,7 +6,7 @@ type private PinType<'T> =
     | TwelveDigits of 'T
     | TenDigits of 'T
 
-let parse parseYear =
+let private parseInternal parseYear =
     let toChars str = [ for c in str -> c ]
     let toString = Array.ofList >> String
 
@@ -102,3 +102,12 @@ let parse parseYear =
     >> Result.bind requireDigitCount
     >> Result.map clean
     >> Result.bind parseNumberValues
+
+let parseInSpecificYear createFunc parseYear str =
+    match parseInternal parseYear str with
+    | Ok pinValues -> createFunc pinValues
+    | Error error -> Error error
+    |> Result.mapError ParsingError.toParsingError
+
+let parse createFunc str = result { let! year = DateTime.UtcNow.Year |> Year.create
+                                    return! parseInSpecificYear createFunc year str }

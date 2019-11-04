@@ -6,7 +6,7 @@ open System
 /// <summary>
 /// Creates a <see cref="SwedishPersonalIdentityNumber"/> out of the individual parts.
 /// </summary>
-/// <param name="values">SwedishPersonalIdentityNumberValues containing all the number parts</param>
+/// <param name="values">IdentityNumberValues containing all the number parts</param>
 let create (values : IdentityNumberValues) =
     result {
         let! y = values.Year |> Year.create
@@ -47,7 +47,7 @@ let to10DigitString pin =
 
 /// <summary>
 /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent 12 digit string representation.
-/// Format is YYYYMMDDBBBC, for example <example>19908072391</example> or <example>191202119986</example>.
+/// Format is YYYYMMDDBBBC, for example <example>199008072390</example> or <example>191202119986</example>.
 /// </summary>
 /// <param name="pin">A SwedishPersonalIdentityNumber</param>
 let to12DigitString pin =
@@ -65,18 +65,13 @@ let to12DigitString pin =
 /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
 /// </param>
 /// <param name="str">A string representation of the Swedish personal identity number to parse.</param>
-let parseInSpecificYear parseYear str =
-    match Parse.parse parseYear str with
-    | Ok pinValues -> create pinValues
-    | Error error -> Error error
-    |> Result.mapError ParsingError.toParsingError
+let parseInSpecificYear parseYear str = Parse.parseInSpecificYear create parseYear str
 
 /// <summary>
 /// Converts the string representation of the personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent.
 /// </summary>
 /// <param name="str">A string representation of the Swedish personal identity number to parse.</param>
-let parse str = result { let! year = DateTime.UtcNow.Year |> Year.create
-                         return! parseInSpecificYear year str }
+let parse str = Parse.parse create str
 
 module Hints =
     open ActiveLogin.Identity.Swedish
