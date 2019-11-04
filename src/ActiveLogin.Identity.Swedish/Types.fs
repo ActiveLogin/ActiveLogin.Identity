@@ -282,27 +282,50 @@ type IdentityNumberValues =
       BirthNumber : int
       Checksum : int }
 
+/// Represents a Swedish Identity Number.
 type IdentityNumber =
     | Personal of SwedishPersonalIdentityNumber
     | Coordination of SwedishCoordinationNumber
+
+    /// The year for date of birth.
     member this.Year =
         match this with
         | Personal p -> p.Year
         | Coordination c -> c.Year
+
+    /// The month for date of birth.
     member this.Month =
         match this with
         | Personal p -> p.Month
         | Coordination c -> c.Month
+
+    /// The day for date of birth.
     member this.Day =
         match this with
         | Personal p -> p.Day |> Day
         | Coordination c -> c.CoordinationDay |> CoordinationDay
+
+    /// A birth number (födelsenummer) to distinguish people born on the same day.
     member this.BirthNumber =
         match this with
         | Personal p -> p.BirthNumber
         | Coordination c -> c.BirthNumber
+
+    /// A checksum (kontrollsiffra) used for validation. Last digit in the PIN.
     member this.Checksum =
         match this with
         | Personal p -> p.Checksum
         | Coordination c -> c.Checksum
-type Parse = string -> Year -> Result<IdentityNumber, Error>
+
+    /// Returns a value indicating whether this is a SwedishPersonalIdentityNumber.
+    member this.IsSwedishPersonalIdentityNumber =
+        match this with
+        | Personal _ -> true
+        | _ -> false
+
+    /// Returns a value indicating whether this is a SwedishCoordinationNumber.
+    member this.IsSwedishCoordinationNumber =
+        match this with
+        | Coordination _ -> true
+        | _ -> false
+

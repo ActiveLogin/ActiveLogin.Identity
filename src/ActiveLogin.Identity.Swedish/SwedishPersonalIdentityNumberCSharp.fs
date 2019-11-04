@@ -11,7 +11,7 @@ open System.Runtime.InteropServices //for OutAttribute
 /// https://sv.wikipedia.org/wiki/Personnummer_i_Sverige
 /// </summary>
 [<CompiledName("SwedishPersonalIdentityNumber")>]
-type SwedishPersonalIdentityNumberCSharp private(pin : SwedishPersonalIdentityNumber) =
+type SwedishPersonalIdentityNumberCSharp internal(pin : SwedishPersonalIdentityNumber) =
 
     /// <summary>
     /// Creates an instance of <see cref="SwedishPersonalIdentityNumber"/> out of the individual parts.
