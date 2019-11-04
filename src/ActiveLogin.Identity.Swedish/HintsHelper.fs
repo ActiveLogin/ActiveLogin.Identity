@@ -8,7 +8,6 @@ let getDateOfBirthHint (num : IdentityNumber) =
         match num with
         | Personal pin -> pin.Day.Value
         | Coordination num -> num.RealDay
-
     DateTime(num.Year.Value, num.Month.Value, day, 0, 0, 0, DateTimeKind.Utc)
 
 let getAgeHintOnDate (date : DateTime) num =

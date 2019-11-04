@@ -167,6 +167,7 @@ module CoordinationDay =
 
 type CoordinationDay with
     member this.Value = this |> CoordinationDay.value
+    member this.RealDay = this.Value - 60
 
 type DayInternal =
     | Day of Day
@@ -271,7 +272,7 @@ type SwedishCoordinationNumber =
     /// Format is YYYYMMDDBBBC, for example <example>???</example> or <example>???</example>.
     /// </summary>
     override this.ToString() = sprintf "%A" this
-    member this.RealDay = this.CoordinationDay.Value - 60
+    member this.RealDay = this.CoordinationDay.RealDay
 
 
 type IdentityNumberValues =

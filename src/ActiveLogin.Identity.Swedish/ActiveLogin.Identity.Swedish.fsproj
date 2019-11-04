@@ -53,12 +53,13 @@
         <Compile Include="StringHelpers.fs" />
         <Compile Include="HintsHelper.fs" />
         <Compile Include="SwedishPersonalIdentityNumber.fs" />
-        <Compile Include="SwedishPersonalIdentityNumberCSharp.fs" />
         <Compile Include="SwedishCoordinationNumber.fs" />
+        <Compile Include="IdentityNumber.fs" />
+        <Compile Include="SwedishPersonalIdentityNumberCSharp.fs" />
         <Compile Include="SwedishCoordinationNumberCSharp.fs" />
+        <Compile Include="IdentityNumberCSharp.fs" />
         <Compile Include="SwedishPersonalIdentityNumberCSharpHintExtensions.fs" />
         <Compile Include="SwedishCoordinationNumberCSharpHintExtensions.fs" />
-        <Compile Include="IdentityNumber.fs" />
     </ItemGroup>
 
     <ItemGroup>
