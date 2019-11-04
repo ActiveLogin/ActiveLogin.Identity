@@ -9,8 +9,6 @@ open Expecto
 open FsCheck
 open ActiveLogin.Identity.Swedish.FSharp
 open System.Reflection
-open ActiveLogin.Identity.Swedish.FSharp.TestData
-
 
 [<Tests>]
 let tests =

@@ -1,6 +1,5 @@
 module ActiveLogin.Identity.Swedish.FSharp.SwedishCoordinationNumber
 open ActiveLogin.Identity.Swedish.FSharp
-open System
 
 /// <summary>
 /// Creates a <see cref="SwedishCoordinationNumber"/> out of the individual parts.

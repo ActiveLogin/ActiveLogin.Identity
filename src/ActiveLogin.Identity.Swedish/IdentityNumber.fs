@@ -1,12 +1,11 @@
 module ActiveLogin.Identity.Swedish.FSharp.IdentityNumber
 
 open ActiveLogin.Identity.Swedish.FSharp
-open System
 
 /// <summary>
-/// Creates a <see cref="SwedishPersonalIdentityNumber"/> out of the individual parts.
+/// Creates a <see cref="IdentityNumber"/> out of the individual parts.
 /// </summary>
-/// <param name="values">SwedishPersonalIdentityNumberValues containing all the number parts</param>
+/// <param name="values">IdentityNumberValues containing all the number parts</param>
 let create (values : IdentityNumberValues) =
     result {
         match SwedishPersonalIdentityNumber.create values with
@@ -18,7 +17,7 @@ let create (values : IdentityNumberValues) =
     }
 
 /// <summary>
-/// Converts the string representation of the Swedish personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent.
+/// Converts the string representation of the identity number to its <see cref="IdentityNumber"/> equivalent.
 /// </summary>
 /// <param name="parseYear">
 /// The specific year to use when checking if the person has turned / will turn 100 years old.
@@ -26,11 +25,75 @@ let create (values : IdentityNumberValues) =
 ///
 /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
 /// </param>
-/// <param name="str">A string representation of the Swedish personal identity number to parse.</param>
+/// <param name="str">A string representation of the identity number to parse.</param>
 let parseInSpecificYear parseYear str = Parse.parseInSpecificYear create parseYear str
 
 /// <summary>
-/// Converts the string representation of the personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent.
+/// Converts the string representation of the identity number to its <see cref="IdentityNumber"/> equivalent.
 /// </summary>
-/// <param name="str">A string representation of the Swedish personal identity number to parse.</param>
+/// <param name="str">A string representation of the identity number to parse.</param>
 let parse str = Parse.parse create str
+
+/// <summary>
+/// Converts a IdentityNumber to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars.
+/// </summary>
+/// <param name="serializationYear">
+/// The specific year to use when checking if the person has turned / will turn 100 years old.
+/// That information changes the delimiter (- or +).
+///
+/// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
+/// </param>
+/// <param name="num">An IdentityNumber</param>
+let to10DigitStringInSpecificYear serializationYear (num: IdentityNumber) =
+    num
+    |> StringHelpers.to10DigitStringInSpecificYear serializationYear
+
+/// <summary>
+/// Converts a IdentityNumber to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars.
+/// </summary>
+/// <param name="num">An IdentityNumber</param>
+let to10DigitString (num : IdentityNumber) =
+    num
+    |> StringHelpers.to10DigitString
+
+/// <summary>
+/// Converts the value of the current <see cref="IdentityNumber" /> object to its equivalent 12 digit string representation.
+/// Format is YYYYMMDDBBBC, for example <example>199008672397</example> or <example>191202719983</example>.
+/// </summary>
+/// <param name="num">An IdentityNumber</param>
+let to12DigitString num =
+    num
+    |> StringHelpers.to12DigitString
+
+module Hints =
+    open ActiveLogin.Identity.Swedish
+
+    /// <summary>
+    /// Date of birth for the person according to the identity number.
+    /// Not always the actual date of birth due to the limited quantity of identity numbers per day.
+    /// </summary>
+    /// <param name="num">An IdentityNumber</param>
+    let getDateOfBirthHint num = HintsHelper.getDateOfBirthHint num
+
+    /// <summary>
+    /// Get the age of the person according to the date in the identity number.
+    /// Not always the actual date of birth due to the limited quantity of identity numbers per day.
+    /// </summary>
+    /// <param name="date">The date when to calculate the age.</param>
+    /// <param name="num">An IdentityNumber</param>
+    let getAgeHintOnDate date num = HintsHelper.getAgeHintOnDate date num
+
+    /// <summary>
+    /// Get the age of the person according to the date in the identity number.
+    /// Not always the actual date of birth due to the limited quantity of identity numbers per day.
+    /// </summary>
+    /// <param name="num">An IdentityNumber</param>
+    let getAgeHint num = HintsHelper.getAgeHint num
+
+    /// <summary>
+    /// Gender (juridiskt kön) in Sweden according to the last digit of the birth number in the identity number.
+    /// Odd number: Male
+    /// Even number: Female
+    /// </summary>
+    /// <param name="num">An IdentityNumber</param>
+    let getGenderHint num = HintsHelper.getGenderHint num
