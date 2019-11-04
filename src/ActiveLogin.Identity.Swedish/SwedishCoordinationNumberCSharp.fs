@@ -11,7 +11,7 @@ open System.Runtime.InteropServices //for OutAttribute
 /// https://sv.wikipedia.org/wiki/Personnummer_i_Sverige
 /// </summary>
 [<CompiledName("SwedishCoordinationNumber")>]
-type SwedishCoordinationNumberCSharp private(num : SwedishCoordinationNumber) =
+type SwedishCoordinationNumberCSharp internal(num : SwedishCoordinationNumber) =
 
     /// <summary>
     /// Creates an instance of <see cref="SwedishCoordinationNumber"/> out of the individual parts.

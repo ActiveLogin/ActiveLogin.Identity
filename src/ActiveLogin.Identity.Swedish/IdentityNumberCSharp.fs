@@ -11,7 +11,7 @@ open System.Runtime.InteropServices //for OutAttribute
 /// https://sv.wikipedia.org/wiki/Personnummer_i_Sverige
 /// </summary>
 [<CompiledName("IdentityNumber")>]
-type IdentityNumberCSharp(num: IdentityNumber) =
+type IdentityNumberCSharp private(num: IdentityNumber) =
 
     /// <summary>
     /// Creates an instance of a <see cref="IdentityNumber"/> out of the individual parts.
@@ -36,13 +36,42 @@ type IdentityNumberCSharp(num: IdentityNumber) =
 
     member this.SwedishPersonalIdentityNumber =
         match num with
-        | Personal pin -> pin
-        | _ -> Unchecked.defaultof<SwedishPersonalIdentityNumber>
+        | Personal pin -> pin |> SwedishPersonalIdentityNumberCSharp
+        | _ -> Unchecked.defaultof<SwedishPersonalIdentityNumberCSharp>
 
     member this.SwedishCoordinationNumber =
         match num with
-        | Coordination num -> num
-        | _ -> Unchecked.defaultof<SwedishCoordinationNumber>
+        | Coordination num -> num |> SwedishCoordinationNumberCSharp
+        | _ -> Unchecked.defaultof<SwedishCoordinationNumberCSharp>
+
+    /// <summary>
+    /// The year for date of birth.
+    /// </summary>
+    member __.Year = num.Year.Value
+
+    /// <summary>
+    /// The month for date of birth.
+    /// </summary>
+    member __.Month = num.Month.Value
+
+    /// <summary>
+    /// The coordination day (this is the day for date of birth + 60)
+    /// </summary>
+    member __.Day = match num.Day with | Day d -> d.Value | CoordinationDay cd -> cd.Value
+
+    /// <summary>
+    /// A birth number (födelsenummer) to distinguish people born on the same day.
+    /// </summary>
+    member __.BirthNumber = num.BirthNumber.Value
+
+    /// <summary>
+    /// A checksum (kontrollsiffra) used for validation. Last digit in the number.
+    /// </summary>
+    member __.Checksum = num.Checksum.Value
+
+    member __.IsSwedishPersonalIdentityNumber = num.IsSwedishPersonalIdentityNumber
+
+    member __.IsSwedishCoordinationNumber = num.IsSwedishCoordinationNumber
 
     /// <summary>
     /// Converts the string representation of the Swedish identity number to its <see cref="IdentityNumber"/> equivalent.
@@ -112,6 +141,22 @@ type IdentityNumberCSharp(num: IdentityNumber) =
             true
 
     /// <summary>
+    /// Creates an instance of a <see cref="IdentityNumber"/> out of a swedish personal identity number.
+    /// </summary>
+    /// <param name="pin">The SwedishPersonalIdentityNumber.</param>
+    /// <returns>An instance of <see cref="IdentityNumber"/></returns>
+    static member FromSwedishPersonalIdentityNumber(pin: SwedishPersonalIdentityNumberCSharp) =
+        IdentityNumberCSharp(Personal pin.IdentityNumber)
+
+    /// <summary>
+    /// Creates an instance of a <see cref="IdentityNumber"/> out of a swedish coordination number.
+    /// </summary>
+    /// <param name="pin">The SwedishCoordinationNumber.</param>
+    /// <returns>An instance of <see cref="IdentityNumber"/></returns>
+    static member FromSwedishCoordinationNumber(num: SwedishCoordinationNumberCSharp) =
+        IdentityNumberCSharp(Coordination num.IdentityNumber)
+
+    /// <summary>
     /// Converts the value of the current <see cref="IdentityNumber" /> object to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars.
     /// Format is YYMMDDXBBBC, for example <example>990807-2391</example> or <example>120211+9986</example>.
     /// </summary>
@@ -161,3 +206,4 @@ type IdentityNumberCSharp(num: IdentityNumber) =
         | (null, null) -> true
         | (null, _) | (_, null) -> false
         | _ -> left.IdentityNumber = right.IdentityNumber
+

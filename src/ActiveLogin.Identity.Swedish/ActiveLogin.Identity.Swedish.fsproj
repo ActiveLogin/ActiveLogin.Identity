@@ -63,6 +63,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Compile Include="IdentityNumberCSharpHintExtensions.fs" />
         <None Include="..\..\docs\images\active-login-logo-fingerprint-blue-v2-256x256.png" Pack="True" PackagePath="icon.png" />
         <None Include="..\..\LICENSE.md" Pack="True" PackagePath="LICENSE.md" />
         <None Include="..\..\README.md" Pack="True" PackagePath="README.md" />
