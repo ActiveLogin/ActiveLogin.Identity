@@ -12,7 +12,6 @@ open System.Runtime.InteropServices //for OutAttribute
 /// </summary>
 [<CompiledName("SwedishPersonalIdentityNumber")>]
 type SwedishPersonalIdentityNumberCSharp private(pin : SwedishPersonalIdentityNumber) =
-    let identityNumber = pin
 
     /// <summary>
     /// Creates an instance of <see cref="SwedishPersonalIdentityNumber"/> out of the individual parts.
@@ -36,32 +35,32 @@ type SwedishPersonalIdentityNumberCSharp private(pin : SwedishPersonalIdentityNu
 
         SwedishPersonalIdentityNumberCSharp(idNum)
 
-    member internal __.IdentityNumber = identityNumber
+    member internal __.IdentityNumber = pin
 
     /// <summary>
     /// The year for date of birth.
     /// </summary>
-    member __.Year = identityNumber.Year.Value
+    member __.Year = pin.Year.Value
 
     /// <summary>
     /// The month for date of birth.
     /// </summary>
-    member __.Month = identityNumber.Month.Value
+    member __.Month = pin.Month.Value
 
     /// <summary>
     /// The day for date of birth.
     /// </summary>
-    member __.Day = identityNumber.Day.Value
+    member __.Day = pin.Day.Value
 
     /// <summary>
     /// A birth number (födelsenummer) to distinguish people born on the same day.
     /// </summary>
-    member __.BirthNumber = identityNumber.BirthNumber.Value
+    member __.BirthNumber = pin.BirthNumber.Value
 
     /// <summary>
     /// A checksum (kontrollsiffra) used for validation. Last digit in the PIN.
     /// </summary>
-    member __.Checksum = identityNumber.Checksum.Value
+    member __.Checksum = pin.Checksum.Value
 
     /// <summary>
     /// Converts the string representation of the Swedish personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent.
@@ -139,19 +138,19 @@ type SwedishPersonalIdentityNumberCSharp private(pin : SwedishPersonalIdentityNu
     member __.To10DigitStringInSpecificYear(serializationYear : int) =
         match serializationYear |> Year.create with
         | Error _ -> raise (ArgumentOutOfRangeException("year", serializationYear, "Invalid year."))
-        | Ok year -> to10DigitStringInSpecificYear year identityNumber |> Error.handle
+        | Ok year -> to10DigitStringInSpecificYear year pin |> Error.handle
 
     /// <summary>
     /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent short string representation.
     /// Format is YYMMDDXBBBC, for example <example>990807-2391</example> or <example>120211+9986</example>.
     /// </summary>
-    member __.To10DigitString() = to10DigitString identityNumber |> Error.handle
+    member __.To10DigitString() = to10DigitString pin |> Error.handle
 
     /// <summary>
     /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent 12 digit string representation.
     /// Format is YYYYMMDDBBBC, for example <example>19908072391</example> or <example>191202119986</example>.
     /// </summary>
-    member __.To12DigitString() = to12DigitString identityNumber
+    member __.To12DigitString() = to12DigitString pin
 
     /// <summary>
     /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent 12 digit string representation.
@@ -164,12 +163,12 @@ type SwedishPersonalIdentityNumberCSharp private(pin : SwedishPersonalIdentityNu
     /// <returns>true if <paramref name="value">value</paramref> is an instance of <see cref="SwedishPersonalIdentityNumber"></see> and equals the value of this instance; otherwise, false.</returns>
     override __.Equals(b) =
         match b with
-        | :? SwedishPersonalIdentityNumberCSharp as pin -> identityNumber = pin.IdentityNumber
+        | :? SwedishPersonalIdentityNumberCSharp as p -> pin = p.IdentityNumber
         | _ -> false
 
     /// <summary>Returns the hash code for this instance.</summary>
     /// <returns>A 32-bit signed integer hash code.</returns>
-    override __.GetHashCode() = hash identityNumber
+    override __.GetHashCode() = hash pin
 
     static member op_Equality (left: SwedishPersonalIdentityNumberCSharp, right: SwedishPersonalIdentityNumberCSharp) =
         match box left, box right with
