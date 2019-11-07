@@ -54,10 +54,14 @@
         <Compile Include="HintsHelper.fs" />
         <Compile Include="SwedishPersonalIdentityNumber.fs" />
         <Compile Include="SwedishCoordinationNumber.fs" />
+        <Compile Include="SwedishCompanyRegistrationNumber.fs" />
+        <Compile Include="CompanyIdentityNumber.fs" />
         <Compile Include="IndividualIdentityNumber.fs" />
         <Compile Include="SwedishPersonalIdentityNumberCSharp.fs" />
         <Compile Include="SwedishCoordinationNumberCSharp.fs" />
         <Compile Include="IndividualIdentityNumberCSharp.fs" />
+        <Compile Include="SwedishCompanyRegistrationNumberCSharp.fs" />
+        <Compile Include="CompanyIdentityNumberCSharp.fs" />
         <Compile Include="SwedishPersonalIdentityNumberCSharpHintExtensions.fs" />
         <Compile Include="SwedishCoordinationNumberCSharpHintExtensions.fs" />
     </ItemGroup>

@@ -1,6 +1,8 @@
 module ActiveLogin.Identity.Swedish.FSharp.SwedishCoordinationNumber
 open ActiveLogin.Identity.Swedish.FSharp
 
+let toIdentityNumber = Coordination
+
 /// <summary>
 /// Creates a <see cref="SwedishCoordinationNumber"/> out of the individual parts.
 /// </summary>
@@ -31,7 +33,7 @@ let create (year, month, day, birthNumber, checksum) =
 /// <param name="num">A SwedishCoordinationNumber</param>
 let to10DigitStringInSpecificYear serializationYear (num: SwedishCoordinationNumber) =
     num
-    |> Coordination
+    |> toIdentityNumber
     |> StringHelpers.to10DigitStringInSpecificYear serializationYear
 
 /// <summary>
@@ -40,7 +42,7 @@ let to10DigitStringInSpecificYear serializationYear (num: SwedishCoordinationNum
 /// <param name="num">A SwedishCoordinationNumber</param>
 let to10DigitString (num : SwedishCoordinationNumber) =
     num
-    |> Coordination
+    |> toIdentityNumber
     |> StringHelpers.to10DigitString
 
 /// <summary>
@@ -50,7 +52,7 @@ let to10DigitString (num : SwedishCoordinationNumber) =
 /// <param name="num">A SwedishCoordinationNumber</param>
 let to12DigitString num =
     num
-    |> Coordination
+    |> toIdentityNumber
     |> StringHelpers.to12DigitString
 
 /// <summary>

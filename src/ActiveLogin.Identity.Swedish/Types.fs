@@ -8,7 +8,6 @@ type ParsingError =
     | Length
     | Invalid of string
 
-
 type Error =
     | InvalidYear of int
     | InvalidMonth of int
@@ -195,30 +194,42 @@ type BirthNumber with
 type Checksum = private Checksum of int
 
 module Checksum =
-    let private create' (Year year) (Month month) day (BirthNumber birth) checksum =
-        let isValidChecksum =
-            let calculatedChecksum =
-                let twoDigitYear = year % 100
-                let numberStr = sprintf "%02i%02i%02i%03i" twoDigitYear month day birth
-                let digits = numberStr |> Seq.map (fun s -> s.ToString() |> int)
-                digits
-                |> Seq.rev
-                |> Seq.mapi (fun (i : int) (d : int) ->
-                       if i % 2 = 0 then d * 2
-                       else d)
-                |> Seq.rev
-                |> Seq.sumBy (fun (d : int) ->
-                       if d > 9 then d - 9
-                       else d)
-                |> fun x -> (x * 9) % 10
-            calculatedChecksum = checksum
+    let calculateChecksum digits =
+        digits
+        |> Seq.rev
+        |> Seq.mapi (fun (i : int) (d : int) ->
+               if i % 2 = 0 then d * 2
+               else d)
+        |> Seq.rev
+        |> Seq.sumBy (fun (d : int) ->
+               if d > 9 then d - 9
+               else d)
+        |> fun x -> (x * 9) % 10
 
-        if isValidChecksum then
-            checksum
+    let createFromDigits digits expectedChecksum =
+        let checksum = calculateChecksum digits
+        if checksum = expectedChecksum then
+            expectedChecksum
             |> Checksum
             |> Ok
         else
-            checksum
+            expectedChecksum
+            |> InvalidChecksum
+            |> Error
+
+    let private create' (Year year) (Month month) day (BirthNumber birth) expectedChecksum =
+        let checksum =
+            let twoDigitYear = year % 100
+            let numberStr = sprintf "%02i%02i%02i%03i" twoDigitYear month day birth
+            let digits = numberStr |> Seq.map (fun s -> s.ToString() |> int)
+            calculateChecksum digits
+
+        if checksum = expectedChecksum then
+            expectedChecksum
+            |> Checksum
+            |> Ok
+        else
+            expectedChecksum
             |> InvalidChecksum
             |> Error
 
@@ -274,8 +285,61 @@ type SwedishCoordinationNumber =
     override this.ToString() = sprintf "%A" this
     member this.RealDay = this.CoordinationDay.RealDay
 
+type X = private X of int
+module X =
+    let create x =
+        if x < 1 || x > 9999 then ParsingError.Invalid "Must be 0001-9999" |> ParsingError |> Error
+        else x |> X |> Ok
+    let value (X x)  = x
+type X with
+    member this.Value = this |> X.value
 
-/// Represents a Swedish Identity Number.
+type Y = private Y of int
+module Y =
+    let create y =
+        if y < 20 || y > 99 then ParsingError.Invalid "Must be 20-99 " |> ParsingError |> Error
+        else y |> Y |> Ok
+
+    let value (Y y) = y
+type Y with
+    member this.Value = this |> Y.value
+
+type Z = private Z of int
+module Z =
+    let create z =
+        if z < 1 || z > 99 then ParsingError.Invalid "Must be 01-99" |> ParsingError |> Error
+        else z |> Z |> Ok
+
+    let value (Z z) = z
+type Z with
+    member this.Value = this |> Z.value
+
+type Q = private Q of int
+module Q =
+    let create q =
+        if q < 1 || q > 999 then ParsingError.Invalid "Must be 001 - 999" |> ParsingError |> Error
+        else q |> Q |> Ok
+
+    let value (Q q) = q
+
+type Q with
+    member this.Value = this |> Q.value
+
+/// Represents a Swedish Company Registration Number (organisationsnummer).
+type SwedishCompanyRegistrationNumber =
+    internal
+        { X : X
+          Y : Y
+          Z : Z
+          Q : Q
+          Checksum : Checksum }
+    /// <summary>
+    /// Converts the value of the current <see cref="SwedishCompanyRegistrationNumber" /> object to its equivalent 12 digit string representation.
+    /// Format is YYYYMMDDBBBC, for example <example>???</example> or <example>???</example>.
+    /// </summary>
+    override this.ToString() = sprintf "%A" this
+
+/// Represents a Swedish Individual Identity Number.
 type IndividualIdentityNumber =
     | Personal of SwedishPersonalIdentityNumber
     | Coordination of SwedishCoordinationNumber
@@ -322,3 +386,24 @@ type IndividualIdentityNumber =
         | Coordination _ -> true
         | _ -> false
 
+type CompanyIdentityNumber =
+    | Individual of IndividualIdentityNumber
+    | Company of SwedishCompanyRegistrationNumber
+
+    /// Returns a value indicating whether this is a SwedishPersonalIdentityNumber.
+    member this.IsSwedishPersonalIdentityNumber =
+        match this with
+        | Individual (Personal _) -> true
+        | _ -> false
+
+    /// Returns a value indicating whether this is a SwedishCoordinationNumber.
+    member this.IsSwedishCoordinationNumber =
+        match this with
+        | Individual (Coordination _) -> true
+        | _ -> false
+
+    /// Returns a value indicating whether this is a SwedishCompanyRegistrationNumber.
+    member this.IsSwedishCompanyRegistrationNumber =
+        match this with
+        | Company _ -> true
+        | _ -> false

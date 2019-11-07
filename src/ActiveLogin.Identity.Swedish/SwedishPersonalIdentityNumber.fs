@@ -1,5 +1,6 @@
 module ActiveLogin.Identity.Swedish.FSharp.SwedishPersonalIdentityNumber
 
+let toIdentityNumber = Personal
 
 /// <summary>
 /// Creates a <see cref="SwedishPersonalIdentityNumber"/> out of the individual parts.
@@ -31,7 +32,7 @@ let create (year, month, day, birthNumber, checksum) =
 /// <param name="pin">A SwedishPersonalIdentityNumber</param>
 let to10DigitStringInSpecificYear serializationYear pin =
     pin
-    |> Personal
+    |> toIdentityNumber
     |> StringHelpers.to10DigitStringInSpecificYear serializationYear
 
 /// <summary>
@@ -40,7 +41,7 @@ let to10DigitStringInSpecificYear serializationYear pin =
 /// <param name="pin">A SwedishPersonalIdentityNumber</param>
 let to10DigitString pin =
     pin
-    |> Personal
+    |> toIdentityNumber
     |> StringHelpers.to10DigitString
 
 /// <summary>
@@ -50,7 +51,7 @@ let to10DigitString pin =
 /// <param name="pin">A SwedishPersonalIdentityNumber</param>
 let to12DigitString pin =
     pin
-    |> Personal
+    |> toIdentityNumber
     |> StringHelpers.to12DigitString
 
 /// <summary>

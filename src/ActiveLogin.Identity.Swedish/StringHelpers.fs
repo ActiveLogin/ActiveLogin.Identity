@@ -22,7 +22,6 @@ let private parseDay day =
     | Day d -> d.Value
     | CoordinationDay cd -> cd.Value
 
-
 let to10DigitStringInSpecificYear serializationYear (num : IndividualIdentityNumber) =
     result {
         let! validYear = validSerializationYear serializationYear num.Year
@@ -37,7 +36,7 @@ let to10DigitStringInSpecificYear serializationYear (num : IndividualIdentityNum
             delimiter
             num.BirthNumber.Value
             num.Checksum.Value
-    }
+}
 
 let to10DigitString (num : IndividualIdentityNumber) =
     let year =
