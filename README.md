@@ -19,6 +19,7 @@ ActiveLogin.Identity provides parsing and validation of Swedish identities such 
 | ------- | ----------- | ----- |
 | [ActiveLogin.Identity.Swedish](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/src/ActiveLogin.Identity.Swedish) | .NET classes handling Personal Identity Number | [![NuGet](https://img.shields.io/nuget/v/ActiveLogin.Identity.Swedish.svg)](https://www.nuget.org/packages/ActiveLogin.Identity.Swedish/) |
 | [ActiveLogin.Identity.Swedish.AspNetCore](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/src/ActiveLogin.Identity.Swedish.AspNetCore) | Validation attributes for ASP.NET Core. | [![NuGet](https://img.shields.io/nuget/v/ActiveLogin.Identity.Swedish.AspNetCore.svg)](https://www.nuget.org/packages/ActiveLogin.Identity.Swedish.AspNetCore/) |
+| [ActiveLogin.Identity.Swedish.TestData](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/src/ActiveLogin.Identity.Swedish.TestData) | Provides Swedish Personal Identity Numbers test data. | [![NuGet](https://img.shields.io/nuget/v/ActiveLogin.Identity.Swedish.TestData.svg)](https://www.nuget.org/packages/ActiveLogin.Identity.Swedish.TestData/) |
 
 ## Getting started
 
