@@ -4,6 +4,9 @@ trigger:
 - master
 - feature/*
 
+variables:
+  - group: ActiveLogin
+
 jobs:
 - job: Build
 
