@@ -6,7 +6,7 @@ ActiveLogin.Identity provides parsing and validation of Swedish identities such 
 
 ## Features
 - :id: .NET parser for Swedish Personal Identity Number (Svenskt personnummer)
-- :penguin: Cross platform: Targets .NET Standard 2.0 and .NET Framework 4.6.1
+- :penguin: Cross platform: Targets .NET Standard 2.0
 - :heavy_check_mark: Strong named
 - :lock: GDPR Compliant
 - :calendar: Extracts metadata such as date of birth and gender
