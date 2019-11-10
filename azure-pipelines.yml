@@ -41,7 +41,7 @@ jobs:
     pathToNugetPackages: '$(Build.ArtifactStagingDirectory)\**\*.nupkg'
 
     codesigningCertPassword: ''
-    codesigningStamperUrl: 'http://timestamp.digicert.com'
+    codesigningTimestamperUrl: 'http://timestamp.digicert.com'
 
   steps:
 
