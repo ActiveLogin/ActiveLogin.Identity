@@ -14,16 +14,16 @@ jobs:
     matrix:
       Windows:
         vmImage: 'windows-latest'
-        signNugetPackage: true
         artifactName: 'nuget-windows'
+        signNugetPackage: true
       macOS:
         vmImage: 'macOS-latest'
-        signNugetPackage: false
         artifactName: 'nuget-macos'
+        signNugetPackage: false
       Linux:
         vmImage: 'ubuntu-latest'
-        signNugetPackage: false
         artifactName: 'nuget-linux'
+        signNugetPackage: false
     maxParallel: 3
 
   pool:
