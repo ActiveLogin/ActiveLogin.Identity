@@ -107,8 +107,5 @@ jobs:
       projects: '$(pathToTestProjects)'
       arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
   
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish Artifacts'
-    inputs:
-      pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
-      artifactName: '$(artifactName)'
+  - publish: '$(Build.ArtifactStagingDirectory)'
+    artifact: '$(artifactName)'
