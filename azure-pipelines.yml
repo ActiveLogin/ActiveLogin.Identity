@@ -83,7 +83,7 @@ jobs:
       secureFile: 'activesolution-codesigning-cert.pfx'
 
   - task: NuGetToolInstaller@0
-    displayName: 'Install NuGet'
+    displayName: 'Install: NuGet'
     condition: and(succeeded(), and(eq(variables['signNugetPackage'], true) , ne(variables['Build.Reason'], 'PullRequest')))
     inputs:
       versionSpec: 5.3.0
