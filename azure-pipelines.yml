@@ -1,5 +1,7 @@
 # Azure DevOps Pipeline
 
+name: $(Date:yyyyMMdd)$(Rev:r)
+
 trigger:
 - master
 - feature/*
