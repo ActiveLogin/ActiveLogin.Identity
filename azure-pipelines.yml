@@ -77,19 +77,19 @@ jobs:
   - task: DownloadSecureFile@1
     displayName: 'Download secure file: activesolution-codesigning-cert.pfx'
     name: codesigningCert
-    condition: and(succeeded(), and(eq(variables['signNugetPackage'], true) , ne(variables['Build.Reason'], 'PullRequest')) 
+    condition: and(succeeded(), and(eq(variables['signNugetPackage'], true) , ne(variables['Build.Reason'], 'PullRequest'))) 
     inputs:
       secureFile: 'activesolution-codesigning-cert.pfx'
 
   - task: NuGetToolInstaller@0
     displayName: 'Install NuGet'
-    condition: and(succeeded(), and(eq(variables['signNugetPackage'], true) , ne(variables['Build.Reason'], 'PullRequest')) 
+    condition: and(succeeded(), and(eq(variables['signNugetPackage'], true) , ne(variables['Build.Reason'], 'PullRequest')))
     inputs:
       versionSpec: 5.3.0
 
   - task: NuGetCommand@2
     displayName: 'nuget sign'
-    condition: and(succeeded(), and(eq(variables['signNugetPackage'], true) , ne(variables['Build.Reason'], 'PullRequest'))
+    condition: and(succeeded(), and(eq(variables['signNugetPackage'], true) , ne(variables['Build.Reason'], 'PullRequest')))
     inputs:
       command: custom
       arguments: 'sign "$(pathToNugetPackages)" -CertificatePath "$(codesigningCert.secureFilePath)" -CertificatePassword "$(codesigningCertPassword)" -Timestamper "$(codesigningTimestamperUrl)"'
