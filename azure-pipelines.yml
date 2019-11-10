@@ -1,0 +1,108 @@
+# Azure DevOps Pipeline
+
+trigger:
+- master
+- feature/*
+
+jobs:
+- job: Build
+
+  strategy:
+    matrix:
+      Windows:
+        vmImage: 'windows-latest'
+        signNugetPackage: true
+        artifactName: 'nuget-windows'
+      macOS:
+        vmImage: 'macOS-latest'
+        signNugetPackage: false
+        artifactName: 'nuget-macos'
+      Linux:
+        vmImage: 'ubuntu-latest'
+        signNugetPackage: false
+        artifactName: 'nuget-linux'
+    maxParallel: 3
+
+  pool:
+    vmImage: '$(vmImage)'
+
+  variables:
+    buildConfiguration: 'Release'
+    dotnetVerbosity: 'Detailed'
+  
+    pathToBuildProjects: '**/**/*.*sproj'
+    pathToTestProjects: '**/test/**/*.Test.*sproj'
+    pathToPackProjects: '**/src/**/*.*sproj'
+    pathToNugetPackages: '$(Build.ArtifactStagingDirectory)\**\*.nupkg'
+
+    codesigningCertPassword: ''
+    codesigningStamperUrl: 'http://timestamp.digicert.com'
+
+  steps:
+
+  - task: UseDotNet@2
+    displayName: 'Install: .NET Core SDK'
+    inputs:
+      useGlobalJson: true
+
+  - task: DotNetCoreCLI@2
+    displayName: 'dotnet restore'
+    inputs:
+      command: restore
+      projects: '$(pathToBuildProjects) --verbosity $(dotnetVerbosity)'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'dotnet build'
+    inputs:
+      command: build
+      projects: '$(pathToBuildProjects)'
+      arguments: '--configuration $(buildConfiguration) --verbosity $(dotnetVerbosity)'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'dotnet pack: ci'
+    inputs:
+      command: custom
+      custom: pack
+      projects: '$(pathToPackProjects)'
+      arguments: '--output "$(Build.ArtifactStagingDirectory)\ci" --configuration $(buildConfiguration) --verbosity $(dotnetVerbosity) /p:Configuration=$(buildConfiguration) /p:VersionSuffix=ci-$(Build.BuildNumber) /p:RepositoryBranch=$(Build.SourceBranchName) /p:RepositoryCommit=$(Build.SourceVersion)'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'dotnet pack: release'
+    inputs:
+      command: custom
+      custom: pack
+      projects: '$(pathToPackProjects)'
+      arguments: '--output "$(Build.ArtifactStagingDirectory)\release" --configuration $(buildConfiguration) --verbosity $(dotnetVerbosity) /p:Configuration=$(buildConfiguration) /p:RepositoryBranch=$(Build.SourceBranchName) /p:RepositoryCommit=$(Build.SourceVersion)'
+
+  - task: DownloadSecureFile@1
+    displayName: 'Download secure file: activesolution-codesigning-cert.pfx'
+    name: codesigningCert
+    condition: and(succeeded(), and(eq(variables['signNugetPackage'], true) , ne(variables['Build.Reason'], 'PullRequest')) 
+    inputs:
+      secureFile: 'activesolution-codesigning-cert.pfx'
+
+  - task: NuGetToolInstaller@0
+    displayName: 'Install NuGet'
+    condition: and(succeeded(), and(eq(variables['signNugetPackage'], true) , ne(variables['Build.Reason'], 'PullRequest')) 
+    inputs:
+      versionSpec: 5.3.0
+
+  - task: NuGetCommand@2
+    displayName: 'nuget sign'
+    condition: and(succeeded(), and(eq(variables['signNugetPackage'], true) , ne(variables['Build.Reason'], 'PullRequest'))
+    inputs:
+      command: custom
+      arguments: 'sign "$(pathToNugetPackages)" -CertificatePath "$(codesigningCert.secureFilePath)" -CertificatePassword "$(codesigningCertPassword)" -Timestamper "$(codesigningTimestamperUrl)"'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'dotnet test'
+    inputs:
+      command: test
+      projects: '$(pathToTestProjects)'
+      arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
+  
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifacts'
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+      artifactName: '$(artifactName)'
