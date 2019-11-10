@@ -7,7 +7,7 @@ trigger:
 - feature/*
 
 variables:
-  - group: ActiveLogin
+  - group: Active Login
 
 jobs:
 - job: Build
