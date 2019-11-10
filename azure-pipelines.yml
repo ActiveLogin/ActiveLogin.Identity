@@ -49,7 +49,8 @@ jobs:
     displayName: 'dotnet restore'
     inputs:
       command: restore
-      projects: '$(pathToBuildProjects) --verbosity $(dotnetVerbosity)'
+      projects: '$(pathToBuildProjects)'
+      arguments: '--verbosity $(dotnetVerbosity)'
 
   - task: DotNetCoreCLI@2
     displayName: 'dotnet build'
