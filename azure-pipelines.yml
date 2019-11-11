@@ -102,16 +102,16 @@ stages:
     - group: Active Login   # Contains codesigningCertPassword: Password for code signing cert
 
     - name: sourceArtifactName
-    value: 'nuget-windows'
+      value: 'nuget-windows'
 
     - name: targetArtifactName
-    value: 'nuget-windows-signed'
+      value: 'nuget-windows-signed'
 
     - name: pathToNugetPackages
-    value: '**/*.nupkg'
+      value: '**/*.nupkg'
 
     - name: codesigningTimestamperUrl
-    value: 'http://timestamp.digicert.com'
+      value: 'http://timestamp.digicert.com'
 
     steps:
     - download: current
