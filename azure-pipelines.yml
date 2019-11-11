@@ -11,20 +11,20 @@ stages:
   jobs:
   - job: Build, test and package NuGet packages
     strategy:
-    matrix:
-      Windows:
-        vmImage: 'windows-latest'
-        artifactName: 'nuget-windows'
-        signNugetPackage: true
-      macOS:
-        vmImage: 'macOS-latest'
-        artifactName: 'nuget-macos'
-        signNugetPackage: false
-      Linux:
-        vmImage: 'ubuntu-latest'
-        artifactName: 'nuget-linux'
-        signNugetPackage: false
-    maxParallel: 3
+      matrix:
+        Windows:
+          vmImage: 'windows-latest'
+          artifactName: 'nuget-windows'
+          signNugetPackage: true
+        macOS:
+          vmImage: 'macOS-latest'
+          artifactName: 'nuget-macos'
+          signNugetPackage: false
+        Linux:
+          vmImage: 'ubuntu-latest'
+          artifactName: 'nuget-linux'
+          signNugetPackage: false
+      maxParallel: 3
 
     pool:
       vmImage: '$(vmImage)'
