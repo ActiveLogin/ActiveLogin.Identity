@@ -93,6 +93,7 @@ stages:
 
 - stage: Sign
   displayName: 'Sign'
+  dependsOn: Build
   condition: and(succeeded(), and(eq(variables['signNugetPackage'], true) , ne(variables['Build.Reason'], 'PullRequest')))
   jobs:
   - job: SignNuGet
