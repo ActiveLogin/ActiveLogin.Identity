@@ -12,83 +12,83 @@ stages:
   - job: Build, test and package NuGet packages
     strategy:
     matrix:
-        Windows:
-            vmImage: 'windows-latest'
-            artifactName: 'nuget-windows'
-            signNugetPackage: true
-        macOS:
-            vmImage: 'macOS-latest'
-            artifactName: 'nuget-macos'
-            signNugetPackage: false
-        Linux:
-            vmImage: 'ubuntu-latest'
-            artifactName: 'nuget-linux'
-            signNugetPackage: false
+      Windows:
+        vmImage: 'windows-latest'
+        artifactName: 'nuget-windows'
+        signNugetPackage: true
+      macOS:
+        vmImage: 'macOS-latest'
+        artifactName: 'nuget-macos'
+        signNugetPackage: false
+      Linux:
+        vmImage: 'ubuntu-latest'
+        artifactName: 'nuget-linux'
+        signNugetPackage: false
     maxParallel: 3
 
     pool:
-        vmImage: '$(vmImage)'
+      vmImage: '$(vmImage)'
 
     variables:
-        dotnetBuildConfiguration: 'Release'
-        dotnetVerbosity: 'Detailed'
+      dotnetBuildConfiguration: 'Release'
+      dotnetVerbosity: 'Detailed'
 
-        pathToBuildProjects: '**/**/*.*sproj'
-        pathToTestProjects: '**/test/**/*.Test.*sproj'
-        pathToPackProjects: '**/src/**/*.*sproj'
-        pathToNugetPackages: '**/*.nupkg'
+      pathToBuildProjects: '**/**/*.*sproj'
+      pathToTestProjects: '**/test/**/*.Test.*sproj'
+      pathToPackProjects: '**/src/**/*.*sproj'
+      pathToNugetPackages: '**/*.nupkg'
 
-        sourceRepositoryBranch: '$(Build.SourceBranchName)'
-        sourceRepositoryCommit: '$(Build.SourceVersion)'
+      sourceRepositoryBranch: '$(Build.SourceBranchName)'
+      sourceRepositoryCommit: '$(Build.SourceVersion)'
 
-        codesigningTimestamperUrl: 'http://timestamp.digicert.com'
+      codesigningTimestamperUrl: 'http://timestamp.digicert.com'
 
     steps:
 
     - task: UseDotNet@2
-    displayName: 'Install: .NET Core SDK'
-    inputs:
+      displayName: 'Install: .NET Core SDK'
+      inputs:
         useGlobalJson: true
 
     - task: DotNetCoreCLI@2
-    displayName: 'dotnet restore'
-    inputs:
+      displayName: 'dotnet restore'
+      inputs:
         command: restore
         projects: '$(pathToBuildProjects)'
         arguments: '--verbosity $(dotnetVerbosity)'
 
     - task: DotNetCoreCLI@2
-    displayName: 'dotnet build'
-    inputs:
+      displayName: 'dotnet build'
+      inputs:
         command: build
         projects: '$(pathToBuildProjects)'
         arguments: '--configuration $(dotnetBuildConfiguration) --verbosity $(dotnetVerbosity)'
 
     - task: DotNetCoreCLI@2
-    displayName: 'dotnet pack: ci'
-    inputs:
+      displayName: 'dotnet pack: ci'
+      inputs:
         command: custom
         custom: pack
         projects: '$(pathToPackProjects)'
         arguments: '--output "$(Build.ArtifactStagingDirectory)/ci" --configuration $(dotnetBuildConfiguration) --verbosity $(dotnetVerbosity) /p:Configuration=$(dotnetBuildConfiguration) /p:RepositoryBranch=$(sourceRepositoryBranch) /p:RepositoryCommit=$(sourceRepositoryCommit) /p:VersionSuffix=ci-$(Build.BuildNumber)'
 
     - task: DotNetCoreCLI@2
-    displayName: 'dotnet pack: release'
-    inputs:
+      displayName: 'dotnet pack: release'
+      inputs:
         command: custom
         custom: pack
         projects: '$(pathToPackProjects)'
         arguments: '--output "$(Build.ArtifactStagingDirectory)/release" --configuration $(dotnetBuildConfiguration) --verbosity $(dotnetVerbosity) /p:Configuration=$(dotnetBuildConfiguration) /p:RepositoryBranch=$(sourceRepositoryBranch) /p:RepositoryCommit=$(sourceRepositoryCommit)'
 
     - task: DotNetCoreCLI@2
-    displayName: 'dotnet test'
-    inputs:
+      displayName: 'dotnet test'
+      inputs:
         command: test
         projects: '$(pathToTestProjects)'
         arguments: '--configuration $(dotnetBuildConfiguration) --collect "Code coverage"'
 
     - publish: '$(Build.ArtifactStagingDirectory)'
-    artifact: '$(artifactName)'
+      artifact: '$(artifactName)'
 
 stages:
 - stage: sign
@@ -116,24 +116,24 @@ stages:
 
     steps:
     - download: current
-    artifact: '$(sourceArtifactName)'
+      artifact: '$(sourceArtifactName)'
 
     - task: DownloadSecureFile@1
-    displayName: 'Download secure file: activesolution-codesigning-cert.pfx'
-    name: codesigningCert
-    inputs:
+      displayName: 'Download secure file: activesolution-codesigning-cert.pfx'
+      name: codesigningCert
+      inputs:
         secureFile: 'activesolution-codesigning-cert.pfx'
 
     - task: NuGetToolInstaller@0
-    displayName: 'Install: NuGet'
-    inputs:
+      displayName: 'Install: NuGet'
+      inputs:
         versionSpec: 5.3.0
 
     - task: NuGetCommand@2
-    displayName: 'nuget sign'
-    inputs:
+      displayName: 'nuget sign'
+      inputs:
         command: custom
         arguments: 'sign "$(Pipeline.Workspace)/$(pathToNugetPackages)" -CertificatePath "$(codesigningCert.secureFilePath)" -CertificatePassword "$(codesigningCertPassword)" -Timestamper "$(codesigningTimestamperUrl)"'
 
     - publish: '$(Pipeline.Workspace)'
-    artifact: '$(targetArtifactName)'
+      artifact: '$(targetArtifactName)'
