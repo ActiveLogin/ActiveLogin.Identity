@@ -115,6 +115,7 @@ stages:
 
     steps:
     - download: current
+      patterns: '$(sourceArtifactName)'
       artifact: '$(sourceArtifactName)'
 
     - task: DownloadSecureFile@1
@@ -134,5 +135,5 @@ stages:
         command: custom
         arguments: 'sign "$(Pipeline.Workspace)/$(pathToNugetPackages)" -CertificatePath "$(codesigningCert.secureFilePath)" -CertificatePassword "$(codesigningCertPassword)" -Timestamper "$(codesigningTimestamperUrl)"'
 
-    - publish: '$(Pipeline.Workspace)'
+    - publish: '$(Pipeline.Workspace)/$(sourceArtifactName)'
       artifact: '$(targetArtifactName)'
