@@ -1,4 +1,4 @@
-module ActiveLogin.Identity.Swedish.FSharp.IdentityNumber
+module ActiveLogin.Identity.Swedish.FSharp.IndividualIdentityNumber
 
 open ActiveLogin.Identity.Swedish.FSharp
 
@@ -6,7 +6,7 @@ open ActiveLogin.Identity.Swedish.FSharp
 /// Creates a <see cref="IdentityNumber"/> out of the individual parts.
 /// </summary>
 /// <param name="values">IdentityNumberValues containing all the number parts</param>
-let create (values : IdentityNumberValues) =
+let create values =
     result {
         match SwedishPersonalIdentityNumber.create values with
         | Ok p -> return p |> Personal
@@ -44,7 +44,7 @@ let parse str = Parse.parse create str
 /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
 /// </param>
 /// <param name="num">An IdentityNumber</param>
-let to10DigitStringInSpecificYear serializationYear (num: IdentityNumber) =
+let to10DigitStringInSpecificYear serializationYear (num: IndividualIdentityNumber) =
     num
     |> StringHelpers.to10DigitStringInSpecificYear serializationYear
 
@@ -52,7 +52,7 @@ let to10DigitStringInSpecificYear serializationYear (num: IdentityNumber) =
 /// Converts a IdentityNumber to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars.
 /// </summary>
 /// <param name="num">An IdentityNumber</param>
-let to10DigitString (num : IdentityNumber) =
+let to10DigitString (num : IndividualIdentityNumber) =
     num
     |> StringHelpers.to10DigitString
 

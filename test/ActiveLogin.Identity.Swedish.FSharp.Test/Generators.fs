@@ -20,6 +20,7 @@ type InvalidBirthNumber = InvalidBirthNumber of int
 type ValidBirthNumber = ValidBirthNumber of int
 type Char100 = Char100 of char []
 type Age = Age of Years: int * Months: int * Days: double
+type IdentityNumberValues = (int * int * int * int * int)
 
 module Pin =
     type Valid12Digit = Valid12Digit of string
@@ -45,11 +46,11 @@ module CoordNum =
 
 
 let stringToValues (pin: string) =
-    { Year = pin.[0..3] |> int
-      Month = pin.[4..5] |> int
-      Day = pin.[6..7] |> int
-      BirthNumber = pin.[8..10] |> int
-      Checksum = pin.[11..11] |> int }
+    ( pin.[0..3] |> int,
+      pin.[4..5] |> int,
+      pin.[6..7] |> int,
+      pin.[8..10] |> int,
+      pin.[11..11] |> int )
 
 module Generators =
 
@@ -144,19 +145,19 @@ module Generators =
 
         let withInvalidDay =
             gen {
-                let! (Pin.ValidValues validValues) = validValues
-                let daysInMonth = DateTime.DaysInMonth(validValues.Year, validValues.Month)
+                let! (Pin.ValidValues (year, month, day, birthNumber, checksum)) = validValues
+                let daysInMonth = DateTime.DaysInMonth(year, month)
                 let! invalidDay = outsideRange 1 daysInMonth
-                return { validValues with Day = invalidDay } |> Pin.WithInvalidDay
+                return (year, month, invalidDay, birthNumber, checksum) |> Pin.WithInvalidDay
             }
 
         let withInvalidDayGen() = withInvalidDay |> Arb.fromGen
 
         let withValidDay =
             gen {
-                let! (Pin.ValidValues validValues) = validValues
-                let! validDay = validDay validValues.Year validValues.Month
-                return { validValues with Day = validDay } |> Pin.WithValidDay
+                let! (Pin.ValidValues (year, month, day, birthNumber, checksum)) = validValues
+                let! validDay = validDay year month
+                return (year, month, validDay, birthNumber, checksum) |> Pin.WithValidDay
             }
 
         let withValidDayGen() = withValidDay |> Arb.fromGen
@@ -334,10 +335,10 @@ module Generators =
 
         let withInvalidDay =
             gen {
-                let! (CoordNum.ValidValues validValues) = validValues
-                let daysInMonth = DateTime.DaysInMonth(validValues.Year, validValues.Month)
+                let! (CoordNum.ValidValues (year, month, day, birthNumber, checksum)) = validValues
+                let daysInMonth = DateTime.DaysInMonth(year, month)
                 let! invalidDay = invalidDay daysInMonth
-                return { validValues with Day = invalidDay } |> CoordNum.WithInvalidDay
+                return (year, month, invalidDay, birthNumber, checksum) |> CoordNum.WithInvalidDay
             }
 
         let withInvalidDayGen() = withInvalidDay |> Arb.fromGen
@@ -347,9 +348,9 @@ module Generators =
 
         let withValidDay =
             gen {
-                let! (CoordNum.ValidValues validValues) = validValues
-                let! validDay = validDay validValues.Year validValues.Month
-                return { validValues with Day = validDay } |> CoordNum.WithValidDay
+                let! (CoordNum.ValidValues (year, month, day, birthNumber, checksum)) = validValues
+                let! validDay = validDay year month
+                return (year, month, validDay, birthNumber, checksum) |> CoordNum.WithValidDay
             }
 
         let withValidDayGen() = withValidDay |> Arb.fromGen

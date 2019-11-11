@@ -1,7 +1,7 @@
 namespace ActiveLogin.Identity.Swedish
 
 open ActiveLogin.Identity.Swedish.FSharp
-open IdentityNumber
+open IndividualIdentityNumber
 open System
 open System.Runtime.InteropServices //for OutAttribute
 
@@ -10,8 +10,8 @@ open System.Runtime.InteropServices //for OutAttribute
 /// https://en.wikipedia.org/wiki/Personal_identity_number_(Sweden)
 /// https://sv.wikipedia.org/wiki/Personnummer_i_Sverige
 /// </summary>
-[<CompiledName("IdentityNumber")>]
-type IdentityNumberCSharp private(num: IdentityNumber) =
+[<CompiledName("IndividualIdentityNumber")>]
+type IndividualIdentityNumberCSharp private(num: IndividualIdentityNumber) =
 
     /// <summary>
     /// Creates an instance of a <see cref="IdentityNumber"/> out of the individual parts.
@@ -25,14 +25,9 @@ type IdentityNumberCSharp private(num: IdentityNumber) =
     /// <exception cref="ArgumentOutOfRangeException">Thrown when any of the range arguments is invalid.</exception>
     /// <exception cref="ArgumentException">Thrown when checksum is invalid.</exception>
     private new(year, month, day, birthNumber, checksum) =
-        let idNum =
-            create { Year = year
-                     Month = month
-                     Day = day
-                     BirthNumber = birthNumber
-                     Checksum = checksum } |> Error.handle
+        let idNum = (year, month, day, birthNumber, checksum) |> create |> Error.handle
 
-        IdentityNumberCSharp(idNum)
+        IndividualIdentityNumberCSharp(idNum)
 
     member this.SwedishPersonalIdentityNumber =
         match num with
@@ -89,7 +84,7 @@ type IdentityNumberCSharp private(num: IdentityNumber) =
         result { let! year = parseYear |> Year.create
                  return! parseInSpecificYear year s }
         |> Error.handle
-        |> IdentityNumberCSharp
+        |> IndividualIdentityNumberCSharp
 
     member internal __.IdentityNumber = num
 
@@ -102,7 +97,7 @@ type IdentityNumberCSharp private(num: IdentityNumber) =
     static member Parse(s) =
         parse s
         |> Error.handle
-        |> IdentityNumberCSharp
+        |> IndividualIdentityNumberCSharp
 
     /// <summary>
     /// Converts the string representation of the coordination number to its <see cref="IdentityNumber"/>
@@ -117,13 +112,13 @@ type IdentityNumberCSharp private(num: IdentityNumber) =
     /// </param>
     /// <param name="parseResult">If valid, an instance of <see cref="IdentityNumber"/></param>
     static member TryParseInSpecificYear((s : string), (parseYear : int),
-                                         [<Out>] parseResult : IdentityNumberCSharp byref) =
+                                         [<Out>] parseResult : IndividualIdentityNumberCSharp byref) =
         let num = result { let! year = parseYear |> Year.create
                            return! parseInSpecificYear year s }
         match num with
         | Error _ -> false
         | Ok num ->
-            parseResult <- (num |> IdentityNumberCSharp)
+            parseResult <- (num |> IndividualIdentityNumberCSharp)
             true
 
     /// <summary>
@@ -132,12 +127,12 @@ type IdentityNumberCSharp private(num: IdentityNumber) =
     /// </summary>
     /// <param name="s">A string representation of the Swedish coordination number to parse.</param>
     /// <param name="parseResult">If valid, an instance of <see cref="IdentityNumber"/></param>
-    static member TryParse((s : string), [<Out>] parseResult : IdentityNumberCSharp byref) =
+    static member TryParse((s : string), [<Out>] parseResult : IndividualIdentityNumberCSharp byref) =
         let num = parse s
         match num with
         | Error _ -> false
         | Ok num ->
-            parseResult <- (num |> IdentityNumberCSharp)
+            parseResult <- (num |> IndividualIdentityNumberCSharp)
             true
 
     /// <summary>
@@ -146,7 +141,7 @@ type IdentityNumberCSharp private(num: IdentityNumber) =
     /// <param name="pin">The SwedishPersonalIdentityNumber.</param>
     /// <returns>An instance of <see cref="IdentityNumber"/></returns>
     static member FromSwedishPersonalIdentityNumber(pin: SwedishPersonalIdentityNumberCSharp) =
-        IdentityNumberCSharp(Personal pin.IdentityNumber)
+        IndividualIdentityNumberCSharp(Personal pin.IdentityNumber)
 
     /// <summary>
     /// Creates an instance of a <see cref="IdentityNumber"/> out of a swedish coordination number.
@@ -154,7 +149,7 @@ type IdentityNumberCSharp private(num: IdentityNumber) =
     /// <param name="pin">The SwedishCoordinationNumber.</param>
     /// <returns>An instance of <see cref="IdentityNumber"/></returns>
     static member FromSwedishCoordinationNumber(num: SwedishCoordinationNumberCSharp) =
-        IdentityNumberCSharp(Coordination num.IdentityNumber)
+        IndividualIdentityNumberCSharp(Coordination num.IdentityNumber)
 
     /// <summary>
     /// Converts the value of the current <see cref="IdentityNumber" /> object to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars.
@@ -194,14 +189,14 @@ type IdentityNumberCSharp private(num: IdentityNumber) =
     /// <returns>true if <paramref name="value">value</paramref> is an instance of <see cref="IdentityNumber"></see> and equals the value of this instance; otherwise, false.</returns>
     override __.Equals(b) =
         match b with
-        | :? IdentityNumberCSharp as n -> num = n.IdentityNumber
+        | :? IndividualIdentityNumberCSharp as n -> num = n.IdentityNumber
         | _ -> false
 
     /// <summary>Returns the hash code for this instance.</summary>
     /// <returns>A 32-bit signed integer hash code.</returns>
     override __.GetHashCode() = hash num
 
-    static member op_Equality (left: IdentityNumberCSharp, right: IdentityNumberCSharp) =
+    static member op_Equality (left: IndividualIdentityNumberCSharp, right: IndividualIdentityNumberCSharp) =
         match box left, box right with
         | (null, null) -> true
         | (null, _) | (_, null) -> false

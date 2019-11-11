@@ -12,8 +12,8 @@ type IdentityNumberCSharpHintExtensions() =
     /// Not always the actual date of birth due to the limited quantity of identity numbers per day.
     /// </summary>
     [<Extension>]
-    static member GetDateOfBirthHint(num : IdentityNumberCSharp) =
-        IdentityNumber.Hints.getDateOfBirthHint num.IdentityNumber
+    static member GetDateOfBirthHint(num : IndividualIdentityNumberCSharp) =
+        IndividualIdentityNumber.Hints.getDateOfBirthHint num.IdentityNumber
 
     /// <summary>
     /// Gender (juridiskt kön) in Sweden according to the last digit of the birth number in the identity number.
@@ -21,8 +21,8 @@ type IdentityNumberCSharpHintExtensions() =
     /// Even number: Female
     /// </summary>
     [<Extension>]
-    static member GetGenderHint(num : IdentityNumberCSharp) =
-        IdentityNumber.Hints.getGenderHint num.IdentityNumber
+    static member GetGenderHint(num : IndividualIdentityNumberCSharp) =
+        IndividualIdentityNumber.Hints.getGenderHint num.IdentityNumber
 
     /// <summary>
     /// Get the age of the person according to the date in the identity number.
@@ -32,8 +32,8 @@ type IdentityNumberCSharpHintExtensions() =
     /// <param name="date">The date when to calculate the age.</param>
     /// <returns></returns>
     [<Extension>]
-    static member GetAgeHint(num : IdentityNumberCSharp, date : DateTime) =
-        IdentityNumber.Hints.getAgeHintOnDate date num.IdentityNumber
+    static member GetAgeHint(num : IndividualIdentityNumberCSharp, date : DateTime) =
+        IndividualIdentityNumber.Hints.getAgeHintOnDate date num.IdentityNumber
         |> function
         | None -> invalidArg "num" "The person is not yet born."
         | Some i -> i
@@ -43,8 +43,8 @@ type IdentityNumberCSharpHintExtensions() =
     /// Not always the actual date of birth due to the limited quantity of identity numbers per day.
     /// </summary>
     [<Extension>]
-    static member GetAgeHint(num : IdentityNumberCSharp) =
-        IdentityNumber.Hints.getAgeHint num.IdentityNumber
+    static member GetAgeHint(num : IndividualIdentityNumberCSharp) =
+        IndividualIdentityNumber.Hints.getAgeHint num.IdentityNumber
         |> function
         | None -> invalidArg "num" "The person is not yet born."
         | Some i -> i

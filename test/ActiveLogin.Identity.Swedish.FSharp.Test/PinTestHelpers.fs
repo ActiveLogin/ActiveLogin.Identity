@@ -18,11 +18,11 @@ let tee f x = f x |> ignore; x
 
 let quickParseR (str:string) =
     let values =
-        { Year = str.[ 0..3 ] |> int
-          Month = str.[ 4..5 ] |> int
-          Day = str.[ 6..7 ] |> int
-          BirthNumber = str.[ 8..10 ] |> int
-          Checksum = str.[ 11..11 ] |> int }
+        ( str.[ 0..3 ] |> int,
+          str.[ 4..5 ] |> int,
+          str.[ 6..7 ] |> int,
+          str.[ 8..10 ] |> int,
+          str.[ 11..11 ] |> int )
     SwedishPersonalIdentityNumber.create values
 
 let quickParse str =
@@ -31,11 +31,11 @@ let quickParse str =
     | Error e -> e.ToString() |> failwithf "Test setup error %s"
 
 let pinToValues (pin:SwedishPersonalIdentityNumber) =
-    { Year = pin.Year |> Year.value
-      Month = pin.Month |> Month.value
-      Day = pin.Day |> Day.value
-      BirthNumber = pin.BirthNumber |> BirthNumber.value
-      Checksum = pin.Checksum |> Checksum.value }
+    ( pin.Year |> Year.value,
+      pin.Month |> Month.value,
+      pin.Day |> Day.value,
+      pin.BirthNumber |> BirthNumber.value,
+      pin.Checksum |> Checksum.value )
 
 
 type Rng =

@@ -22,63 +22,57 @@ let tests =
             |> Result.map SwedishPersonalIdentityNumber.to12DigitString = Ok str
 
         testPropWithMaxTest 20000 "invalid year returns InvalidYear Error" <|
-            fun (Gen.Pin.ValidValues validValues, Gen.InvalidYear invalidYear) ->
-                let input = { validValues with Year = invalidYear }
-                let result = SwedishPersonalIdentityNumber.create input
+            fun (Gen.Pin.ValidValues (y, m, d, b, c), Gen.InvalidYear invalidYear) ->
+                let result = SwedishPersonalIdentityNumber.create (invalidYear, m, d, b, c)
                 result =! Error(InvalidYear invalidYear)
 
         testPropWithMaxTest 20000 "valid year does not return InvalidYear Error" <|
-            fun (Gen.Pin.ValidValues values, Gen.ValidYear validYear) ->
-                let input = { values with Year = validYear }
-                let result = SwedishPersonalIdentityNumber.create input
+            fun (Gen.Pin.ValidValues (y, m, d, b, c), Gen.ValidYear validYear) ->
+                let result = SwedishPersonalIdentityNumber.create (y, m, d, b, c)
                 result <>! (Error(InvalidYear validYear))
 
         testProp "invalid month returns InvalidMonth Error" <|
-            fun (Gen.Pin.ValidValues validValues, Gen.InvalidMonth invalidMonth) ->
-                let input = { validValues with Month = invalidMonth }
-                let result = SwedishPersonalIdentityNumber.create input
+            fun (Gen.Pin.ValidValues (y, m, d, b, c), Gen.InvalidMonth invalidMonth) ->
+                let result = SwedishPersonalIdentityNumber.create (y, invalidMonth, d, b, c)
                 result =! Error(InvalidMonth invalidMonth)
 
         testProp "valid month does not return InvalidMonth Error" <|
-            fun (Gen.Pin.ValidValues values, Gen.ValidMonth validMonth) ->
-                let input = { values with Month = validMonth }
-                let result = SwedishPersonalIdentityNumber.create input
+            fun (Gen.Pin.ValidValues (y, m, d, b, c), Gen.ValidMonth validMonth) ->
+                let result = SwedishPersonalIdentityNumber.create (y, m, d, b, c)
                 result <>! (Error(InvalidMonth validMonth))
 
-        testProp "invalid day returns InvalidDay Error" <| fun (Gen.Pin.WithInvalidDay input) ->
-            let result = SwedishPersonalIdentityNumber.create input
-            result =! Error(InvalidDayAndCoordinationDay input.Day )
+        testProp "invalid day returns InvalidDay Error" <| fun (Gen.Pin.WithInvalidDay (y, m, d, b, c)) ->
+            let result = SwedishPersonalIdentityNumber.create (y, m, d, b, c)
+            result =! Error(InvalidDayAndCoordinationDay d)
 
-        testProp "valid day does not return InvalidDay Error" <| fun (Gen.Pin.WithValidDay input) ->
-            let result = SwedishPersonalIdentityNumber.create input
-            result <>! Error(InvalidDayAndCoordinationDay input.Day)
-            result <>! Error(InvalidDay input.Day)
+        testProp "valid day does not return InvalidDay Error" <| fun (Gen.Pin.WithValidDay (y, m, d, b, c)) ->
+            let result = SwedishPersonalIdentityNumber.create (y, m, d, b, c)
+            result <>! Error(InvalidDayAndCoordinationDay d)
+            result <>! Error(InvalidDay d)
 
         testProp "invalid birth number returns InvalidBirthNumber Error" <|
-            fun (Gen.Pin.ValidValues validValues, Gen.InvalidBirthNumber invalidBirthnumber) ->
-                let input = { validValues with BirthNumber = invalidBirthnumber }
-                let result = SwedishPersonalIdentityNumber.create input
-                result =! Error(InvalidBirthNumber invalidBirthnumber)
+            fun (Gen.Pin.ValidValues (y, m, d, b, c), Gen.InvalidBirthNumber invalidBirthNumber) ->
+                let result = SwedishPersonalIdentityNumber.create (y, m, d, invalidBirthNumber, c)
+                result =! Error(InvalidBirthNumber invalidBirthNumber)
 
         testPropWithMaxTest 3000 "valid birth number does not return InvalidBirthNumber Error" <|
-            fun (Gen.Pin.ValidValues validValues, Gen.ValidBirthNumber validBirthNumber) ->
-                let input = { validValues with BirthNumber = validBirthNumber}
-                let result = SwedishPersonalIdentityNumber.create input
+            fun (Gen.Pin.ValidValues (y, m, d, b, c), Gen.ValidBirthNumber validBirthNumber) ->
+                let result = SwedishPersonalIdentityNumber.create (y, m, d, validBirthNumber, c)
                 result <>! Error(InvalidBirthNumber validBirthNumber)
 
         testProp "invalid checksum returns InvalidChecksum Error" <|
-            fun (Gen.Pin.ValidValues values) ->
+            fun (Gen.Pin.ValidValues (y, m, d, b, c)) ->
                 let invalidChecksums =
                     [ 0..9 ]
-                    |> List.except [ values.Checksum ]
+                    |> List.except [ c ]
 
                 let withInvalidChecksums =
                     invalidChecksums
-                    |> List.map (fun checksum -> { values with Checksum = checksum })
+                    |> List.map (fun checksum -> (y, m, d, b, checksum))
 
                 let invalidChecksumsAndResults =
                     withInvalidChecksums
-                    |> List.map (fun values -> values.Checksum, SwedishPersonalIdentityNumber.create values)
+                    |> List.map (fun (y, m, d, b, c) -> c, SwedishPersonalIdentityNumber.create (y, m, d, b, c))
 
                 invalidChecksumsAndResults
                 |> List.iter (fun (invalidChecksum, result) ->
@@ -86,9 +80,9 @@ let tests =
                     | Error (InvalidChecksum actual) -> invalidChecksum =! actual
                     | _ -> failwith "Expected InvalidChecksum Error")
 
-        testProp "possible coordination-number day" <| fun (Gen.Pin.ValidValues values) ->
-            let coordinationDay = values.Day + 60
-            let result = { values with Day = coordinationDay } |> SwedishPersonalIdentityNumber.create
+        testProp "possible coordination-number day" <| fun (Gen.Pin.ValidValues (y, m, d, b, c)) ->
+            let coordinationDay = d + 60
+            let result = SwedishPersonalIdentityNumber.create (y, m, coordinationDay, b, c)
             result =! Error(InvalidDay coordinationDay)
 
         testCase "fsharp should have no public constructor" <| fun () ->

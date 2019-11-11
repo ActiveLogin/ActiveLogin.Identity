@@ -23,7 +23,7 @@ let private parseDay day =
     | CoordinationDay cd -> cd.Value
 
 
-let to10DigitStringInSpecificYear serializationYear (num : IdentityNumber) =
+let to10DigitStringInSpecificYear serializationYear (num : IndividualIdentityNumber) =
     result {
         let! validYear = validSerializationYear serializationYear num.Year
         let delimiter =
@@ -39,7 +39,7 @@ let to10DigitStringInSpecificYear serializationYear (num : IdentityNumber) =
             num.Checksum.Value
     }
 
-let to10DigitString (num : IdentityNumber) =
+let to10DigitString (num : IndividualIdentityNumber) =
     let year =
         DateTime.UtcNow.Year
         |> Year.create
@@ -48,7 +48,7 @@ let to10DigitString (num : IdentityNumber) =
         | Error _ -> invalidArg "year" "DateTime.Year wasn't a valid year"
     to10DigitStringInSpecificYear year num
 
-let to12DigitString (num: IdentityNumber) =
+let to12DigitString (num: IndividualIdentityNumber) =
     sprintf "%02i%02i%02i%03i%1i"
         num.Year.Value
         num.Month.Value
