@@ -115,7 +115,7 @@ stages:
 
     steps:
     - download: current
-      patterns: '$(sourceArtifactName)'
+      patterns: '$(sourceArtifactName)/**/*'
       artifact: '$(sourceArtifactName)'
 
     - task: DownloadSecureFile@1
