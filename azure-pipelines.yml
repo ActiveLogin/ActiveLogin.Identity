@@ -4,7 +4,6 @@ name: $(Date:yyyyMMdd)$(Rev:r)
 
 trigger:
 - master
-- feature/*
 
 variables:
   - group: Active Login
@@ -32,15 +31,14 @@ jobs:
     vmImage: '$(vmImage)'
 
   variables:
-    buildConfiguration: 'Release'
+    dotnetBuildConfiguration: 'Release'
     dotnetVerbosity: 'Detailed'
   
     pathToBuildProjects: '**/**/*.*sproj'
     pathToTestProjects: '**/test/**/*.Test.*sproj'
     pathToPackProjects: '**/src/**/*.*sproj'
-    pathToNugetPackages: '$(Build.ArtifactStagingDirectory)\**\*.nupkg'
+    pathToNugetPackages: '**/*.nupkg'
 
-    codesigningCertPassword: ''
     codesigningTimestamperUrl: 'http://timestamp.digicert.com'
 
   steps:
@@ -62,7 +60,7 @@ jobs:
     inputs:
       command: build
       projects: '$(pathToBuildProjects)'
-      arguments: '--configuration $(buildConfiguration) --verbosity $(dotnetVerbosity)'
+      arguments: '--configuration $(dotnetBuildConfiguration) --verbosity $(dotnetVerbosity)'
 
   - task: DotNetCoreCLI@2
     displayName: 'dotnet pack: ci'
@@ -70,7 +68,7 @@ jobs:
       command: custom
       custom: pack
       projects: '$(pathToPackProjects)'
-      arguments: '--output "$(Build.ArtifactStagingDirectory)\ci" --configuration $(buildConfiguration) --verbosity $(dotnetVerbosity) /p:Configuration=$(buildConfiguration) /p:VersionSuffix=ci-$(Build.BuildNumber) /p:RepositoryBranch=$(Build.SourceBranchName) /p:RepositoryCommit=$(Build.SourceVersion)'
+      arguments: '--output "$(Build.ArtifactStagingDirectory)/ci" --configuration $(dotnetBuildConfiguration) --verbosity $(dotnetVerbosity) /p:Configuration=$(dotnetBuildConfiguration) /p:VersionSuffix=ci-$(Build.BuildNumber) /p:RepositoryBranch=$(Build.SourceBranchName) /p:RepositoryCommit=$(Build.SourceVersion)'
 
   - task: DotNetCoreCLI@2
     displayName: 'dotnet pack: release'
@@ -78,7 +76,7 @@ jobs:
       command: custom
       custom: pack
       projects: '$(pathToPackProjects)'
-      arguments: '--output "$(Build.ArtifactStagingDirectory)\release" --configuration $(buildConfiguration) --verbosity $(dotnetVerbosity) /p:Configuration=$(buildConfiguration) /p:RepositoryBranch=$(Build.SourceBranchName) /p:RepositoryCommit=$(Build.SourceVersion)'
+      arguments: '--output "$(Build.ArtifactStagingDirectory)/release" --configuration $(dotnetBuildConfiguration) --verbosity $(dotnetVerbosity) /p:Configuration=$(dotnetBuildConfiguration) /p:RepositoryBranch=$(Build.SourceBranchName) /p:RepositoryCommit=$(Build.SourceVersion)'
 
   - task: DownloadSecureFile@1
     displayName: 'Download secure file: activesolution-codesigning-cert.pfx'
@@ -98,14 +96,14 @@ jobs:
     condition: and(succeeded(), and(eq(variables['signNugetPackage'], true) , ne(variables['Build.Reason'], 'PullRequest')))
     inputs:
       command: custom
-      arguments: 'sign "$(pathToNugetPackages)" -CertificatePath "$(codesigningCert.secureFilePath)" -CertificatePassword "$(codesigningCertPassword)" -Timestamper "$(codesigningTimestamperUrl)"'
+      arguments: 'sign "$(Build.ArtifactStagingDirectory)/$(pathToNugetPackages)" -CertificatePath "$(codesigningCert.secureFilePath)" -CertificatePassword "$(codesigningCertPassword)" -Timestamper "$(codesigningTimestamperUrl)"'
 
   - task: DotNetCoreCLI@2
     displayName: 'dotnet test'
     inputs:
       command: test
       projects: '$(pathToTestProjects)'
-      arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
+      arguments: '--configuration $(dotnetBuildConfiguration) --collect "Code coverage"'
   
   - publish: '$(Build.ArtifactStagingDirectory)'
     artifact: '$(artifactName)'
