@@ -275,15 +275,8 @@ type SwedishCoordinationNumber =
     member this.RealDay = this.CoordinationDay.RealDay
 
 
-type IdentityNumberValues =
-    { Year : int
-      Month : int
-      Day : int
-      BirthNumber : int
-      Checksum : int }
-
 /// Represents a Swedish Identity Number.
-type IdentityNumber =
+type IndividualIdentityNumber =
     | Personal of SwedishPersonalIdentityNumber
     | Coordination of SwedishCoordinationNumber
 

@@ -25,13 +25,7 @@ type SwedishPersonalIdentityNumberCSharp internal(pin : SwedishPersonalIdentityN
     /// <exception cref="ArgumentOutOfRangeException">Thrown when any of the range arguments is invalid.</exception>
     /// <exception cref="ArgumentException">Thrown when checksum is invalid.</exception>
     new(year, month, day, birthNumber, checksum) =
-        let idNum =
-            create { Year = year
-                     Month = month
-                     Day = day
-                     BirthNumber = birthNumber
-                     Checksum = checksum } |> Error.handle
-
+        let idNum = (year, month, day, birthNumber, checksum) |> create |> Error.handle
 
         SwedishPersonalIdentityNumberCSharp(idNum)
 

@@ -6,16 +6,16 @@ open Swensen.Unquote
 open System
 
 module Expect =
-    let equalPin (expected: IdentityNumberValues) (actual: Result<SwedishPersonalIdentityNumber,_>) =
+    let equalPin (year, month, day, birthNumber, checksum) (actual: Result<SwedishPersonalIdentityNumber,_>) =
         actual |> Expect.isOk "should be ok"
         match actual with
         | Error _ -> failwith "test error"
         | Ok pin ->
-            pin.Year |> Year.value =! expected.Year
-            pin.Month |> Month.value =! expected.Month
-            pin.Day |> Day.value =! expected.Day
-            pin.BirthNumber |> BirthNumber.value =! expected.BirthNumber
-            pin.Checksum |> Checksum.value =! expected.Checksum
+            pin.Year |> Year.value =! year
+            pin.Month |> Month.value =! month
+            pin.Day |> Day.value =! day
+            pin.BirthNumber |> BirthNumber.value =! birthNumber
+            pin.Checksum |> Checksum.value =! checksum
 
 module Result =
     let iter f res =

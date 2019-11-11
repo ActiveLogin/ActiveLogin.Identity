@@ -8,33 +8,33 @@ let sampleStrings = [ "990913+9801"; "120211+9986"; "990807-2391"; "180101-2392"
 let sampleCoordinationNumbers = [ "199008672397" ]
 let sampleInvalidNumbers = [ "ABC" ]
 
-let parseAndPrintIdentityNumber str =
+let parseAndPrintIndividualIdentityNumber str =
     let printHeader str =
         str
         |> printfn "Input: %s\n----------------------"
 
     let print10DigitString num =
         num
-        |> IdentityNumber.to10DigitString
+        |> IndividualIdentityNumber.to10DigitString
         |> printfn "IdentityNumber.to10DigitString: %A"
 
     let print12DigitString num =
         num
-        |> IdentityNumber.to12DigitString
+        |> IndividualIdentityNumber.to12DigitString
         |> printfn "IdentityNumber.to12DigitString: %s"
 
     let printDateOfBirthHint num =
-        let date = num |> IdentityNumber.Hints.getDateOfBirthHint
+        let date = num |> IndividualIdentityNumber.Hints.getDateOfBirthHint
         date.ToShortDateString() |> printfn "IdentityNumber.Hints.getDateOfBirthHint: %s"
 
     let printAgeHint num =
         num
-        |> IdentityNumber.Hints.getAgeHintOnDate DateTime.UtcNow
+        |> IndividualIdentityNumber.Hints.getAgeHintOnDate DateTime.UtcNow
         |> Option.defaultValue 0
         |> printfn "IdentityNumber.Hints.getAgeHintOnDate: %i"
 
     let printGenderHint pin =
-        let gender = pin |> IdentityNumber.Hints.getGenderHint
+        let gender = pin |> IndividualIdentityNumber.Hints.getGenderHint
         gender.ToString() |> printfn "IdentityNumber.Hints.getGenderHint: %s"
 
     let printIsTestNumber num =
@@ -47,7 +47,7 @@ let parseAndPrintIdentityNumber str =
         | Coordination _ -> printfn "Testnumber check is not implemented for coordination numbers"
 
     printHeader str
-    match IdentityNumber.parse str  with
+    match IndividualIdentityNumber.parse str  with
     | Ok num ->
         match num with
         | Personal pin ->
@@ -62,7 +62,7 @@ let parseAndPrintIdentityNumber str =
         printAgeHint num
         printGenderHint num
         printIsTestNumber num
-    | Error e -> printfn "%A: Unable to parse the input as a IdentityNumber." e
+    | Error e -> printfn "%A: Unable to parse the input as an IndividualIdentityNumber." e
     printf "\n\n"
 
 [<EntryPoint>]
@@ -70,7 +70,7 @@ let main argv =
     printfn "Sample showing possible uses of SwedishPersonalIdentityNumber."
     printf "\n\n"
 
-    sampleStrings @ sampleCoordinationNumbers @ sampleInvalidNumbers |> List.iter parseAndPrintIdentityNumber
+    sampleStrings @ sampleCoordinationNumbers @ sampleInvalidNumbers |> List.iter parseAndPrintIndividualIdentityNumber
 
     printfn "Here is a valid 10 digit string personal identity number that can be used for testing:\n----------------------"
     SwedishPersonalIdentityNumberTestData.getRandom()
@@ -94,6 +94,6 @@ let main argv =
 
     printfn "What is your (Swedish) Identity Number?"
     let userInput = Console.ReadLine()
-    parseAndPrintIdentityNumber userInput
+    parseAndPrintIndividualIdentityNumber userInput
     Console.ReadLine() |> ignore
     0 // return an integer exit code

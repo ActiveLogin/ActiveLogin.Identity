@@ -7,7 +7,7 @@ namespace ConsoleSample
 {
     class Program
     {
-        private static readonly string[] RawPersonalIdentityNumberSamples =
+        private static readonly string[] RawIndividualIdentityNumberSamples =
         {
             "990913+9801",
             "120211+9986",
@@ -23,9 +23,9 @@ namespace ConsoleSample
             Console.WriteLine("Sample showing possible uses of SwedishPersonalIdentityNumber.");
             WriteSpace();
 
-            foreach (var sample in RawPersonalIdentityNumberSamples)
+            foreach (var sample in RawIndividualIdentityNumberSamples)
             {
-                WritePersonalIdentityNumberInfo(sample);
+                WriteIndividualIdentityNumberInfo(sample);
                 WriteSpace();
             }
 
@@ -44,32 +44,32 @@ namespace ConsoleSample
             Console.WriteLine("Here is a personal identity number that can be used for testing:");
             Console.WriteLine("----------------------");
             var randomPin = SwedishPersonalIdentityNumberTestData.GetRandom();
-            WritePersonalIdentityNumberInfo(IdentityNumber.FromSwedishPersonalIdentityNumber(randomPin));
+            WriteIndividualIdentityNumberInfo(IndividualIdentityNumber.FromSwedishPersonalIdentityNumber(randomPin));
 
             WriteSpace();
 
             Console.WriteLine("What is your (Swedish) Personal Identity Number?");
             var userRawPersonalIdentityNumber = Console.ReadLine();
-            WritePersonalIdentityNumberInfo(userRawPersonalIdentityNumber);
+            WriteIndividualIdentityNumberInfo(userRawPersonalIdentityNumber);
             WriteSpace();
 
             Console.ReadLine();
         }
 
-        private static void WritePersonalIdentityNumberInfo(string rawPersonalIdentityNumber)
+        private static void WriteIndividualIdentityNumberInfo(string rawIndividualIdentityNumber)
         {
-            WriteHeader($"Input: {rawPersonalIdentityNumber}");
-            if (IdentityNumber.TryParse(rawPersonalIdentityNumber, out var identityNumber))
+            WriteHeader($"Input: {rawIndividualIdentityNumber}");
+            if (IndividualIdentityNumber.TryParse(rawIndividualIdentityNumber, out var identityNumber))
             {
-                WritePersonalIdentityNumberInfo(identityNumber);
+                WriteIndividualIdentityNumberInfo(identityNumber);
             }
             else
             {
-                Console.Error.WriteLine("Unable to parse the input as a SwedishPersonalIdentityNumber.");
+                Console.Error.WriteLine("Unable to parse the input as a IndividualIdentityNumber.");
             }
         }
 
-        private static void WritePersonalIdentityNumberInfo(IdentityNumber identityNumber)
+        private static void WriteIndividualIdentityNumberInfo(IndividualIdentityNumber identityNumber)
         {
             if (identityNumber.IsSwedishPersonalIdentityNumber)
             {

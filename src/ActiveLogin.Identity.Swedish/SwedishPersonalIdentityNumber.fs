@@ -5,13 +5,13 @@ module ActiveLogin.Identity.Swedish.FSharp.SwedishPersonalIdentityNumber
 /// Creates a <see cref="SwedishPersonalIdentityNumber"/> out of the individual parts.
 /// </summary>
 /// <param name="values">IdentityNumberValues containing all the number parts</param>
-let create (values : IdentityNumberValues) =
+let create (year, month, day, birthNumber, checksum) =
     result {
-        let! y = values.Year |> Year.create
-        let! m = values.Month |> Month.create
-        let! d = values.Day |> Day.create y m
-        let! s = values.BirthNumber |> BirthNumber.create
-        let! c = values.Checksum |> Checksum.create y m (Day d) s
+        let! y = year |> Year.create
+        let! m = month |> Month.create
+        let! d = day |> Day.create y m
+        let! s = birthNumber |> BirthNumber.create
+        let! c = checksum |> Checksum.create y m (Day d) s
         return { SwedishPersonalIdentityNumber.Year = y
                  Month = m
                  Day = d
