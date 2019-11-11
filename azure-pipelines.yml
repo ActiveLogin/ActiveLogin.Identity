@@ -9,7 +9,7 @@ stages:
 - stage: build
   displayName: Build and test
   jobs:
-  - job: Build, test and package NuGet packages
+  - job: 'Build, test and package NuGet packages'
     strategy:
       matrix:
         Windows:
