@@ -90,7 +90,6 @@ stages:
     - publish: '$(Build.ArtifactStagingDirectory)'
       artifact: '$(artifactName)'
 
-stages:
 - stage: sign
   displayName: Sign
   condition: and(succeeded(), and(eq(variables['signNugetPackage'], true) , ne(variables['Build.Reason'], 'PullRequest')))
