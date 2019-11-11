@@ -10,21 +10,18 @@ stages:
   displayName:  'Build, test and package NuGet packages'
   jobs:
   - job: BuildTestPackageNuGet
-    displayName: 'Build, test and package'
+    displayName: 'Build'
     strategy:
       matrix:
         Windows:
           vmImage: 'windows-latest'
           artifactName: 'nuget-windows'
-          signNugetPackage: true
         macOS:
           vmImage: 'macOS-latest'
           artifactName: 'nuget-macos'
-          signNugetPackage: false
         Linux:
           vmImage: 'ubuntu-latest'
           artifactName: 'nuget-linux'
-          signNugetPackage: false
       maxParallel: 3
 
     pool:
@@ -94,7 +91,7 @@ stages:
 - stage: Sign
   displayName: 'Sign NuGet packages'
   dependsOn: Build
-  condition: and(succeeded(), and(eq(variables['signNugetPackage'], true) , ne(variables['Build.Reason'], 'PullRequest')))
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
   jobs:
   - job: SignNuGet
     displayName: 'Sign Windows'
