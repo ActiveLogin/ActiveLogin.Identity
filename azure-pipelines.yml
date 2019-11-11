@@ -6,10 +6,11 @@ trigger:
 - master
 
 stages:
-- stage: build
+- stage: Build
   displayName: Build and test
   jobs:
-  - job: Build and package NuGet packages
+  - job: BuildTestPackageNuGet
+    displayName: 'Build, test and package NuGet packages'
     strategy:
       matrix:
         Windows:
@@ -90,11 +91,12 @@ stages:
     - publish: '$(Build.ArtifactStagingDirectory)'
       artifact: '$(artifactName)'
 
-- stage: sign
-  displayName: Sign
+- stage: Sign
+  displayName: 'Sign'
   condition: and(succeeded(), and(eq(variables['signNugetPackage'], true) , ne(variables['Build.Reason'], 'PullRequest')))
   jobs:
-  - job: Sign NuGet packages
+  - job: SignNuGet
+    displayName: 'Sign NuGet packages'
     pool:
         vmImage: 'windows-latest'
 
