@@ -5,36 +5,34 @@ name: $(Date:yyyyMMdd)$(Rev:r)
 trigger:
 - master
 
-variables:
-  - group: Active Login # Contains:
-                        #  - codesigningCertPassword: Password for code signing cert
-
-jobs:
-- job: Build
-
-  strategy:
+stages:
+- stage: build
+  displayName: Build and test
+  jobs:
+  - job: Build, test and package NuGet packages
+    strategy:
     matrix:
-      Windows:
+        Windows:
         vmImage: 'windows-latest'
         artifactName: 'nuget-windows'
         signNugetPackage: true
-      macOS:
+        macOS:
         vmImage: 'macOS-latest'
         artifactName: 'nuget-macos'
         signNugetPackage: false
-      Linux:
+        Linux:
         vmImage: 'ubuntu-latest'
         artifactName: 'nuget-linux'
         signNugetPackage: false
     maxParallel: 3
 
-  pool:
+    pool:
     vmImage: '$(vmImage)'
 
-  variables:
+    variables:
     dotnetBuildConfiguration: 'Release'
     dotnetVerbosity: 'Detailed'
-  
+
     pathToBuildProjects: '**/**/*.*sproj'
     pathToTestProjects: '**/test/**/*.Test.*sproj'
     pathToPackProjects: '**/src/**/*.*sproj'
@@ -45,69 +43,97 @@ jobs:
 
     codesigningTimestamperUrl: 'http://timestamp.digicert.com'
 
-  steps:
+    steps:
 
-  - task: UseDotNet@2
+    - task: UseDotNet@2
     displayName: 'Install: .NET Core SDK'
     inputs:
-      useGlobalJson: true
+        useGlobalJson: true
 
-  - task: DotNetCoreCLI@2
+    - task: DotNetCoreCLI@2
     displayName: 'dotnet restore'
     inputs:
-      command: restore
-      projects: '$(pathToBuildProjects)'
-      arguments: '--verbosity $(dotnetVerbosity)'
+        command: restore
+        projects: '$(pathToBuildProjects)'
+        arguments: '--verbosity $(dotnetVerbosity)'
 
-  - task: DotNetCoreCLI@2
+    - task: DotNetCoreCLI@2
     displayName: 'dotnet build'
     inputs:
-      command: build
-      projects: '$(pathToBuildProjects)'
-      arguments: '--configuration $(dotnetBuildConfiguration) --verbosity $(dotnetVerbosity)'
+        command: build
+        projects: '$(pathToBuildProjects)'
+        arguments: '--configuration $(dotnetBuildConfiguration) --verbosity $(dotnetVerbosity)'
 
-  - task: DotNetCoreCLI@2
+    - task: DotNetCoreCLI@2
     displayName: 'dotnet pack: ci'
     inputs:
-      command: custom
-      custom: pack
-      projects: '$(pathToPackProjects)'
-      arguments: '--output "$(Build.ArtifactStagingDirectory)/ci" --configuration $(dotnetBuildConfiguration) --verbosity $(dotnetVerbosity) /p:Configuration=$(dotnetBuildConfiguration) /p:RepositoryBranch=$(sourceRepositoryBranch) /p:RepositoryCommit=$(sourceRepositoryCommit) /p:VersionSuffix=ci-$(Build.BuildNumber)'
+        command: custom
+        custom: pack
+        projects: '$(pathToPackProjects)'
+        arguments: '--output "$(Build.ArtifactStagingDirectory)/ci" --configuration $(dotnetBuildConfiguration) --verbosity $(dotnetVerbosity) /p:Configuration=$(dotnetBuildConfiguration) /p:RepositoryBranch=$(sourceRepositoryBranch) /p:RepositoryCommit=$(sourceRepositoryCommit) /p:VersionSuffix=ci-$(Build.BuildNumber)'
 
-  - task: DotNetCoreCLI@2
+    - task: DotNetCoreCLI@2
     displayName: 'dotnet pack: release'
     inputs:
-      command: custom
-      custom: pack
-      projects: '$(pathToPackProjects)'
-      arguments: '--output "$(Build.ArtifactStagingDirectory)/release" --configuration $(dotnetBuildConfiguration) --verbosity $(dotnetVerbosity) /p:Configuration=$(dotnetBuildConfiguration) /p:RepositoryBranch=$(sourceRepositoryBranch) /p:RepositoryCommit=$(sourceRepositoryCommit)'
+        command: custom
+        custom: pack
+        projects: '$(pathToPackProjects)'
+        arguments: '--output "$(Build.ArtifactStagingDirectory)/release" --configuration $(dotnetBuildConfiguration) --verbosity $(dotnetVerbosity) /p:Configuration=$(dotnetBuildConfiguration) /p:RepositoryBranch=$(sourceRepositoryBranch) /p:RepositoryCommit=$(sourceRepositoryCommit)'
 
-  - task: DownloadSecureFile@1
-    displayName: 'Download secure file: activesolution-codesigning-cert.pfx'
-    name: codesigningCert
-    condition: and(succeeded(), and(eq(variables['signNugetPackage'], true) , ne(variables['Build.Reason'], 'PullRequest'))) 
-    inputs:
-      secureFile: 'activesolution-codesigning-cert.pfx'
-
-  - task: NuGetToolInstaller@0
-    displayName: 'Install: NuGet'
-    condition: and(succeeded(), and(eq(variables['signNugetPackage'], true) , ne(variables['Build.Reason'], 'PullRequest')))
-    inputs:
-      versionSpec: 5.3.0
-
-  - task: NuGetCommand@2
-    displayName: 'nuget sign'
-    condition: and(succeeded(), and(eq(variables['signNugetPackage'], true) , ne(variables['Build.Reason'], 'PullRequest')))
-    inputs:
-      command: custom
-      arguments: 'sign "$(Build.ArtifactStagingDirectory)/$(pathToNugetPackages)" -CertificatePath "$(codesigningCert.secureFilePath)" -CertificatePassword "$(codesigningCertPassword)" -Timestamper "$(codesigningTimestamperUrl)"'
-
-  - task: DotNetCoreCLI@2
+    - task: DotNetCoreCLI@2
     displayName: 'dotnet test'
     inputs:
-      command: test
-      projects: '$(pathToTestProjects)'
-      arguments: '--configuration $(dotnetBuildConfiguration) --collect "Code coverage"'
-  
-  - publish: '$(Build.ArtifactStagingDirectory)'
+        command: test
+        projects: '$(pathToTestProjects)'
+        arguments: '--configuration $(dotnetBuildConfiguration) --collect "Code coverage"'
+
+    - publish: '$(Build.ArtifactStagingDirectory)'
     artifact: '$(artifactName)'
+
+stages:
+- stage: sign
+  displayName: Sign
+  condition: and(succeeded(), and(eq(variables['signNugetPackage'], true) , ne(variables['Build.Reason'], 'PullRequest')))
+  jobs:
+  - job: Sign NuGet packages
+    pool:
+    vmImage: 'windows-latest'
+
+    variables:
+    - group: Active Login   # Contains codesigningCertPassword: Password for code signing cert
+
+    - name: sourceArtifactName
+    value: 'nuget-windows'
+
+    - name: targetArtifactName
+    value: 'nuget-windows-signed'
+
+    - name: pathToNugetPackages
+    value: '**/*.nupkg'
+
+    - name: codesigningTimestamperUrl
+    value: 'http://timestamp.digicert.com'
+
+    steps:
+    - download: current
+    artifact: '$(sourceArtifactName)'
+
+    - task: DownloadSecureFile@1
+    displayName: 'Download secure file: activesolution-codesigning-cert.pfx'
+    name: codesigningCert
+    inputs:
+        secureFile: 'activesolution-codesigning-cert.pfx'
+
+    - task: NuGetToolInstaller@0
+    displayName: 'Install: NuGet'
+    inputs:
+        versionSpec: 5.3.0
+
+    - task: NuGetCommand@2
+    displayName: 'nuget sign'
+    inputs:
+        command: custom
+        arguments: 'sign "$(Pipeline.Workspace)/$(pathToNugetPackages)" -CertificatePath "$(codesigningCert.secureFilePath)" -CertificatePassword "$(codesigningCertPassword)" -Timestamper "$(codesigningTimestamperUrl)"'
+
+    - publish: '$(Pipeline.Workspace)'
+    artifact: '$(targetArtifactName)'
