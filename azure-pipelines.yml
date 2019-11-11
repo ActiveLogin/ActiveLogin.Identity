@@ -6,7 +6,8 @@ trigger:
 - master
 
 variables:
-  - group: Active Login
+  - group: Active Login # Contains:
+                        #  - codesigningCertPassword: Password for code signing cert
 
 jobs:
 - job: Build
@@ -39,6 +40,9 @@ jobs:
     pathToPackProjects: '**/src/**/*.*sproj'
     pathToNugetPackages: '**/*.nupkg'
 
+    sourceRepositoryBranch: '$(Build.SourceBranchName)'
+    sourceRepositoryCommit: '$(Build.SourceVersion)'
+
     codesigningTimestamperUrl: 'http://timestamp.digicert.com'
 
   steps:
@@ -68,7 +72,7 @@ jobs:
       command: custom
       custom: pack
       projects: '$(pathToPackProjects)'
-      arguments: '--output "$(Build.ArtifactStagingDirectory)/ci" --configuration $(dotnetBuildConfiguration) --verbosity $(dotnetVerbosity) /p:Configuration=$(dotnetBuildConfiguration) /p:VersionSuffix=ci-$(Build.BuildNumber) /p:RepositoryBranch=$(Build.SourceBranchName) /p:RepositoryCommit=$(Build.SourceVersion)'
+      arguments: '--output "$(Build.ArtifactStagingDirectory)/ci" --configuration $(dotnetBuildConfiguration) --verbosity $(dotnetVerbosity) /p:Configuration=$(dotnetBuildConfiguration) /p:RepositoryBranch=$(sourceRepositoryBranch) /p:RepositoryCommit=$(sourceRepositoryCommit) /p:VersionSuffix=ci-$(Build.BuildNumber)'
 
   - task: DotNetCoreCLI@2
     displayName: 'dotnet pack: release'
@@ -76,7 +80,7 @@ jobs:
       command: custom
       custom: pack
       projects: '$(pathToPackProjects)'
-      arguments: '--output "$(Build.ArtifactStagingDirectory)/release" --configuration $(dotnetBuildConfiguration) --verbosity $(dotnetVerbosity) /p:Configuration=$(dotnetBuildConfiguration) /p:RepositoryBranch=$(Build.SourceBranchName) /p:RepositoryCommit=$(Build.SourceVersion)'
+      arguments: '--output "$(Build.ArtifactStagingDirectory)/release" --configuration $(dotnetBuildConfiguration) --verbosity $(dotnetVerbosity) /p:Configuration=$(dotnetBuildConfiguration) /p:RepositoryBranch=$(sourceRepositoryBranch) /p:RepositoryCommit=$(sourceRepositoryCommit)'
 
   - task: DownloadSecureFile@1
     displayName: 'Download secure file: activesolution-codesigning-cert.pfx'
