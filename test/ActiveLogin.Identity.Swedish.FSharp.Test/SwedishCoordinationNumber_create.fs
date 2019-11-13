@@ -8,6 +8,7 @@ open Swensen.Unquote
 open Expecto
 open FsCheck
 open ActiveLogin.Identity.Swedish.FSharp
+open ActiveLogin.Identity.Swedish.FSharp.TestData
 open System.Reflection
 
 [<Tests>]
