@@ -41,17 +41,18 @@ let tests =
 
                         Hints.getAgeHintOnDate checkDate num =! Some years
 
-            testProp "a person born on a leap day also ages by years counting from their date of birth"
-                <| fun (Gen.CoordNum.LeapDayCoordNum num, Gen.Age (years, months, days)) ->
-                    let dateOfBirth = getDateOfBirth num
-                    // Since there isn't a leap day every year we need to add 1 day to the checkdate
-                    let checkDate =
-                        dateOfBirth.Date
-                            .AddYears(years)
-                            .AddMonths(months)
-                            .AddDays(days + 1.)
-
-                    Hints.getAgeHintOnDate checkDate num =! Some years
+// Right now we do not have leap days in the test data and cannot run this test
+//            testProp "a person born on a leap day also ages by years counting from their date of birth"
+//                <| fun (Gen.CoordNum.LeapDayCoordNum num, Gen.Age (years, months, days)) ->
+//                    let dateOfBirth = getDateOfBirth num
+//                    // Since there isn't a leap day every year we need to add 1 day to the checkdate
+//                    let checkDate =
+//                        dateOfBirth.Date
+//                            .AddYears(years)
+//                            .AddMonths(months)
+//                            .AddDays(days + 1.)
+//
+//                    Hints.getAgeHintOnDate checkDate num =! Some years
 
             testProp "cannot get age for date before person was born" <| fun (Gen.CoordNum.ValidNum num) ->
                 let dateOfBirth = getDateOfBirth num

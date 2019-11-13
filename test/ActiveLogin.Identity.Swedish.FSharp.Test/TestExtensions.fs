@@ -73,7 +73,6 @@ module Year =
 module Month =
     let createOrFail = Month.create >> Result.OkValue
 
-
     let getCheckSum (year) (month) day' (birth) =
         let twoDigitYear = year % 100
         let numberStr = sprintf "%02i%02i%02i%03i" twoDigitYear month day' birth
