@@ -6,8 +6,8 @@ trigger:
 - master
 
 stages:
-- stage: Build
-  displayName:  'Build, test and package NuGet packages'
+- stage: BuildNuget
+  displayName:  'Build NuGet packages'
   jobs:
   - job: BuildTestPackageNuGet
     displayName: 'Build'
@@ -88,9 +88,9 @@ stages:
     - publish: '$(Build.ArtifactStagingDirectory)'
       artifact: '$(artifactName)'
 
-- stage: Sign
+- stage: SignNuget
   displayName: 'Sign NuGet packages'
-  dependsOn: Build
+  dependsOn: BuildNuget
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
   jobs:
   - job: SignNuGet
