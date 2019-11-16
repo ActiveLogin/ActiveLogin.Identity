@@ -83,7 +83,7 @@ stages:
       inputs:
         command: test
         projects: '$(pathToTestProjects)'
-        arguments: '--configuration $(dotnetBuildConfiguration) --collect "Code coverage"'
+        arguments: '--configuration $(dotnetBuildConfiguration) --collect "Code coverage" -- Expecto.fail-on-focused-tests=true'
 
     - publish: '$(Build.ArtifactStagingDirectory)'
       artifact: '$(artifactName)'
