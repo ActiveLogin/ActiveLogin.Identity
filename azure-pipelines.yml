@@ -33,6 +33,7 @@ stages:
 
       pathToBuildProjects: '**/**/*.*sproj'
       pathToTestProjects: '**/test/**/*.Test.*sproj'
+      pathToFSharpTestProjects: '**/test/**/*.Test.fsproj'
       pathToPackProjects: '**/src/**/*.*sproj'
       pathToNugetPackages: '**/*.nupkg'
 
@@ -84,6 +85,13 @@ stages:
         command: test
         projects: '$(pathToTestProjects)'
         arguments: '--configuration $(dotnetBuildConfiguration) --collect "Code coverage"'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'dotnet run (FSharp tests)'
+      inputs:
+        command: test
+        projects: '$(pathToFSharpTestProjects)'
+        arguments: '--configuration $(dotnetBuildConfiguration) --fail-on-focused-tests'
 
     - publish: '$(Build.ArtifactStagingDirectory)'
       artifact: '$(artifactName)'
