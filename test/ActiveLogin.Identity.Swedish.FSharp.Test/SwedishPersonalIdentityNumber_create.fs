@@ -1,5 +1,4 @@
 /// <remarks>
-
 /// Tested with offical test Personal Identity Numbers from Skatteverket:
 /// https://skatteverket.entryscape.net/catalog/9/datasets/147
 /// </remarks>
@@ -16,7 +15,7 @@ open ActiveLogin.Identity.Swedish.FSharp.TestData
 [<Tests>]
 let tests =
     testList "create" [
-        ftestProp "roundtrip 12DigitString -> create -> to12DigitString" <| fun (Gen.Valid12Digit str) ->
+        testProp "roundtrip 12DigitString -> create -> to12DigitString" <| fun (Gen.Valid12Digit str) ->
             str
             |> Gen.stringToValues
             |> SwedishPersonalIdentityNumber.create
