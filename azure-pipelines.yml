@@ -89,7 +89,7 @@ stages:
     - task: DotNetCoreCLI@2
       displayName: 'dotnet run (FSharp tests)'
       inputs:
-        command: test
+        command: run
         projects: '$(pathToFSharpTestProjects)'
         arguments: '--configuration $(dotnetBuildConfiguration) --fail-on-focused-tests'
 
