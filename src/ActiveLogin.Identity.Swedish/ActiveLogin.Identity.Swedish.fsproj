@@ -4,7 +4,7 @@
         <TargetFramework>netstandard2.0</TargetFramework>
         <LangVersion>latest</LangVersion>
         <NeutralLanguage>en</NeutralLanguage>
-        <NoWarn>1701;1702;1591</NoWarn>
+        <NoWarn>1701;1702;1591;FS2003</NoWarn>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
         <AssemblyName>ActiveLogin.Identity.Swedish</AssemblyName>

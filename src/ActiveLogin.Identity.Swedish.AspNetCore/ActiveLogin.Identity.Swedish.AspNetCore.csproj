@@ -4,6 +4,7 @@
         <TargetFramework>netstandard2.0</TargetFramework>
         <LangVersion>latest</LangVersion>
         <NeutralLanguage>en</NeutralLanguage>
+        <NoWarn>CS7035</NoWarn>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
         <AssemblyName>ActiveLogin.Identity.Swedish.AspNetCore</AssemblyName>
