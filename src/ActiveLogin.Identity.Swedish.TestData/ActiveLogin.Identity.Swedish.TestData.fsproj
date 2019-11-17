@@ -1,10 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.0</TargetFrameworks>
+        <TargetFramework>netstandard2.0</TargetFramework>
         <LangVersion>latest</LangVersion>
         <NeutralLanguage>en</NeutralLanguage>
-        <NoWarn>1701;1702;1591;FS2003</NoWarn>
+        <NoWarn>1701;1702;1591</NoWarn>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
         <AssemblyName>ActiveLogin.Identity.Swedish.TestData</AssemblyName>
@@ -12,13 +12,14 @@
 
         <VersionPrefix>3.0.0</VersionPrefix>
         <VersionSuffix>alpha-1</VersionSuffix>
-        <AssemblyVersion>3.0.0</AssemblyVersion>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <FileVersion Condition="'$(BUILD_BUILDNUMBER)' == ''">$(VersionPrefix).0</FileVersion>
         <FileVersion Condition="'$(BUILD_BUILDNUMBER)' != ''">$(VersionPrefix).$(BUILD_BUILDNUMBER)</FileVersion>
 
         <SignAssembly>true</SignAssembly>
         <AssemblyOriginatorKeyFile>StrongNameKey.snk</AssemblyOriginatorKeyFile>
 
-        <Description>.NET classes that provides swedish personal identity numbers test data</Description>
+        <Description>.NET classes that provides Swedish personal identity numbers test data.</Description>
         <PackageTags>PersonalIdentityNumber;PIN;personnummer;Sweden;testdata;test</PackageTags>
 
         <Authors>Viktor Andersson;Peter Örneholm</Authors>
