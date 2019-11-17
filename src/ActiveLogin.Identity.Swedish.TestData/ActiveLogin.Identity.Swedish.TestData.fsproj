@@ -19,7 +19,7 @@
         <SignAssembly>true</SignAssembly>
         <AssemblyOriginatorKeyFile>StrongNameKey.snk</AssemblyOriginatorKeyFile>
 
-        <Description>.NET classes that provides Swedish personal identity numbers test data.</Description>
+        <Description>.NET classes that provide Swedish personal identity numbers test data.</Description>
         <PackageTags>PersonalIdentityNumber;PIN;personnummer;Sweden;testdata;test</PackageTags>
 
         <Authors>Viktor Andersson;Peter Örneholm</Authors>
