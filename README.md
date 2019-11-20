@@ -244,8 +244,12 @@ Active Login is licensed under the very permissive [MIT license](https://opensou
 Active Login is built on or uses the following great open source products:
 
 * [.NET Core](https://github.com/dotnet/core)
-* [XUnit](https://github.com/xunit/xunit)
 * [FSharp](https://github.com/fsharp/fsharp)
+* [XUnit](https://github.com/xunit/xunit)
+* [Expecto](https://github.com/haf/expecto)
+* [FsCheck](https://github.com/fscheck/FsCheck)
+* [Unquote](https://github.com/SwensenSoftware/unquote)
+* [BenchmarkDotNet](https://github.com/dotnet/BenchmarkDotNet)
 
 ### Sponsors
 
