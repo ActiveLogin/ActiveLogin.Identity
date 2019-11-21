@@ -2,19 +2,23 @@ module ActiveLogin.Identity.Swedish.FSharp.IndividualIdentityNumber
 
 open ActiveLogin.Identity.Swedish.FSharp
 
+
 /// <summary>
 /// Creates a <see cref="IdentityNumber"/> out of the individual parts.
 /// </summary>
 /// <param name="values">IdentityNumberValues containing all the number parts</param>
 let create values =
-    result {
-        match SwedishPersonalIdentityNumber.create values with
-        | Ok p -> return p |> Personal
-        | Error _ ->
-            match SwedishCoordinationNumber.create values with
-            | Ok coordNum -> return coordNum |> Coordination
-            | Error _ -> return! ParsingError.Invalid "Not a pin or coordination number" |> ParsingError |> Error
-    }
+    match SwedishPersonalIdentityNumber.create values, SwedishCoordinationNumber.create values with
+    | Ok pin, Error _ ->
+        pin |> Personal |> Ok
+    | Error _, Ok num ->
+        num |> Coordination |> Ok
+    | Error pinError, Error coordError ->
+        let msg = sprintf "Not a valid pin or coordination number. PinError: %A, CoordinationError: %A" pinError coordError
+        ParsingError.Invalid msg |> ParsingError |> Error
+    | Ok _, Ok _ ->
+        // A number can't be a valid pin and coordination number at the same time. Ending up here is a bug.
+        failwith "This should not have happened! There is an application error for either SwedishPersonalIdentityNumber or SwedishCoordinationNumber"
 
 /// <summary>
 /// Converts the string representation of the identity number to its <see cref="IdentityNumber"/> equivalent.
