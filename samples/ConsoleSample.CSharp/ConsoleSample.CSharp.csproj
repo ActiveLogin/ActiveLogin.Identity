@@ -1,14 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\ActiveLogin.Identity.Swedish\ActiveLogin.Identity.Swedish.fsproj" />
-    <ProjectReference Include="..\..\src\ActiveLogin.Identity.Swedish.TestData\ActiveLogin.Identity.Swedish.TestData.fsproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\ActiveLogin.Identity.Swedish\ActiveLogin.Identity.Swedish.fsproj" />
+        <ProjectReference Include="..\..\src\ActiveLogin.Identity.Swedish.TestData\ActiveLogin.Identity.Swedish.TestData.fsproj" />
+    </ItemGroup>
 
 </Project>

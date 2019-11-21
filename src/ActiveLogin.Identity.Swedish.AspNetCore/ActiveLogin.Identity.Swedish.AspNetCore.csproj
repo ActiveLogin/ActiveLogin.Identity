@@ -1,8 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
         <NeutralLanguage>en</NeutralLanguage>
         <NoWarn>CS7035</NoWarn>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
