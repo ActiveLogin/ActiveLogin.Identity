@@ -222,6 +222,8 @@ Some forms of a Swedish Personal Identity Number depends of the age of the perso
 The "-" will be replaced with a "+" on January 1st the year a person turns 100 years old. Therefore these methods (`.To10DigitStringInSpecificYear(...)`, `.ParseInSpecificYear(...)`, `.TryParseInSpecificYear(...)`) exists to define at what year the the data should be represented or parsed.
 Useful for parsing old data or printing data for the future.
 
+---
+
 ## Active Login
 
 _Integrating your systems with market leading authentication services._
@@ -241,6 +243,25 @@ Active Login is licensed under the very permissive [MIT license](https://opensou
 
 Active Login is built on or uses the following great open source products:
 
-* [.NET Standard](https://github.com/dotnet/standard)
-* [XUnit](https://github.com/xunit/xunit)
+* [.NET Core](https://github.com/dotnet/core)
 * [FSharp](https://github.com/fsharp/fsharp)
+* [XUnit](https://github.com/xunit/xunit)
+* [Expecto](https://github.com/haf/expecto)
+* [FsCheck](https://github.com/fscheck/FsCheck)
+* [Unquote](https://github.com/SwensenSoftware/unquote)
+* [BenchmarkDotNet](https://github.com/dotnet/BenchmarkDotNet)
+
+### Sponsors
+
+Active Solution is the main sponsor of Active Login.
+
+![Active Solution](https://activese-assets-prod.azureedge.net/graphics/activesolution-logo.svg)
+
+_We deliver tomorrow's cloud solutions, today. Our costumers choose us because we are engaged, flexible and efficient. We attract the brightest talent and are one of Microsoft's most valued partners._
+
+[https://www.activesolution.se/](https://www.activesolution.se/)
+
+### Support & Training
+
+If you need help with implementing Active Login, there are commercial support & training options available.
+See [ActiveLogin.net](https://activelogin.net#support) for more details.
