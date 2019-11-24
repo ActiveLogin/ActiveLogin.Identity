@@ -42,6 +42,8 @@ dotnet add package ActiveLogin.Identity.Swedish.AspNetCore
 
 ### 2. Use the library in your C# project
 
+### SwedishPersonalIdentityNumber
+
 `SwedishPersonalIdentityNumber` provides parsing methods such as `SwedishPersonalIdentityNumber.Parse()` and `SwedishPersonalIdentityNumber.TryParse()` that can be used like this:
 
 ```c#
@@ -96,6 +98,57 @@ public class SampleDataModel
     public string SwedishPersonalIdentityNumber { get; set; }
 }
 ```
+
+### SwedishCoordinationNumber
+
+`SwedishCoordinationNumber` provides parsing methods such as `SwedishCoordinationNumber.Parse()` and `SwedishCoordinationNumber.TryParse()` that can be used like this:
+
+```c#
+var rawCoordinationNumber = "680164-2395";
+if (SwedishCoordinationNumber.TryParse(rawCoordinationNumber, out var coordinationNumber))
+{
+    Console.WriteLine("SwedishCoordinationNumber");
+    Console.WriteLine(" .ToString(): {0}", coordinationNumber.ToString());
+    Console.WriteLine(" .To10DigitString(): {0}", coordinationNumber.To10DigitString());
+    Console.WriteLine(" .To12DigitString(): {0}", coordinationNumber.To12DigitString());
+    Console.WriteLine(" .RealDay: {0}", coordinationNumber.RealDay;
+
+    Console.WriteLine(" .GetDateOfBirthHint(): {0}", coordinationNumber.GetDateOfBirthHint().ToShortDateString());
+    Console.WriteLine(" .GetAgeHint(): {0}", coordinationNumber.GetAgeHint().ToString());
+
+    Console.WriteLine(" .GetGenderHint(): {0}", coordinationNumber.GetGenderHint().ToString());
+    
+    // IsTestNumber is an extension method from the package ActiveLogin.Identity.Swedish.TestData
+    Console.WriteLine(" .IsTestNumber(): {0}", coordinationNumber.IsTestNumber().ToString());
+}
+else
+{
+    Console.Error.WriteLine("Unable to parse the input as a SwedishCoordinationNumber.");
+}
+```
+
+The code above would output (as of 2018-07-23):
+
+```text
+SwedishCoordinationNumber
+ .ToString(): 199908072391
+ .To10DigitString(): 990807-2391
+ .To12DigitString(): 199908072391
+ .RealDay: 7
+ .GetDateOfBirthHint(): 1999-08-07
+ .GetAgeHint(): 18
+ .GetGenderHint(): Male
+ .IsTestNumber(): True
+```
+
+#### Hints
+
+Some data, such as DateOfBirth, Age and Gender can't be guaranteed to reflect the truth due to the limited quantity of personal identity numbers per day.
+Therefore they are exposed as extension methods in the C# api and are suffixed with `Hint` to reflect this. They are also placed in a separate namespace `ActiveLogin.Identity.Swedish.Extensions`. In the F# api these functions are available in the `ActiveLogin.Identity.Swedish.FSharp.SwedishCoordinationNumber.Hints` module.
+
+#### ASP.NET Core MVC
+
+SwedishCoordinationNumberAttribute: To be added.
 
 ### 3. Use the library in your F# project
 
@@ -192,7 +245,7 @@ Worth noticing is that the date part is not guaranteed to be the exact date you 
 
 The Swedish word "personnummer" is translated into ["personal identity number" by Skatteverket](https://www.skatteverket.se/servicelankar/otherlanguages/inenglish/individualsandemployees/livinginsweden/personalidentitynumberandcoordinationnumber.4.2cf1b5cd163796a5c8b4295.html) and that's the translation we decided on using as it's used in official documents.
 
-Unforentunately the term "social security number" or SSN is often used even for a swedish personal identity number, even though that is misleading as a [SSN is something used in the United States](https://en.wikipedia.org/wiki/Social_Security_number) and should not be mixed up with a PIN.
+Unfortunately the term "social security number" or SSN is often used even for a swedish personal identity number, even though that is misleading as a [SSN is something used in the United States](https://en.wikipedia.org/wiki/Social_Security_number) and should not be mixed up with a PIN.
 
 ### What data are you using for tests and samples?
 
