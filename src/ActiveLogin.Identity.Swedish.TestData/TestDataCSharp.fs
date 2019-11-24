@@ -8,12 +8,7 @@ open ActiveLogin.Identity.Swedish
 [<CompiledName("SwedishPersonalIdentityNumberTestData")>]
 type SwedishPersonalIdentityNumberTestDataCSharp() =
     static let toCSharpPin (pin: SwedishPersonalIdentityNumber) =
-        let year = pin.Year |> Year.value
-        let month = pin.Month |> Month.value
-        let day = pin.Day |> Day.value
-        let birthNumber = pin.BirthNumber |> BirthNumber.value
-        let checksum = pin.Checksum |> Checksum.value
-        SwedishPersonalIdentityNumberCSharp(year, month, day, birthNumber, checksum)
+        SwedishPersonalIdentityNumberCSharp(pin.Year, pin.Month, pin.Day, pin.BirthNumber, pin.Checksum)
 
     /// All the testdata from Skatteverket presented as an array of 12 digit strings.
     static member Raw12DigitStrings = raw12DigitStrings

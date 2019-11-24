@@ -1,23 +1,25 @@
 module ActiveLogin.Identity.Swedish.FSharp.SwedishPersonalIdentityNumber
 
 
-/// <summary>
-/// Creates a <see cref="SwedishPersonalIdentityNumber"/> out of the individual parts.
-/// </summary>
-/// <param name="values">IdentityNumberValues containing all the number parts</param>
-let create (year, month, day, birthNumber, checksum) =
+let internal createInternal (year, month, day, birthNumber, checksum) =
     result {
         let! y = year |> Year.create
         let! m = month |> Month.create
         let! d = day |> Day.create y m
         let! s = birthNumber |> BirthNumber.create
-        let! c = checksum |> Checksum.create y m (Day d) s
-        return { SwedishPersonalIdentityNumber.Year = y
-                 Month = m
-                 Day = d
-                 BirthNumber = s
-                 Checksum = c }
+        let! c = checksum |> Checksum.create y m (DayInternal.Day d) s
+        return { SwedishPersonalIdentityNumber._Year = y
+                 _Month = m
+                 _Day = d
+                 _BirthNumber = s
+                 _Checksum = c }
     }
+
+/// <summary>
+/// Creates a <see cref="SwedishPersonalIdentityNumber"/> out of the individual parts.
+/// </summary>
+/// <param name="values">IdentityNumberValues containing all the number parts</param>
+let create = createInternal >> Error.handle
 
 /// <summary>
 /// Converts a SwedishPersonalIdentityNumber to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars.
@@ -33,6 +35,7 @@ let to10DigitStringInSpecificYear serializationYear pin =
     pin
     |> Personal
     |> StringHelpers.to10DigitStringInSpecificYear serializationYear
+    |> Error.handle
 
 /// <summary>
 /// Converts a SwedishPersonalIdentityNumber to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars.
@@ -42,6 +45,7 @@ let to10DigitString pin =
     pin
     |> Personal
     |> StringHelpers.to10DigitString
+    |> Error.handle
 
 /// <summary>
 /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent 12 digit string representation.
@@ -53,6 +57,12 @@ let to12DigitString pin =
     |> Personal
     |> StringHelpers.to12DigitString
 
+let internal parseInSpecificYearInternal parseYear str =
+    result {
+        let! pYear = parseYear |> Year.create
+        return! Parse.parseInSpecificYear createInternal pYear str
+    }
+
 /// <summary>
 /// Converts the string representation of the Swedish personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent.
 /// </summary>
@@ -63,13 +73,26 @@ let to12DigitString pin =
 /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
 /// </param>
 /// <param name="str">A string representation of the Swedish personal identity number to parse.</param>
-let parseInSpecificYear parseYear str = Parse.parseInSpecificYear create parseYear str
+let parseInSpecificYear parseYear str =
+    parseInSpecificYearInternal parseYear str |> Error.handle
+
+let tryParseInSpecificYear parseYear str =
+    match parseInSpecificYearInternal parseYear str with
+    | Ok pin -> Some pin
+    | Error _ -> None
+
+let internal parseInternal str = Parse.parse createInternal str
 
 /// <summary>
 /// Converts the string representation of the personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent.
 /// </summary>
 /// <param name="str">A string representation of the Swedish personal identity number to parse.</param>
-let parse str = Parse.parse create str
+let parse = parseInternal >> Error.handle
+
+let tryParse str =
+   match parseInternal str with
+   | Ok pin -> Some pin
+   | Error _ -> None
 
 module Hints =
     open ActiveLogin.Identity.Swedish

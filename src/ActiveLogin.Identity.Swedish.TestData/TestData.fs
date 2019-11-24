@@ -27,22 +27,17 @@ module SwedishPersonalIdentityNumberTestData =
         allPins
         |> Array.map (fun (year, month, day, birthNumber, checksum) -> sprintf "%04i%02i%02i%03i%i" year month day birthNumber checksum)
 
-    let internal create values =
-        match SwedishPersonalIdentityNumber.create values with
-        | Ok p -> p
-        | Error err -> failwithf "broken test data %A for %A" err values
-
     /// A sequence of all test numbers ordered by date descending
-    let allPinsByDateDesc() = seq { for pin in allPins do yield create pin }
+    let allPinsByDateDesc() = seq { for pin in allPins do yield SwedishPersonalIdentityNumber.create pin }
 
     /// A sequence of all test numbers in random order
-    let allPinsShuffled() = seq { for pin in shuffledPins() do yield create pin }
+    let allPinsShuffled() = seq { for pin in shuffledPins() do yield SwedishPersonalIdentityNumber.create pin }
 
     /// A random test number
     let getRandom() =
         let index = rng(0, Array.length allPins - 1)
         allPins.[index]
-        |> create
+        |> SwedishPersonalIdentityNumber.create
 
     /// <summary>
     /// Returns a sequence of length specified by count, of unique random test numbers. If it is not important that the
@@ -58,16 +53,8 @@ module SwedishPersonalIdentityNumberTestData =
     /// Checks if a SwedishPersonalIdentityNumber is a test number
     /// </summary>
     /// <param name="pin">A SwedishPersonalIdentityNumber</param>
-    let isTestNumber pin =
-        let asTuple
-            { SwedishPersonalIdentityNumber.Year = year
-              Month = month
-              Day = day
-              BirthNumber = birthNumber
-              Checksum = checksum } =
-            (year.Value, month.Value, day.Value, birthNumber.Value, checksum.Value)
-        pin
-        |> asTuple
+    let isTestNumber (pin: SwedishPersonalIdentityNumber) =
+        (pin.Year, pin.Month, pin.Day, pin.BirthNumber, pin.Checksum)
         |> isTestNumberTuple
 
 module SwedishPersonalIdentityNumber =
@@ -89,20 +76,15 @@ module SwedishCoordinationNumberTestData =
         allCoordNums
         |> Array.map (fun (year, month, day, birthNumber, checksum) -> sprintf "%04i%02i%02i%03i%i" year month day birthNumber checksum)
 
-    let internal create values =
-        match SwedishCoordinationNumber.create values with
-        | Ok p -> p
-        | Error err -> failwithf "broken test data %A for %A" err values
-
     /// A sequence of all test numbers ordered by date descending
-    let allCoordNumsByDateDesc() = seq { for coordNum in allCoordNums do yield create coordNum }
+    let allCoordNumsByDateDesc() = seq { for coordNum in allCoordNums do yield SwedishCoordinationNumber.create coordNum }
     /// A sequence of all test numbers in random order
-    let allCoordNumsShuffled() = seq { for coordNum in shuffledCoordNums() do yield create coordNum }
+    let allCoordNumsShuffled() = seq { for coordNum in shuffledCoordNums() do yield SwedishCoordinationNumber.create coordNum }
     /// A random test number
     let getRandom() =
         let index = rng(0, Array.length allCoordNums - 1)
         allCoordNums.[index]
-        |> create
+        |> SwedishCoordinationNumber.create
     /// <summary>
     /// Returns a sequence of length specified by count, of unique random test numbers. If it is not important that the
     /// sequence of numbers is unique it is more efficient to call getRandom() repeatedly
@@ -117,16 +99,8 @@ module SwedishCoordinationNumberTestData =
     /// Checks if a SwedishCoordinationNumber is a test number
     /// </summary>
     /// <param name="coordNum">A SwedishCoordinationNumber</param>
-    let isTestNumber coordNum =
-        let asTuple
-            { SwedishCoordinationNumber.Year = year
-              Month = month
-              CoordinationDay = day
-              BirthNumber = birthNumber
-              Checksum = checksum } =
-            (year.Value, month.Value, day.Value, birthNumber.Value, checksum.Value)
-        coordNum
-        |> asTuple
+    let isTestNumber (coordNum: SwedishCoordinationNumber) =
+        (coordNum.Year, coordNum.Month, coordNum.CoordinationDay, coordNum.BirthNumber, coordNum.Checksum)
         |> isTestNumberTuple
 
 module SwedishCoordinationNumber =

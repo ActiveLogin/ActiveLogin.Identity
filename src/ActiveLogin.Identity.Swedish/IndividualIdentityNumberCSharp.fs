@@ -25,7 +25,7 @@ type IndividualIdentityNumberCSharp private(num: IndividualIdentityNumber) =
     /// <exception cref="ArgumentOutOfRangeException">Thrown when any of the range arguments is invalid.</exception>
     /// <exception cref="ArgumentException">Thrown when checksum is invalid.</exception>
     private new(year, month, day, birthNumber, checksum) =
-        let idNum = (year, month, day, birthNumber, checksum) |> create |> Error.handle
+        let idNum = (year, month, day, birthNumber, checksum) |> create
 
         IndividualIdentityNumberCSharp(idNum)
 
@@ -42,27 +42,27 @@ type IndividualIdentityNumberCSharp private(num: IndividualIdentityNumber) =
     /// <summary>
     /// The year for date of birth.
     /// </summary>
-    member __.Year = num.Year.Value
+    member __.Year = num.Year
 
     /// <summary>
     /// The month for date of birth.
     /// </summary>
-    member __.Month = num.Month.Value
+    member __.Month = num.Month
 
     /// <summary>
     /// The coordination day (this is the day for date of birth + 60)
     /// </summary>
-    member __.Day = match num.Day with | Day d -> d.Value | CoordinationDay cd -> cd.Value
+    member __.Day = num.Day
 
     /// <summary>
     /// A birth number (födelsenummer) to distinguish people born on the same day.
     /// </summary>
-    member __.BirthNumber = num.BirthNumber.Value
+    member __.BirthNumber = num.BirthNumber
 
     /// <summary>
     /// A checksum (kontrollsiffra) used for validation. Last digit in the number.
     /// </summary>
-    member __.Checksum = num.Checksum.Value
+    member __.Checksum = num.Checksum
 
     member __.IsSwedishPersonalIdentityNumber = num.IsSwedishPersonalIdentityNumber
 
@@ -81,9 +81,7 @@ type IndividualIdentityNumberCSharp private(num: IndividualIdentityNumber) =
     /// <exception cref="ArgumentNullException">Thrown when string input is null.</exception>
     /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid IdentityNumber.</exception>
     static member ParseInSpecificYear((s : string), parseYear : int) =
-        result { let! year = parseYear |> Year.create
-                 return! parseInSpecificYear year s }
-        |> Error.handle
+        parseInSpecificYear parseYear s
         |> IndividualIdentityNumberCSharp
 
     member internal __.IdentityNumber = num
@@ -96,7 +94,6 @@ type IndividualIdentityNumberCSharp private(num: IndividualIdentityNumber) =
     /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid IdentityNumber.</exception>
     static member Parse(s) =
         parse s
-        |> Error.handle
         |> IndividualIdentityNumberCSharp
 
     /// <summary>
@@ -113,13 +110,11 @@ type IndividualIdentityNumberCSharp private(num: IndividualIdentityNumber) =
     /// <param name="parseResult">If valid, an instance of <see cref="IdentityNumber"/></param>
     static member TryParseInSpecificYear((s : string), (parseYear : int),
                                          [<Out>] parseResult : IndividualIdentityNumberCSharp byref) =
-        let num = result { let! year = parseYear |> Year.create
-                           return! parseInSpecificYear year s }
-        match num with
-        | Error _ -> false
-        | Ok num ->
+        match tryParseInSpecificYear parseYear s with
+        | Some num ->
             parseResult <- (num |> IndividualIdentityNumberCSharp)
             true
+        | None -> false
 
     /// <summary>
     /// Converts the string representation of the coordination number to its <see cref="IdentityNumber"/>
@@ -128,12 +123,11 @@ type IndividualIdentityNumberCSharp private(num: IndividualIdentityNumber) =
     /// <param name="s">A string representation of the Swedish coordination number to parse.</param>
     /// <param name="parseResult">If valid, an instance of <see cref="IdentityNumber"/></param>
     static member TryParse((s : string), [<Out>] parseResult : IndividualIdentityNumberCSharp byref) =
-        let num = parse s
-        match num with
-        | Error _ -> false
-        | Ok num ->
+        match tryParse s with
+        | Some num ->
             parseResult <- (num |> IndividualIdentityNumberCSharp)
             true
+        | None -> false
 
     /// <summary>
     /// Creates an instance of a <see cref="IdentityNumber"/> out of a swedish personal identity number.
@@ -162,15 +156,13 @@ type IndividualIdentityNumberCSharp private(num: IndividualIdentityNumber) =
     /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
     /// </param>
     member __.To10DigitStringInSpecificYear(serializationYear : int) =
-        match serializationYear |> Year.create with
-        | Error _ -> raise (ArgumentOutOfRangeException("year", serializationYear, "Invalid year."))
-        | Ok year -> to10DigitStringInSpecificYear year num |> Error.handle
+        to10DigitStringInSpecificYear serializationYear num
 
     /// <summary>
     /// Converts the value of the current <see cref="IdentityNumber" /> object to its equivalent short string representation.
     /// Format is YYMMDDXBBBC, for example <example>990807-2391</example> or <example>120211+9986</example>.
     /// </summary>
-    member __.To10DigitString() = to10DigitString num |> Error.handle
+    member __.To10DigitString() = to10DigitString num
 
     /// <summary>
     /// Converts the value of the current <see cref="IdentityNumber" /> object to its equivalent 12 digit string representation.

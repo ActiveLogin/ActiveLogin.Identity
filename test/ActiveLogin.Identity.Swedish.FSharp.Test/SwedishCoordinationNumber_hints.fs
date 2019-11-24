@@ -16,13 +16,8 @@ open ActiveLogin.Identity.Swedish
 
 
 let getDateOfBirth (num: SwedishCoordinationNumber) =
-    {| Date = DateTime(num.Year.Value, num.Month.Value, num.RealDay)
-       IsLeapDay = num.Month.Value = 2 && num.RealDay = 29 |}
-
-let (|Even|Odd|) (num:BirthNumber) =
-    match num.Value % 2 with
-    | 0 -> Even
-    | _ -> Odd
+    {| Date = DateTime(num.Year, num.Month, num.RealDay)
+       IsLeapDay = num.Month = 2 && num.RealDay = 29 |}
 
 [<Tests>]
 let tests =
@@ -30,7 +25,7 @@ let tests =
         testList "getAgeHint" [
             testProp "a person ages by years counting from their date of birth"
                 <| fun (Gen.CoordNum.ValidNum num, Gen.Age (years, months, days)) ->
-                    not (num.Month.Value = 2 && num.RealDay = 29) ==>
+                    not (num.Month = 2 && num.RealDay = 29) ==>
                     lazy
                         let dateOfBirth = getDateOfBirth num
                         let checkDate =
@@ -70,8 +65,8 @@ let tests =
             testProp "get date of birth hint extracts year, month and date from number" <| fun (Gen.CoordNum.ValidNum num) ->
                 let result = Hints.getDateOfBirthHint num
 
-                result.Year =! num.Year.Value
-                result.Month =! num.Month.Value
+                result.Year =! num.Year
+                result.Month =! num.Month
                 result.Day =! num.RealDay
         ]
 

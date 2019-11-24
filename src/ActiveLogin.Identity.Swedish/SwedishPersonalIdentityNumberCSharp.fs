@@ -25,7 +25,7 @@ type SwedishPersonalIdentityNumberCSharp internal(pin : SwedishPersonalIdentityN
     /// <exception cref="ArgumentOutOfRangeException">Thrown when any of the range arguments is invalid.</exception>
     /// <exception cref="ArgumentException">Thrown when checksum is invalid.</exception>
     new(year, month, day, birthNumber, checksum) =
-        let idNum = (year, month, day, birthNumber, checksum) |> create |> Error.handle
+        let idNum = (year, month, day, birthNumber, checksum) |> create
 
         SwedishPersonalIdentityNumberCSharp(idNum)
 
@@ -34,27 +34,27 @@ type SwedishPersonalIdentityNumberCSharp internal(pin : SwedishPersonalIdentityN
     /// <summary>
     /// The year for date of birth.
     /// </summary>
-    member __.Year = pin.Year.Value
+    member __.Year = pin.Year
 
     /// <summary>
     /// The month for date of birth.
     /// </summary>
-    member __.Month = pin.Month.Value
+    member __.Month = pin.Month
 
     /// <summary>
     /// The day for date of birth.
     /// </summary>
-    member __.Day = pin.Day.Value
+    member __.Day = pin.Day
 
     /// <summary>
     /// A birth number (födelsenummer) to distinguish people born on the same day.
     /// </summary>
-    member __.BirthNumber = pin.BirthNumber.Value
+    member __.BirthNumber = pin.BirthNumber
 
     /// <summary>
     /// A checksum (kontrollsiffra) used for validation. Last digit in the PIN.
     /// </summary>
-    member __.Checksum = pin.Checksum.Value
+    member __.Checksum = pin.Checksum
 
     /// <summary>
     /// Converts the string representation of the Swedish personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent.
@@ -69,9 +69,7 @@ type SwedishPersonalIdentityNumberCSharp internal(pin : SwedishPersonalIdentityN
     /// <exception cref="ArgumentNullException">Thrown when string input is null.</exception>
     /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid SwedishPersonalIdentityNumber.</exception>
     static member ParseInSpecificYear((s : string), parseYear : int) =
-        result { let! year = parseYear |> Year.create
-                 return! parseInSpecificYear year s }
-        |> Error.handle
+        parseInSpecificYear parseYear s
         |> SwedishPersonalIdentityNumberCSharp
 
     /// <summary>
@@ -82,7 +80,6 @@ type SwedishPersonalIdentityNumberCSharp internal(pin : SwedishPersonalIdentityN
     /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid SwedishPersonalIdentityNumber.</exception>
     static member Parse(s) =
         parse s
-        |> Error.handle
         |> SwedishPersonalIdentityNumberCSharp
 
     /// <summary>
@@ -98,13 +95,12 @@ type SwedishPersonalIdentityNumberCSharp internal(pin : SwedishPersonalIdentityN
     /// <param name="parseResult">If valid, an instance of <see cref="SwedishPersonalIdentityNumber"/></param>
     static member TryParseInSpecificYear((s : string), (parseYear : int),
                                          [<Out>] parseResult : SwedishPersonalIdentityNumberCSharp byref) =
-        let pin = result { let! year = parseYear |> Year.create
-                           return! parseInSpecificYear year s }
+        let pin = tryParseInSpecificYear parseYear s
         match pin with
-        | Error _ -> false
-        | Ok pin ->
+        | Some pin ->
             parseResult <- (pin |> SwedishPersonalIdentityNumberCSharp)
             true
+        | None -> false
 
     /// <summary>
     /// Converts the string representation of the personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent  and returns a value that indicates whether the conversion succeeded.
@@ -112,12 +108,11 @@ type SwedishPersonalIdentityNumberCSharp internal(pin : SwedishPersonalIdentityN
     /// <param name="s">A string representation of the Swedish personal identity number to parse.</param>
     /// <param name="parseResult">If valid, an instance of <see cref="SwedishPersonalIdentityNumber"/></param>
     static member TryParse((s : string), [<Out>] parseResult : SwedishPersonalIdentityNumberCSharp byref) =
-        let pin = parse s
-        match pin with
-        | Error _ -> false
-        | Ok pin ->
+        match tryParse s with
+        | Some pin ->
             parseResult <- (pin |> SwedishPersonalIdentityNumberCSharp)
             true
+        | None -> false
 
     /// <summary>
     /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars.
@@ -130,15 +125,16 @@ type SwedishPersonalIdentityNumberCSharp internal(pin : SwedishPersonalIdentityN
     /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
     /// </param>
     member __.To10DigitStringInSpecificYear(serializationYear : int) =
-        match serializationYear |> Year.create with
-        | Error _ -> raise (ArgumentOutOfRangeException("year", serializationYear, "Invalid year."))
-        | Ok year -> to10DigitStringInSpecificYear year pin |> Error.handle
+        to10DigitStringInSpecificYear serializationYear pin
+//        match serializationYear |> Year.create with
+//        | Error _ -> raise (ArgumentOutOfRangeException("year", serializationYear, "Invalid year."))
+//        | Ok year -> to10DigitStringInSpecificYear year pin |> Error.handle
 
     /// <summary>
     /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent short string representation.
     /// Format is YYMMDDXBBBC, for example <example>990807-2391</example> or <example>120211+9986</example>.
     /// </summary>
-    member __.To10DigitString() = to10DigitString pin |> Error.handle
+    member __.To10DigitString() = to10DigitString pin
 
     /// <summary>
     /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent 12 digit string representation.

@@ -11,6 +11,7 @@ open ActiveLogin.Identity.Swedish.FSharp
 open ActiveLogin.Identity.Swedish.FSharp.TestData
 open System.Reflection
 
+
 [<Tests>]
 let tests =
     testList "SwedishCoordinationNumber.create" [
@@ -18,46 +19,45 @@ let tests =
             str
             |> Gen.stringToValues
             |> SwedishCoordinationNumber.create
-            |> Result.map SwedishCoordinationNumber.to12DigitString =! Ok str
+            |> SwedishCoordinationNumber.to12DigitString =! str
 
         testPropWithMaxTest 20000 "invalid year returns InvalidYear Error" <|
             fun (Gen.CoordNum.ValidValues (y, m, d, b, c), Gen.InvalidYear invalidYear) ->
-                let result = SwedishCoordinationNumber.create (invalidYear, m, d, b, c)
-                result =! Error(InvalidYear invalidYear)
+                toAction SwedishCoordinationNumber.create (invalidYear, m, d, b, c)
+                |> Expect.throwsWithMessage "Invalid year."
 
         testPropWithMaxTest 20000 "valid year does not return InvalidYear Error" <|
             fun (Gen.CoordNum.ValidValues (y, m, d, b, c), Gen.ValidYear validYear) ->
-                let result = SwedishCoordinationNumber.create (validYear, m, d, b, c)
-                result <>! (Error(InvalidYear validYear))
+                toAction SwedishCoordinationNumber.create (validYear, m, d, b, c)
+                |> Expect.doesNotThrowWithMessage "year"
 
         testProp "invalid month returns InvalidMonth Error" <|
             fun (Gen.CoordNum.ValidValues (y, m, d, b, c), Gen.InvalidMonth invalidMonth) ->
-                let result = SwedishCoordinationNumber.create (y, invalidMonth, d, b, c)
-                result =! Error(InvalidMonth invalidMonth)
+                toAction SwedishCoordinationNumber.create (y, invalidMonth, d, b, c)
+                |> Expect.throwsWithMessage "Invalid month."
 
         testProp "valid month does not return InvalidMonth Error" <|
             fun (Gen.CoordNum.ValidValues (y, m, d, b, c), Gen.ValidMonth validMonth) ->
-                let result = SwedishCoordinationNumber.create (y, validMonth, d, b, c)
-                result <>! (Error(InvalidMonth validMonth))
+                toAction SwedishCoordinationNumber.create (y, validMonth, d, b, c)
+                |> Expect.doesNotThrowWithMessage "month"
 
         testProp "invalid day returns InvalidDay Error" <| fun (Gen.CoordNum.WithInvalidDay (y, m, d, b, c)) ->
-            let result = SwedishCoordinationNumber.create (y, m, d, b, c)
-            result =! Error(InvalidDayAndCoordinationDay d)
+            toAction SwedishCoordinationNumber.create (y, m, d, b, c)
+            |> Expect.throwsWithMessage "Invalid coordination day."
 
         testProp "valid day does not return InvalidDay Error" <| fun (Gen.CoordNum.WithValidDay (y, m, d, b, c)) ->
-            let result = SwedishCoordinationNumber.create (y, m, d, b, c)
-            result <>! Error(InvalidDayAndCoordinationDay d)
-            result <>! Error(InvalidDay d)
+            toAction SwedishCoordinationNumber.create (y, m, d, b, c)
+            |> Expect.doesNotThrowWithMessage "day"
 
         testProp "invalid birth number returns InvalidBirthNumber Error" <|
             fun (Gen.CoordNum.ValidValues (y, m, d, b, c), Gen.InvalidBirthNumber invalidBirthNumber) ->
-                let result = SwedishCoordinationNumber.create (y, m, d, invalidBirthNumber, c)
-                result =! Error(InvalidBirthNumber invalidBirthNumber)
+                toAction SwedishCoordinationNumber.create (y, m, d, invalidBirthNumber, c)
+                |> Expect.throwsWithMessage "Invalid birth number."
 
         testPropWithMaxTest 3000 "valid birth number does not return InvalidBirthNumber Error" <|
             fun (Gen.CoordNum.ValidValues (y, m, d, b, c), Gen.ValidBirthNumber validBirthNumber) ->
-                let result = SwedishCoordinationNumber.create (y, m, d, validBirthNumber, c )
-                result <>! Error(InvalidBirthNumber validBirthNumber)
+                toAction SwedishCoordinationNumber.create (y, m, d, validBirthNumber, c )
+                |> Expect.doesNotThrowWithMessage "birth"
 
         testProp "invalid checksum returns InvalidChecksum Error" <|
             fun (Gen.CoordNum.ValidValues (y, m, d, b, c)) ->
@@ -69,15 +69,10 @@ let tests =
                     invalidChecksums
                     |> List.map (fun checksum -> (y, m, d, b, checksum))
 
-                let invalidChecksumsAndResults =
-                    withInvalidChecksums
-                    |> List.map (fun (y, m, d, b, c) -> c, SwedishCoordinationNumber.create (y, m, d, b, c))
-
-                invalidChecksumsAndResults
-                |> List.iter (fun (invalidChecksum, result) ->
-                    match result with
-                    | Error (InvalidChecksum actual) -> invalidChecksum =! actual
-                    | _ -> failwith "Expected InvalidChecksum Error")
+                withInvalidChecksums
+                |> List.iter (fun (y, m, d, b, cs) ->
+                    toAction SwedishCoordinationNumber.create (y, m, d, b, cs)
+                    |> Expect.throwsWithMessage "Invalid checksum." )
 
         testCase "fsharp should have no public constructor" <| fun () ->
             let typ = typeof<SwedishCoordinationNumber>

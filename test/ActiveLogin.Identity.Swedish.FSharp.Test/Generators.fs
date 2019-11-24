@@ -167,11 +167,11 @@ module Generators =
                 let! (Pin.ValidValues values) = validValues
                 let pin1 =
                     values
-                    |> SwedishPersonalIdentityNumber.createOrFail
+                    |> SwedishPersonalIdentityNumber.create
 
                 let pin2 =
                     values
-                    |> SwedishPersonalIdentityNumber.createOrFail
+                    |> SwedishPersonalIdentityNumber.create
 
                 return (pin1, pin2) |> Pin.TwoEqualPins
             }
@@ -224,7 +224,7 @@ module Generators =
 
         let leapDayPins =
             let isLeapDay (pin: SwedishPersonalIdentityNumber) =
-                pin.Month.Value = 2 && pin.Day.Value = 29
+                pin.Month = 2 && pin.Day = 29
 
             SwedishPersonalIdentityNumberTestData.allPinsShuffled()
             |> Seq.filter isLeapDay
@@ -293,11 +293,11 @@ module Generators =
                 let! (CoordNum.ValidValues values) = validValues
                 let num1 =
                     values
-                    |> SwedishCoordinationNumber.createOrFail
+                    |> SwedishCoordinationNumber.create
 
                 let num2 =
                     values
-                    |> SwedishCoordinationNumber.createOrFail
+                    |> SwedishCoordinationNumber.create
 
                 return (num1, num2) |> CoordNum.TwoEqualCoordNums
             }
@@ -336,7 +336,7 @@ module Generators =
 
         let leapDayCoordNums =
             let isLeapDay (num: SwedishCoordinationNumber) =
-                num.Month.Value = 2 && num.RealDay = 29
+                num.Month = 2 && num.RealDay = 29
 
             SwedishCoordinationNumberTestData.allCoordNumsShuffled()
             |> Seq.filter isLeapDay

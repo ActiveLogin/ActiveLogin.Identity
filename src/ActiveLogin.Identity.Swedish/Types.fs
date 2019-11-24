@@ -3,61 +3,109 @@ module ActiveLogin.Identity.Swedish.FSharp.Types
 
 open System
 
-type ParsingError =
+type internal ParsingError =
     | Empty
     | Length
     | Invalid of string
-
-
-type Error =
-    | InvalidYear of int
-    | InvalidMonth of int
-    | InvalidDayAndCoordinationDay of int //TODO remove this type, with CoordinationNumber support this should not be used
-    | InvalidDay of int
-    | InvalidBirthNumber of int
-    | InvalidChecksum of int
+type internal Error =
+    | ArgumentOutOfRange of parameter: string * value: int * message: string
+    | ArgumentError of parameter: string * message: string
     | ArgumentNullError
     | ParsingError of ParsingError
-    | InvalidSerializationYear of string
+type internal Year = private Year of int
+type internal Month = private Month of int
+type internal Day = private Day of int
+type internal CoordinationDay = private CoordinationDay of int
+[<RequireQualifiedAccess>]
+type internal DayInternal =
+    | Day of Day
+    | CoordinationDay of CoordinationDay
+type internal BirthNumber = private BirthNumber of int
+type internal Checksum = private Checksum of int
+
+/// Represents a Swedish Personal Identity Number (Svenskt Personnummer).
+/// https://en.wikipedia.org/wiki/Personal_identity_number_(Sweden)
+/// https://sv.wikipedia.org/wiki/Personnummer_i_Sverige
+type SwedishPersonalIdentityNumber =
+    internal
+        { _Year : Year
+          _Month : Month
+          _Day : Day
+          _BirthNumber : BirthNumber
+          _Checksum : Checksum }
+    /// <summary>
+    /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent 12 digit string representation.
+    /// Format is YYYYMMDDBBBC, for example <example>19908072391</example> or <example>191202119986</example>.
+    /// </summary>
+    override this.ToString() =
+        let toString
+            { _Year = (Year year)
+              _Month = (Month month)
+              _Day = (Day day)
+              _BirthNumber = (BirthNumber birthNumber)
+              _Checksum = (Checksum checksum) } =
+                sprintf "%04i%02i%02i%03i%01i" year month day birthNumber checksum
+        this |> toString
+
+/// Represents a Swedish Coordination Identity Number (Samordningsnummer).
+type SwedishCoordinationNumber =
+    internal
+        { _Year : Year
+          _Month : Month
+          _CoordinationDay : CoordinationDay
+          _BirthNumber : BirthNumber
+          _Checksum : Checksum }
+    /// <summary>
+    /// Converts the value of the current <see cref="SwedishCoordinationNumber" /> object to its equivalent 12 digit string representation.
+    /// Format is YYYYMMDDBBBC, for example <example>???</example> or <example>???</example>.
+    /// </summary>
+    override this.ToString() =
+        let toString
+            { _Year = (Year year)
+              _Month = (Month month)
+              _CoordinationDay = (CoordinationDay day)
+              _BirthNumber = (BirthNumber birthNumber)
+              _Checksum = (Checksum checksum) } =
+                sprintf "%04i%02i%02i%03i%01i" year month day birthNumber checksum
+        this |> toString
+
+/// Represents a Swedish Identity Number.
+type IndividualIdentityNumber =
+    | Personal of SwedishPersonalIdentityNumber
+    | Coordination of SwedishCoordinationNumber
 
 module ParsingError =
     let internal toParsingError err =
-        let invalidWithMsg msg i =
-            i |> sprintf "%s %i" msg |> Invalid |> ParsingError
         match err with
-        | InvalidYear y ->
-            y |> invalidWithMsg "InvalidYear:"
-        | InvalidMonth m ->
-            m |> invalidWithMsg "Invalid month:"
-        | InvalidDay d | InvalidDayAndCoordinationDay d ->
-            d |> invalidWithMsg "Invalid day:"
-        | InvalidBirthNumber b ->
-            b |> invalidWithMsg "Invalid birthnumber:"
-        | InvalidChecksum c ->
-            c |> invalidWithMsg "Invalid checksum:"
+        | ArgumentOutOfRange (value = v; message = msg) ->
+            sprintf "%s %i" msg v |> ParsingError.Invalid |> ParsingError
+        | ArgumentError (parameter = name; message = msg) ->
+            sprintf "%s: %s" name msg |> ParsingError.Invalid |> ParsingError
         | ParsingError err -> ParsingError err
         | ArgumentNullError -> ArgumentNullError
-        | InvalidSerializationYear msg -> InvalidSerializationYear msg
 
-
-module Error =
+module internal Error =
     /// This function will raise the most fitting Exceptions for the Error type provided.
     let handle result =
         match result with
         | Ok res -> res
         | Error e ->
             match e with
-            | InvalidYear y -> raise (ArgumentOutOfRangeException("year", y, "Invalid year."))
-            | InvalidMonth m ->
-                raise (ArgumentOutOfRangeException("month", m, "Invalid month. Must be in the range 1 to 12."))
-            | InvalidDay d ->
-                raise
-                    (ArgumentOutOfRangeException("day", d, "Invalid day of month. It might be a valid co-ordination number."))
-            | InvalidDayAndCoordinationDay d -> raise (ArgumentOutOfRangeException("day", d, "Invalid day of month."))
-            | InvalidBirthNumber s ->
-                raise
-                    (ArgumentOutOfRangeException("birthNumber", s, "Invalid birth number. Must be in the range 0 to 999."))
-            | InvalidChecksum _ -> raise (ArgumentException("Invalid checksum.", "checksum"))
+            | ArgumentOutOfRange (parameter = name; value = v; message = msg) ->
+                raise (ArgumentOutOfRangeException(name, v , msg))
+            | ArgumentError (parameter = name; message = msg) ->
+                raise (ArgumentException(msg, name))
+//            | InvalidYear y -> raise (ArgumentOutOfRangeException("year", y, "Invalid year."))
+//            | InvalidMonth m ->
+//                raise (ArgumentOutOfRangeException("month", m, "Invalid month. Must be in the range 1 to 12."))
+//            | InvalidDay d ->
+//                raise
+//                    (ArgumentOutOfRangeException("day", d, "Invalid day of month. It might be a valid co-ordination number."))
+//            | InvalidDayAndCoordinationDay d -> raise (ArgumentOutOfRangeException("day", d, "Invalid day of month."))
+//            | InvalidBirthNumber s ->
+//                raise
+//                    (ArgumentOutOfRangeException("birthNumber", s, "Invalid birth number. Must be in the range 0 to 999."))
+//            | InvalidChecksum _ -> raise (ArgumentException("Invalid checksum.", "checksum"))
             | ArgumentNullError ->
                 raise
                     (ArgumentNullException("personalIdentityNumber"))
@@ -72,11 +120,9 @@ module Error =
                 | Invalid msg ->
                     raise
                         (FormatException(sprintf "String was not recognized as a valid SwedishPersonalIdentityNumber. %s" msg))
-            | InvalidSerializationYear msg -> raise (ArgumentOutOfRangeException msg)
+//            | InvalidSerializationYear msg -> raise (ArgumentOutOfRangeException msg)
 
-type Year = private Year of int
-
-module Year =
+module internal Year =
     let create year =
         let isValidYear = year >= DateTime.MinValue.Year && year <= DateTime.MaxValue.Year
         if isValidYear then
@@ -84,18 +130,15 @@ module Year =
             |> Year
             |> Ok
         else
-            year
-            |> InvalidYear
+            ArgumentOutOfRange("year", year, "Invalid year.")
             |> Error
 
     let value (Year year) = year
 
-type Year with
+type internal Year with
     member this.Value = Year.value this
 
-type Month = private Month of int
-
-module Month =
+module internal Month =
     let create month =
         let isValidMonth = month >= 1 && month <= 12
         if isValidMonth then
@@ -103,79 +146,57 @@ module Month =
             |> Month
             |> Ok
         else
-            month
-            |> InvalidMonth
+
+            ArgumentOutOfRange("month", month, "Invalid month.")
             |> Error
 
     let value (Month month) = month
 
-type Month with
+type internal Month with
     member this.Value = Month.value this
 
-type Day = private Day of int
-
-module Day =
+module internal Day =
     let create (Year inYear) (Month inMonth) day =
-        let coordinationNumberDaysAdded = 60
         let daysInMonth = DateTime.DaysInMonth(inYear, inMonth)
         let isValidDay = day >= 1 && day <= daysInMonth
 
-        let isCoordinationDay d =
-            let dayWithoutCoordinationAddon = d - coordinationNumberDaysAdded
-            dayWithoutCoordinationAddon >= 1 && dayWithoutCoordinationAddon <= daysInMonth
-        match isValidDay with
-        | true ->
-            day
-            |> Day
-            |> Ok
-        | false when isCoordinationDay day ->
-            day
-            |> InvalidDay
-            |> Error
-        | false ->
-            day
-            |> InvalidDayAndCoordinationDay
+        if isValidDay then
+            day |> Day |> Ok
+        else
+
+            ArgumentOutOfRange("day", day, "Invalid day of month.")
             |> Error
 
     let value (Day day) = day
 
-type Day with
+type internal Day with
     member this.Value = Day.value this
 
-type CoordinationDay = CoordinationDay of int
-
-module CoordinationDay =
+module internal CoordinationDay =
     let create (Year inYear) (Month inMonth) day =
         let coordinationNumberDaysAdded = 60
         let daysInMonth = DateTime.DaysInMonth(inYear, inMonth)
 
-        let isCoordinationDay d =
-            let dayWithoutCoordinationAddon = d - coordinationNumberDaysAdded
+        let isValidCoordinationDay =
+            let dayWithoutCoordinationAddon = day - coordinationNumberDaysAdded
             dayWithoutCoordinationAddon >= 1 && dayWithoutCoordinationAddon <= daysInMonth
 
-        match isCoordinationDay day with
-        | true ->
+        if isValidCoordinationDay then
             day
             |> CoordinationDay
             |> Ok
-        | false ->
-            day
-            |> InvalidDayAndCoordinationDay
+        else
+
+            ArgumentOutOfRange("day", day, "Invalid coordination day.")
             |> Error
 
     let value (CoordinationDay day) = day
 
-type CoordinationDay with
+type internal CoordinationDay with
     member this.Value = this |> CoordinationDay.value
     member this.RealDay = this.Value - 60
 
-type DayInternal =
-    | Day of Day
-    | CoordinationDay of CoordinationDay
-
-type BirthNumber = private BirthNumber of int
-
-module BirthNumber =
+module internal BirthNumber =
     let create num =
         let isValidBirthNumber = num >= 1 && num <= 999
         if isValidBirthNumber then
@@ -183,18 +204,15 @@ module BirthNumber =
             |> BirthNumber
             |> Ok
         else
-            num
-            |> InvalidBirthNumber
+            ArgumentOutOfRange("num", num, "Invalid birth number.")
             |> Error
 
     let value (BirthNumber num) = num
 
-type BirthNumber with
+type internal BirthNumber with
     member this.Value = BirthNumber.value this
 
-type Checksum = private Checksum of int
-
-module Checksum =
+module internal Checksum =
     let private create' (Year year) (Month month) day (BirthNumber birth) checksum =
         let isValidChecksum =
             let calculatedChecksum =
@@ -218,68 +236,48 @@ module Checksum =
             |> Checksum
             |> Ok
         else
-            checksum
-            |> InvalidChecksum
+            ArgumentError(parameter = "checksum", message = "Invalid checksum.")
             |> Error
 
     let create y m (day: DayInternal) b c =
         let day =
             match day with
-            | Day (day) -> day.Value
-            | CoordinationDay (day) -> day.Value
+            | DayInternal.Day (day) -> day.Value
+            | DayInternal.CoordinationDay (day) -> day.Value
         create' y m day b c
 
     let value (Checksum sum) = sum
 
-type Checksum with
+type internal Checksum with
     member this.Value = this |> Checksum.value
 
-/// Represents a Swedish Personal Identity Number (Svenskt Personnummer).
-/// https://en.wikipedia.org/wiki/Personal_identity_number_(Sweden)
-/// https://sv.wikipedia.org/wiki/Personnummer_i_Sverige
-type SwedishPersonalIdentityNumber =
-    { /// The year for date of birth.
-      Year : Year
-      /// The month for date of birth.
-      Month : Month
-      /// The day for date of birth.
-      Day : Day
-      /// A birth number (födelsenummer) to distinguish people born on the same day.
-      BirthNumber : BirthNumber
-      /// A checksum (kontrollsiffra) used for validation. Last digit in the PIN.
-      Checksum : Checksum }
-    /// <summary>
-    /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent 12 digit string representation.
-    /// Format is YYYYMMDDBBBC, for example <example>19908072391</example> or <example>191202119986</example>.
-    /// </summary>
-    override this.ToString() = sprintf "%A" this
+type SwedishPersonalIdentityNumber with
+    /// The year for date of birth.
+    member this.Year = this._Year.Value
+    /// The month for date of birth.
+    member this.Month = this._Month.Value
+    /// The day for date of birth.
+    member this.Day = this._Day.Value
+    /// A birth number (födelsenummer) to distinguish people born on the same day.
+    member this.BirthNumber = this._BirthNumber.Value
+    /// A checksum (kontrollsiffra) used for validation. Last digit in the PIN.
+    member this.Checksum = this._Checksum.Value
 
+type SwedishCoordinationNumber with
+    /// The year for date of birth.
+    member this.Year = this._Year.Value
+    /// The month for date of birth.
+    member this.Month = this._Month.Value
+    /// The day for date of birth + 60.
+    member this.CoordinationDay = this._CoordinationDay.Value
+    /// The day for date of birth.
+    member this.RealDay = this._CoordinationDay.RealDay
+    /// A birth number (födelsenummer) to distinguish people born on the same day.
+    member this.BirthNumber = this._BirthNumber.Value
+    /// A checksum (kontrollsiffra) used for validation. Last digit in the PIN.
+    member this.Checksum = this._Checksum.Value
 
-/// Represents a Swedish Coordination Identity Number (Samordningsnummer).
-type SwedishCoordinationNumber =
-    { /// The year for date of birth.
-      Year : Year
-      /// The month for date of birth.
-      Month : Month
-      /// The day for date of birth + 60.
-      CoordinationDay : CoordinationDay
-      /// A birth number (födelsenummer) to distinguish people born on the same day.
-      BirthNumber : BirthNumber
-      /// A checksum (kontrollsiffra) used for validation. Last digit in the PIN.
-      Checksum : Checksum }
-    /// <summary>
-    /// Converts the value of the current <see cref="SwedishCoordinationNumber" /> object to its equivalent 12 digit string representation.
-    /// Format is YYYYMMDDBBBC, for example <example>???</example> or <example>???</example>.
-    /// </summary>
-    override this.ToString() = sprintf "%A" this
-    member this.RealDay = this.CoordinationDay.RealDay
-
-
-/// Represents a Swedish Identity Number.
-type IndividualIdentityNumber =
-    | Personal of SwedishPersonalIdentityNumber
-    | Coordination of SwedishCoordinationNumber
-
+type IndividualIdentityNumber with
     /// The year for date of birth.
     member this.Year =
         match this with
@@ -295,8 +293,8 @@ type IndividualIdentityNumber =
     /// The day for date of birth.
     member this.Day =
         match this with
-        | Personal p -> p.Day |> Day
-        | Coordination c -> c.CoordinationDay |> CoordinationDay
+        | Personal p -> p.Day
+        | Coordination c -> c.CoordinationDay
 
     /// A birth number (födelsenummer) to distinguish people born on the same day.
     member this.BirthNumber =
@@ -321,4 +319,3 @@ type IndividualIdentityNumber =
         match this with
         | Coordination _ -> true
         | _ -> false
-

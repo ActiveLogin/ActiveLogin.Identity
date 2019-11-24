@@ -16,13 +16,8 @@ open ActiveLogin.Identity.Swedish
 
 
 let getDateOfBirth (pin: SwedishPersonalIdentityNumber) =
-    {| Date = DateTime(pin.Year.Value, pin.Month.Value, pin.Day.Value)
-       IsLeapDay = pin.Month.Value = 2 && pin.Day.Value = 29 |}
-
-let (|Even|Odd|) (num:BirthNumber) =
-    match num.Value % 2 with
-    | 0 -> Even
-    | _ -> Odd
+    {| Date = DateTime(pin.Year, pin.Month, pin.Day)
+       IsLeapDay = pin.Month = 2 && pin.Day = 29 |}
 
 [<Tests>]
 let tests =
@@ -30,7 +25,7 @@ let tests =
         testList "getAgeHint" [
             testProp "a person ages by years counting from their date of birth"
                 <| fun (Gen.Pin.ValidPin pin, Gen.Age (years, months, days)) ->
-                    not (pin.Month.Value = 2 && pin.Day.Value = 29) ==>
+                    not (pin.Month = 2 && pin.Day = 29) ==>
                     lazy
                         let dateOfBirth = getDateOfBirth pin
                         let checkDate =
@@ -69,9 +64,9 @@ let tests =
             testProp "get date of birth hint extracts year, month and date from pin" <| fun (Gen.Pin.ValidPin pin) ->
                 let result = Hints.getDateOfBirthHint pin
 
-                result.Year =! pin.Year.Value
-                result.Month =! pin.Month.Value
-                result.Day =! pin.Day.Value
+                result.Year =! pin.Year
+                result.Month =! pin.Month
+                result.Day =! pin.Day
         ]
 
         testList "getGenderHint" [

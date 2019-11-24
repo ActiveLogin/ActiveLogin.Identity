@@ -47,8 +47,8 @@ let parseAndPrintIndividualIdentityNumber str =
         | Coordination _ -> printfn "Testnumber check is not implemented for coordination numbers"
 
     printHeader str
-    match IndividualIdentityNumber.parse str  with
-    | Ok num ->
+    match IndividualIdentityNumber.tryParse str  with
+    | Some num ->
         match num with
         | Personal pin ->
             printfn "SwedishPersonalIdentityNumber:"
@@ -62,7 +62,7 @@ let parseAndPrintIndividualIdentityNumber str =
         printAgeHint num
         printGenderHint num
         printIsTestNumber num
-    | Error e -> printfn "%A: Unable to parse the input as an IndividualIdentityNumber." e
+    | None -> printfn "%s: Unable to parse the input as an IndividualIdentityNumber." str
     printf "\n\n"
 
 [<EntryPoint>]

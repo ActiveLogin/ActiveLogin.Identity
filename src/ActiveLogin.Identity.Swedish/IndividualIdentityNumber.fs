@@ -3,12 +3,8 @@ module ActiveLogin.Identity.Swedish.FSharp.IndividualIdentityNumber
 open ActiveLogin.Identity.Swedish.FSharp
 
 
-/// <summary>
-/// Creates a <see cref="IdentityNumber"/> out of the individual parts.
-/// </summary>
-/// <param name="values">IdentityNumberValues containing all the number parts</param>
-let create values =
-    match SwedishPersonalIdentityNumber.create values, SwedishCoordinationNumber.create values with
+let internal createInternal values =
+    match SwedishPersonalIdentityNumber.createInternal values, SwedishCoordinationNumber.createInternal values with
     | Ok pin, Error _ ->
         pin |> Personal |> Ok
     | Error _, Ok num ->
@@ -21,6 +17,19 @@ let create values =
         failwith "This should not have happened! There is an application error for either SwedishPersonalIdentityNumber or SwedishCoordinationNumber"
 
 /// <summary>
+/// Creates a <see cref="IdentityNumber"/> out of the individual parts.
+/// </summary>
+/// <param name="values">IdentityNumberValues containing all the number parts</param>
+let create = createInternal >> Error.handle
+
+
+let internal parseInSpecificYearInternal parseYear str =
+    result {
+        let! pYear = parseYear |> Year.create
+        return! Parse.parseInSpecificYear createInternal pYear str
+    }
+
+/// <summary>
 /// Converts the string representation of the identity number to its <see cref="IdentityNumber"/> equivalent.
 /// </summary>
 /// <param name="parseYear">
@@ -30,13 +39,27 @@ let create values =
 /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
 /// </param>
 /// <param name="str">A string representation of the identity number to parse.</param>
-let parseInSpecificYear parseYear str = Parse.parseInSpecificYear create parseYear str
+let parseInSpecificYear parseYear str =
+    parseInSpecificYearInternal parseYear str
+    |> Error.handle
+
+let tryParseInSpecificYear parseYear str =
+    match parseInSpecificYearInternal parseYear str with
+    | Ok num -> Some num
+    | Error _ -> None
+
+let internal parseInternal str = Parse.parse createInternal str
 
 /// <summary>
 /// Converts the string representation of the identity number to its <see cref="IdentityNumber"/> equivalent.
 /// </summary>
 /// <param name="str">A string representation of the identity number to parse.</param>
-let parse str = Parse.parse create str
+let parse = parseInternal >> Error.handle
+
+let tryParse str =
+    match parseInternal str with
+    | Ok num -> Some num
+    | Error _ -> None
 
 /// <summary>
 /// Converts a IdentityNumber to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars.
@@ -51,6 +74,7 @@ let parse str = Parse.parse create str
 let to10DigitStringInSpecificYear serializationYear (num: IndividualIdentityNumber) =
     num
     |> StringHelpers.to10DigitStringInSpecificYear serializationYear
+    |> Error.handle
 
 /// <summary>
 /// Converts a IdentityNumber to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars.
@@ -59,6 +83,7 @@ let to10DigitStringInSpecificYear serializationYear (num: IndividualIdentityNumb
 let to10DigitString (num : IndividualIdentityNumber) =
     num
     |> StringHelpers.to10DigitString
+    |> Error.handle
 
 /// <summary>
 /// Converts the value of the current <see cref="IdentityNumber" /> object to its equivalent 12 digit string representation.
@@ -70,7 +95,6 @@ let to12DigitString num =
     |> StringHelpers.to12DigitString
 
 module Hints =
-    open ActiveLogin.Identity.Swedish
 
     /// <summary>
     /// Date of birth for the person according to the identity number.
