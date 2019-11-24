@@ -1,46 +1,23 @@
 module ActiveLogin.Identity.Swedish.FSharp.SwedishPersonalIdentityNumber
 
-open System
 
 /// <summary>
 /// Creates a <see cref="SwedishPersonalIdentityNumber"/> out of the individual parts.
 /// </summary>
-/// <param name="values">SwedishPersonalIdentityNumberValues containing all the number parts</param>
-let create (values : SwedishPersonalIdentityNumberValues) =
+/// <param name="values">IdentityNumberValues containing all the number parts</param>
+let create (year, month, day, birthNumber, checksum) =
     result {
-        let! y = values.Year |> Year.create
-        let! m = values.Month |> Month.create
-        let! d = values.Day |> Day.create y m
-        let! s = values.BirthNumber |> BirthNumber.create
-        let! c = values.Checksum |> Checksum.create y m d s
+        let! y = year |> Year.create
+        let! m = month |> Month.create
+        let! d = day |> Day.create y m
+        let! s = birthNumber |> BirthNumber.create
+        let! c = checksum |> Checksum.create y m (Day d) s
         return { SwedishPersonalIdentityNumber.Year = y
                  Month = m
                  Day = d
                  BirthNumber = s
                  Checksum = c }
     }
-
-let private extractValues (pin : SwedishPersonalIdentityNumber) : SwedishPersonalIdentityNumberValues =
-    { Year = pin.Year |> Year.value
-      Month = pin.Month |> Month.value
-      Day = pin.Day |> Day.value
-      BirthNumber = pin.BirthNumber |> BirthNumber.value
-      Checksum = pin.Checksum |> Checksum.value }
-
-let private validSerializationYear (serializationYear: Year) (pinYear: Year) =
-    if serializationYear < pinYear
-    then
-        "SerializationYear cannot be a year before the person was born"
-        |> InvalidSerializationYear
-        |> Error
-
-    elif (serializationYear |> Year.value) > ((pinYear |> Year.value) + 199)
-    then
-        "SerializationYear cannot be a more than 199 years after the person was born"
-        |> InvalidSerializationYear
-        |> Error
-    else
-        serializationYear |> Ok
 
 /// <summary>
 /// Converts a SwedishPersonalIdentityNumber to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars.
@@ -52,56 +29,29 @@ let private validSerializationYear (serializationYear: Year) (pinYear: Year) =
 /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
 /// </param>
 /// <param name="pin">A SwedishPersonalIdentityNumber</param>
-let to10DigitStringInSpecificYear serializationYear (pin : SwedishPersonalIdentityNumber) =
-    result {
-        let! validYear = validSerializationYear serializationYear pin.Year
-        let delimiter =
-            if (validYear |> Year.value) - (pin.Year |> Year.value) >= 100 then "+"
-            else "-"
-
-        let vs = extractValues pin
-        return sprintf "%02i%02i%02i%s%03i%1i" (vs.Year % 100) vs.Month vs.Day delimiter vs.BirthNumber vs.Checksum
-    }
+let to10DigitStringInSpecificYear serializationYear pin =
+    pin
+    |> Personal
+    |> StringHelpers.to10DigitStringInSpecificYear serializationYear
 
 /// <summary>
 /// Converts a SwedishPersonalIdentityNumber to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars.
 /// </summary>
 /// <param name="pin">A SwedishPersonalIdentityNumber</param>
-let to10DigitString (pin : SwedishPersonalIdentityNumber) =
-    let year =
-        DateTime.UtcNow.Year
-        |> Year.create
-        |> function
-        | Ok y -> y
-        | Error _ -> invalidArg "year" "DateTime.Year wasn't a year"
-    to10DigitStringInSpecificYear year pin
+let to10DigitString pin =
+    pin
+    |> Personal
+    |> StringHelpers.to10DigitString
 
 /// <summary>
 /// Converts the value of the current <see cref="SwedishPersonalIdentityNumber" /> object to its equivalent 12 digit string representation.
-/// Format is YYYYMMDDBBBC, for example <example>19908072391</example> or <example>191202119986</example>.
+/// Format is YYYYMMDDBBBC, for example <example>199008072390</example> or <example>191202119986</example>.
 /// </summary>
 /// <param name="pin">A SwedishPersonalIdentityNumber</param>
 let to12DigitString pin =
-    let vs = extractValues pin
-    sprintf "%02i%02i%02i%03i%1i" vs.Year vs.Month vs.Day vs.BirthNumber vs.Checksum
-
-let internal toParsingError err =
-    let invalidWithMsg msg i =
-        i |> sprintf "%s %i" msg |> Invalid |> ParsingError
-    match err with
-    | InvalidYear y ->
-        y |> invalidWithMsg "InvalidYear:"
-    | InvalidMonth m ->
-        m |> invalidWithMsg "Invalid month:"
-    | InvalidDay d | InvalidDayAndCoordinationDay d ->
-        d |> invalidWithMsg "Invalid day:"
-    | InvalidBirthNumber b ->
-        b |> invalidWithMsg "Invalid birthnumber:"
-    | InvalidChecksum c ->
-        c |> invalidWithMsg "Invalid checksum:"
-    | ParsingError err -> ParsingError err
-    | ArgumentNullError -> ArgumentNullError
-    | InvalidSerializationYear msg -> InvalidSerializationYear msg
+    pin
+    |> Personal
+    |> StringHelpers.to12DigitString
 
 /// <summary>
 /// Converts the string representation of the Swedish personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent.
@@ -113,18 +63,13 @@ let internal toParsingError err =
 /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
 /// </param>
 /// <param name="str">A string representation of the Swedish personal identity number to parse.</param>
-let parseInSpecificYear parseYear str =
-    match Parse.parse parseYear str with
-    | Ok pinValues -> create pinValues
-    | Error error -> Error error
-    |> Result.mapError toParsingError
+let parseInSpecificYear parseYear str = Parse.parseInSpecificYear create parseYear str
 
 /// <summary>
 /// Converts the string representation of the personal identity number to its <see cref="SwedishPersonalIdentityNumber"/> equivalent.
 /// </summary>
 /// <param name="str">A string representation of the Swedish personal identity number to parse.</param>
-let parse str = result { let! year = DateTime.UtcNow.Year |> Year.create
-                         return! parseInSpecificYear year str }
+let parse str = Parse.parse create str
 
 module Hints =
     open ActiveLogin.Identity.Swedish
@@ -134,8 +79,7 @@ module Hints =
     /// Not always the actual date of birth due to the limited quantity of personal identity numbers per day.
     /// </summary>
     /// <param name="pin">A SwedishPersonalIdentityNumber</param>
-    let getDateOfBirthHint (pin : SwedishPersonalIdentityNumber) =
-        DateTime(pin.Year.Value, pin.Month.Value, pin.Day.Value, 0, 0, 0, DateTimeKind.Utc)
+    let getDateOfBirthHint pin = HintsHelper.getDateOfBirthHint (Personal pin)
 
     /// <summary>
     /// Get the age of the person according to the date in the personal identity number.
@@ -143,23 +87,14 @@ module Hints =
     /// </summary>
     /// <param name="date">The date when to calculate the age.</param>
     /// <param name="pin">A SwedishPersonalIdentityNumber</param>
-    let getAgeHintOnDate (date : DateTime) pin =
-        let dateOfBirth = getDateOfBirthHint pin
-        if date >= dateOfBirth then
-            let months = 12 * (date.Year - dateOfBirth.Year) + (date.Month - dateOfBirth.Month)
-            match date.Day < dateOfBirth.Day with
-            | true ->
-                let years = (months - 1) / 12
-                years |> Some
-            | false -> months / 12 |> Some
-        else None
+    let getAgeHintOnDate date pin = HintsHelper.getAgeHintOnDate date (Personal pin)
 
     /// <summary>
     /// Get the age of the person according to the date in the personal identity number.
     /// Not always the actual date of birth due to the limited quantity of personal identity numbers per day.
     /// </summary>
     /// <param name="pin">A SwedishPersonalIdentityNumber</param>
-    let getAgeHint pin = getAgeHintOnDate DateTime.UtcNow pin
+    let getAgeHint pin = HintsHelper.getAgeHint (Personal pin)
 
     /// <summary>
     /// Gender (juridiskt kön) in Sweden according to the last digit of the birth number in the personal identity number.
@@ -167,7 +102,4 @@ module Hints =
     /// Even number: Female
     /// </summary>
     /// <param name="pin">A SwedishPersonalIdentityNumber</param>
-    let getGenderHint (pin : SwedishPersonalIdentityNumber) =
-        let isBirthNumberEven = (pin.BirthNumber |> BirthNumber.value) % 2 = 0
-        if isBirthNumberEven then Gender.Female
-        else Gender.Male
+    let getGenderHint pin = HintsHelper.getGenderHint (Personal pin)

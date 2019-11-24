@@ -7,14 +7,14 @@ namespace ConsoleSample
 {
     class Program
     {
-        private static readonly string[] RawPersonalIdentityNumberSamples =
+        private static readonly string[] RawIndividualIdentityNumberSamples =
         {
             "990913+9801",
             "120211+9986",
             "990807-2391",
             "180101-2392",
-
             "180101.2392",
+            "199008672397",
             "ABC",
         };
 
@@ -23,9 +23,9 @@ namespace ConsoleSample
             Console.WriteLine("Sample showing possible uses of SwedishPersonalIdentityNumber.");
             WriteSpace();
 
-            foreach (var sample in RawPersonalIdentityNumberSamples)
+            foreach (var sample in RawIndividualIdentityNumberSamples)
             {
-                WritePersonalIdentityNumberInfo(sample);
+                WriteIndividualIdentityNumberInfo(sample);
                 WriteSpace();
             }
 
@@ -44,51 +44,61 @@ namespace ConsoleSample
             Console.WriteLine("Here is a personal identity number that can be used for testing:");
             Console.WriteLine("----------------------");
             var randomPin = SwedishPersonalIdentityNumberTestData.GetRandom();
-            WritePersonalIdentityNumberInfo(randomPin);
+            WriteIndividualIdentityNumberInfo(IndividualIdentityNumber.FromSwedishPersonalIdentityNumber(randomPin));
 
             WriteSpace();
 
             Console.WriteLine("What is your (Swedish) Personal Identity Number?");
             var userRawPersonalIdentityNumber = Console.ReadLine();
-            WritePersonalIdentityNumberInfo(userRawPersonalIdentityNumber);
+            WriteIndividualIdentityNumberInfo(userRawPersonalIdentityNumber);
             WriteSpace();
 
             Console.ReadLine();
         }
 
-        private static void WritePersonalIdentityNumberInfo(string rawPersonalIdentityNumber)
+        private static void WriteIndividualIdentityNumberInfo(string rawIndividualIdentityNumber)
         {
-            WriteHeader($"Input: {rawPersonalIdentityNumber}");
-            if (SwedishPersonalIdentityNumber.TryParse(rawPersonalIdentityNumber, out var personalIdentityNumber))
+            WriteHeader($"Input: {rawIndividualIdentityNumber}");
+            if (IndividualIdentityNumber.TryParse(rawIndividualIdentityNumber, out var identityNumber))
             {
-                WritePersonalIdentityNumberInfo(personalIdentityNumber);
+                WriteIndividualIdentityNumberInfo(identityNumber);
             }
             else
             {
-                Console.Error.WriteLine("Unable to parse the input as a SwedishPersonalIdentityNumber.");
+                Console.Error.WriteLine("Unable to parse the input as a IndividualIdentityNumber.");
             }
         }
 
-        private static void WritePersonalIdentityNumberInfo(SwedishPersonalIdentityNumber personalIdentityNumber)
+        private static void WriteIndividualIdentityNumberInfo(IndividualIdentityNumber identityNumber)
         {
-            Console.WriteLine("SwedishPersonalIdentityNumber");
-            WriteKeyValueInfo("   .ToString()", personalIdentityNumber.ToString());
-            WriteKeyValueInfo("   .To10DigitString()", personalIdentityNumber.To10DigitString());
-            WriteKeyValueInfo("   .To12DigitString()", personalIdentityNumber.To12DigitString());
+            if (identityNumber.IsSwedishPersonalIdentityNumber)
+            {
+                Console.WriteLine("SwedishPersonalIdentityNumber");
+            }
+            else if (identityNumber.IsSwedishCoordinationNumber)
+            {
+                Console.WriteLine("SwedishCoordinationNumber");
+            }
+            WriteKeyValueInfo("   .ToString()", identityNumber.ToString());
+            WriteKeyValueInfo("   .To10DigitString()", identityNumber.To10DigitString());
+            WriteKeyValueInfo("   .To12DigitString()", identityNumber.To12DigitString());
 
-            WriteKeyValueInfo("   .Year", personalIdentityNumber.Year.ToString());
-            WriteKeyValueInfo("   .Month", personalIdentityNumber.Month.ToString());
-            WriteKeyValueInfo("   .Day", personalIdentityNumber.Day.ToString());
-            WriteKeyValueInfo("   .BirthNumber", personalIdentityNumber.BirthNumber.ToString());
-            WriteKeyValueInfo("   .Checksum", personalIdentityNumber.Checksum.ToString());
+            WriteKeyValueInfo("   .Year", identityNumber.Year.ToString());
+            WriteKeyValueInfo("   .Month", identityNumber.Month.ToString());
+            WriteKeyValueInfo("   .Day", identityNumber.Day.ToString());
+            WriteKeyValueInfo("   .BirthNumber", identityNumber.BirthNumber.ToString());
+            WriteKeyValueInfo("   .Checksum", identityNumber.Checksum.ToString());
 
-            WriteKeyValueInfo("   .GetDateOfBirthHint()", personalIdentityNumber.GetDateOfBirthHint().ToShortDateString());
-            WriteKeyValueInfo("   .GetAgeHint()", personalIdentityNumber.GetAgeHint().ToString());
+            WriteKeyValueInfo("   .GetDateOfBirthHint()", identityNumber.GetDateOfBirthHint().ToShortDateString());
+            WriteKeyValueInfo("   .GetAgeHint()", identityNumber.GetAgeHint().ToString());
 
-            WriteKeyValueInfo("   .GetGenderHint()", personalIdentityNumber.GetGenderHint().ToString());
+            WriteKeyValueInfo("   .GetGenderHint()", identityNumber.GetGenderHint().ToString());
 
-            // IsTestNumber is an extension method from the package ActiveLogin.Identity.Swedish.TestData
-            WriteKeyValueInfo("   .IsTestNumber()", personalIdentityNumber.IsTestNumber().ToString());
+            if (identityNumber.IsSwedishPersonalIdentityNumber)
+            {
+                // IsTestNumber is an extension method from the package ActiveLogin.Identity.Swedish.TestData
+                WriteKeyValueInfo("   .IsTestNumber()", identityNumber.SwedishPersonalIdentityNumber.IsTestNumber().ToString());
+            }
         }
 
         private static void WriteHeader(string header)

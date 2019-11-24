@@ -7,7 +7,7 @@ open Expecto
 open Swensen.Unquote
 
 [<Tests>]
-let tests = testList "hash" [
+let tests = testList "SwedishPersonalIdentityNumber.hash" [
     testProp "identical pins have the same hash code" <|
-        fun (Gen.TwoEqualPins (pin1, pin2)) ->
+        fun (Gen.Pin.TwoEqualPins (pin1, pin2)) ->
             hash pin1 =! hash pin2 ]

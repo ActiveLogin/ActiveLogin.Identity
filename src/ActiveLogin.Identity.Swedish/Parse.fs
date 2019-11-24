@@ -6,7 +6,7 @@ type private PinType<'T> =
     | TwelveDigits of 'T
     | TenDigits of 'T
 
-let parse parseYear =
+let private parseInternal parseYear =
     let toChars str = [ for c in str -> c ]
     let toString = Array.ofList >> String
 
@@ -68,11 +68,12 @@ let parse parseYear =
             | TwelveDigits str ->
                 // YYYYMMDDbbbc
                 // 012345678901
-                return { Year = str.[0..3] |> int
-                         Month = str.[4..5] |> int
-                         Day = str.[6..7] |> int
-                         BirthNumber = str.[8..10] |> int
-                         Checksum = str.[11..11] |> int }
+                let year = str.[0..3] |> int
+                let month = str.[4..5] |> int
+                let day = str.[6..7] |> int
+                let birthNumber = str.[8..10] |> int
+                let checksum = str.[11..11] |> int
+                return (year, month, day, birthNumber, checksum)
             | TenDigits str ->
                 // YYMMDD-bbbc or YYMMDD+bbbc
                 // 01234567890    01234567890
@@ -91,14 +92,24 @@ let parse parseYear =
                     | '+' when shortYear <= lastDigitsParseYear -> fullYearGuess - 100 |> Ok
                     | '+' -> fullYearGuess - 200 |> Ok
                     | _ -> "delimiter" |> Invalid |> ParsingError |> Error
-                return { Year = fullYear
-                         Month = str.[2..3] |> int
-                         Day = str.[4..5] |> int
-                         BirthNumber = str.[7..9] |> int
-                         Checksum = str.[10..10] |> int }
+
+                let month = str.[2..3] |> int
+                let day = str.[4..5] |> int
+                let birthNumber = str.[7..9] |> int
+                let checksum = str.[10..10] |> int
+                return (fullYear, month, day, birthNumber, checksum)
         }
 
     requireNotEmpty
     >> Result.bind requireDigitCount
     >> Result.map clean
     >> Result.bind parseNumberValues
+
+let parseInSpecificYear createFunc parseYear str =
+    match parseInternal parseYear str with
+    | Ok pinValues -> createFunc pinValues
+    | Error error -> Error error
+    |> Result.mapError ParsingError.toParsingError
+
+let parse createFunc str = result { let! year = DateTime.UtcNow.Year |> Year.create
+                                    return! parseInSpecificYear createFunc year str }

@@ -6,7 +6,7 @@ open Expecto
 open System
 open System.Threading
 
-let private arbTypes = [ typeof<Gen.PinGenerators> ]
+let private arbTypes = [ typeof<Gen.ValueGenerators> ]
 let private config =
     { FsCheckConfig.defaultConfig with arbitrary = arbTypes @ FsCheckConfig.defaultConfig.arbitrary }
 let testProp name = testPropertyWithConfig config name
@@ -18,11 +18,11 @@ let tee f x = f x |> ignore; x
 
 let quickParseR (str:string) =
     let values =
-        { Year = str.[ 0..3 ] |> int
-          Month = str.[ 4..5 ] |> int
-          Day = str.[ 6..7 ] |> int
-          BirthNumber = str.[ 8..10 ] |> int
-          Checksum = str.[ 11..11 ] |> int }
+        ( str.[ 0..3 ] |> int,
+          str.[ 4..5 ] |> int,
+          str.[ 6..7 ] |> int,
+          str.[ 8..10 ] |> int,
+          str.[ 11..11 ] |> int )
     SwedishPersonalIdentityNumber.create values
 
 let quickParse str =
@@ -31,11 +31,11 @@ let quickParse str =
     | Error e -> e.ToString() |> failwithf "Test setup error %s"
 
 let pinToValues (pin:SwedishPersonalIdentityNumber) =
-    { Year = pin.Year |> Year.value
-      Month = pin.Month |> Month.value
-      Day = pin.Day |> Day.value
-      BirthNumber = pin.BirthNumber |> BirthNumber.value
-      Checksum = pin.Checksum |> Checksum.value }
+    ( pin.Year |> Year.value,
+      pin.Month |> Month.value,
+      pin.Day |> Day.value,
+      pin.BirthNumber |> BirthNumber.value,
+      pin.Checksum |> Checksum.value )
 
 
 type Rng =
@@ -50,3 +50,24 @@ let rng =
             Random()))
     { Next = fun (min, max) -> localGenerator.Value.Next(min, max)
       NextDouble = localGenerator.Value.NextDouble }
+
+
+let getRandomFromArray arr =
+    fun () ->
+        let index = rng.Next(0, Array.length arr - 1)
+        arr.[index]
+
+let removeHyphen (str:string) =
+    let isHyphen (c:char) = "-".Contains(c)
+    String.filter (isHyphen >> not) str
+
+let surroundEachChar (chars:char[]) (pin:string) =
+    let rnd = getRandomFromArray chars
+    let surroundWith c = [| rnd(); c; rnd() |]
+
+    Seq.collect surroundWith pin
+    |> Array.ofSeq
+    |> System.String
+
+
+let isDigit (c:char) = "0123456789".Contains(c)
