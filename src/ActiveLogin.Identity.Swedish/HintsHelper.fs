@@ -3,11 +3,11 @@ module internal ActiveLogin.Identity.Swedish.FSharp.HintsHelper
 open System
 open ActiveLogin.Identity.Swedish
 
-let getDateOfBirthHint (num : IndividualIdentityNumber) =
+let getDateOfBirthHint (num : IndividualIdentityNumberInternal) =
     let day =
         match num with
-        | Personal pin -> pin.Day
-        | Coordination num -> num.RealDay
+        | Personal pin -> pin.Day.Value
+        | Coordination num -> num.CoordinationDay.RealDay
     DateTime(num.Year, num.Month, day, 0, 0, 0, DateTimeKind.Utc)
 
 let getAgeHintOnDate (date : DateTime) num =
@@ -23,7 +23,7 @@ let getAgeHintOnDate (date : DateTime) num =
 
 let getAgeHint num = getAgeHintOnDate DateTime.UtcNow num
 
-let getGenderHint (num : IndividualIdentityNumber) =
+let getGenderHint (num : IndividualIdentityNumberInternal) =
     let isBirthNumberEven = (num.BirthNumber) % 2 = 0
     if isBirthNumberEven then Gender.Female
     else Gender.Male

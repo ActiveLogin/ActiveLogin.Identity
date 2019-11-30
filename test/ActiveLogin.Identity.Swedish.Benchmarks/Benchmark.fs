@@ -3,7 +3,6 @@ namespace ActiveLogin.Identity.Swedish.Benchmark
 open System
 open BenchmarkDotNet.Attributes
 open ActiveLogin.Identity.Swedish.FSharp.TestData
-open ActiveLogin.Identity.Swedish.FSharp
 open ActiveLogin.Identity.Swedish.TestData
 
 type BenchmarkPinAccess() =
@@ -25,8 +24,7 @@ type BenchmarkPinAccess() =
     [<Benchmark>]
     member __.Get12DigitStringFromRandomPin() =
         for i = 0 to __.N do
-            SwedishPersonalIdentityNumberTestData.getRandom()
-            |> SwedishPersonalIdentityNumber.to12DigitString
+            SwedishPersonalIdentityNumberTestData.getRandom().To12DigitString()
             |> ignore
 
     [<Benchmark>]

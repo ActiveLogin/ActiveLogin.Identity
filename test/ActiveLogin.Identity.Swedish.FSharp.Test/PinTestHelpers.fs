@@ -71,7 +71,7 @@ let quickParse (str:string) =
           str.[ 6..7 ] |> int,
           str.[ 8..10 ] |> int,
           str.[ 11..11 ] |> int )
-    SwedishPersonalIdentityNumber.create values
+    SwedishPersonalIdentityNumber values
 
 let pinToValues (pin:SwedishPersonalIdentityNumber) =
     ( pin.Year,

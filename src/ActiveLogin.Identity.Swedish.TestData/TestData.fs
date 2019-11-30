@@ -1,5 +1,5 @@
 module ActiveLogin.Identity.Swedish.FSharp.TestData
-open ActiveLogin.Identity.Swedish.FSharp
+open ActiveLogin.Identity.Swedish
 open ActiveLogin.Identity.Swedish.TestData
 open System
 open System.Threading
@@ -28,16 +28,16 @@ module SwedishPersonalIdentityNumberTestData =
         |> Array.map (fun (year, month, day, birthNumber, checksum) -> sprintf "%04i%02i%02i%03i%i" year month day birthNumber checksum)
 
     /// A sequence of all test numbers ordered by date descending
-    let allPinsByDateDesc() = seq { for pin in allPins do yield SwedishPersonalIdentityNumber.create pin }
+    let allPinsByDateDesc() = seq { for pin in allPins do yield SwedishPersonalIdentityNumber pin }
 
     /// A sequence of all test numbers in random order
-    let allPinsShuffled() = seq { for pin in shuffledPins() do yield SwedishPersonalIdentityNumber.create pin }
+    let allPinsShuffled() = seq { for pin in shuffledPins() do yield SwedishPersonalIdentityNumber pin }
 
     /// A random test number
     let getRandom() =
         let index = rng(0, Array.length allPins - 1)
         allPins.[index]
-        |> SwedishPersonalIdentityNumber.create
+        |> SwedishPersonalIdentityNumber
 
     /// <summary>
     /// Returns a sequence of length specified by count, of unique random test numbers. If it is not important that the
@@ -77,14 +77,14 @@ module SwedishCoordinationNumberTestData =
         |> Array.map (fun (year, month, day, birthNumber, checksum) -> sprintf "%04i%02i%02i%03i%i" year month day birthNumber checksum)
 
     /// A sequence of all test numbers ordered by date descending
-    let allCoordNumsByDateDesc() = seq { for coordNum in allCoordNums do yield SwedishCoordinationNumber.create coordNum }
+    let allCoordNumsByDateDesc() = seq { for coordNum in allCoordNums do yield SwedishCoordinationNumber coordNum }
     /// A sequence of all test numbers in random order
-    let allCoordNumsShuffled() = seq { for coordNum in shuffledCoordNums() do yield SwedishCoordinationNumber.create coordNum }
+    let allCoordNumsShuffled() = seq { for coordNum in shuffledCoordNums() do yield SwedishCoordinationNumber coordNum }
     /// A random test number
     let getRandom() =
         let index = rng(0, Array.length allCoordNums - 1)
         allCoordNums.[index]
-        |> SwedishCoordinationNumber.create
+        |> SwedishCoordinationNumber
     /// <summary>
     /// Returns a sequence of length specified by count, of unique random test numbers. If it is not important that the
     /// sequence of numbers is unique it is more efficient to call getRandom() repeatedly
