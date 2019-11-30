@@ -2,6 +2,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://dev.azure.com/activesolution/ActiveLogin/_apis/build/status/ActiveLogin.Identity?branchName=master)](https://activesolution.visualstudio.com/ActiveLogin/_build/latest?definitionId=190&branchName=master)
+[![Slack](https://img.shields.io/badge/slack-@ActiveLogin-blue.svg?logo=slack)](https://join.slack.com/t/activelogin/shared_invite/enQtODQ0ODYyMTgxMjg0LWJhODhiZmFmODYyMWMzZWEwMjdmYWU2NGRhZmQ0MTg0MzIwNzA2OTM3NTJjOTk2MmE1MzIwMzkzYjllMjAyNzg)
+[![Twitter Follow](https://img.shields.io/badge/Twitter-@ActiveLoginSE-blue.svg?logo=twitter)](https://twitter.com/ActiveLoginSE)
 
 ActiveLogin.Identity provides parsing and validation of Swedish identities such as Personal Identity Number (svenskt personnummer) and Coordination Number (samordningsnummer). Built on NET Standard and packaged as NuGet-packages they are easy to install and use on multiple platforms.
 
@@ -14,15 +16,40 @@ ActiveLogin.Identity provides parsing and validation of Swedish identities such 
 - :large_blue_diamond: Written in F# and C# and works great with VB.NET as well
 - :white_check_mark: Well tested
 
-## Continuous integration & Packages overview
+## Table of contents
+
+* [Project & Packages overview](#project--packages-overview)
+* [Getting started](#getting-started)
+    + [1. Install the NuGet package](#1-install-the-nuget-package)
+    + [2. Use the library in your C# project](#2-use-the-library-in-your-c-project)
+        - [SwedishPersonalIdentityNumber](#swedishpersonalidentitynumber)
+        - [SwedishCoordinationNumber](#swedishcoordinationnumber)
+    + [3. Use the library in your F# project](#3-use-the-library-in-your-f-project)
+    + [4. Browse tests and samples](#4-browse-tests-and-samples)
+* [FAQ](#faq)
+    + [What formats of a Swedish Personal Identity Number do you support parsing?](#what-formats-of-a-swedish-personal-identity-number-do-you-support-parsing)
+    + [What formats of a Swedish Coordination Number do you support parsing?](#what-formats-of-a-swedish-coordination-number-do-you-support-parsing)
+    + [What definition of Swedish Personal Identity Number are the implementations based on?](#what-definition-of-swedish-personal-identity-number-are-the-implementations-based-on)
+    + [What definition of Swedish Coordination Number are the implementations based on?](#what-definition-of-swedish-coordination-number-are-the-implementations-based-on)
+    + [Why are you calling it "Swedish Personal Identity Number" and not Social Security Number?](#why-are-you-calling-it-swedish-personal-identity-number-and-not-social-security-number)
+    + [What data are you using for tests and samples?](#what-data-are-you-using-for-tests-and-samples)
+    + [When should I use `...InSpecificYear(...)`?](#when-should-i-use-inspecificyear)
+* [Active Login](#active-login)
+    + [Contribute](#contribute)
+    + [Stay updated and join the discussion](#stay-updated-and-join-the-discussion)
+    + [License & acknowledgements](#license--acknowledgements)
+    + [Sponsors](#sponsors)
+    + [Support & Training](#support--training)
+
+## Project & Packages overview
+
+CI-builds from master of all packages are available in [our Azure DevOps Artifacts feed](https://dev.azure.com/activesolution/ActiveLogin/_packaging?_a=feed&feed=ActiveLogin-CI).
 
 | Project | Description | NuGet |
 | ------- | ----------- | ----- |
 | [ActiveLogin.Identity.Swedish](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/src/ActiveLogin.Identity.Swedish) | .NET classes handling Personal Identity Number | [![NuGet](https://img.shields.io/nuget/v/ActiveLogin.Identity.Swedish.svg)](https://www.nuget.org/packages/ActiveLogin.Identity.Swedish/) |
 | [ActiveLogin.Identity.Swedish.AspNetCore](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/src/ActiveLogin.Identity.Swedish.AspNetCore) | Validation attributes for ASP.NET Core. | [![NuGet](https://img.shields.io/nuget/v/ActiveLogin.Identity.Swedish.AspNetCore.svg)](https://www.nuget.org/packages/ActiveLogin.Identity.Swedish.AspNetCore/) |
 | [ActiveLogin.Identity.Swedish.TestData](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/src/ActiveLogin.Identity.Swedish.TestData) | Provides Swedish Identity Numbers test data. | [![NuGet](https://img.shields.io/nuget/v/ActiveLogin.Identity.Swedish.TestData.svg)](https://www.nuget.org/packages/ActiveLogin.Identity.Swedish.TestData/) |
-
-CI-builds from master of all packages are available in [our Azure DevOps Artifacts feed](https://dev.azure.com/activesolution/ActiveLogin/_packaging?_a=feed&feed=ActiveLogin-CI).
 
 ## Getting started
 
@@ -312,7 +339,16 @@ In addition, Active Login also contain convenient modules that help you work wit
 
 ### Contribute
 
-We are very open to community contributions to Active Login. You'll need a basic understanding of Git and GitHub to get started. The easiest way to contribute is to open an issue and start a discussion. If you make code changes, submit a pull request with the changes and a description. Don’t forget to always provide tests that cover the code changes. 
+We are very open to community contributions to Active Login.
+Please see our [contribution guidelines](CONTRIBUTING.md) before getting started.
+
+### Stay updated and join the discussion
+
+The three primary ways to interact and stay updated with Active Login are:
+
+- [Watch our GitHub repo](https://github.com/ActiveLogin/ActiveLogin.Authentication/watchers)
+- [Slack](https://join.slack.com/t/activelogin/shared_invite/enQtODQ0ODYyMTgxMjg0LWJhODhiZmFmODYyMWMzZWEwMjdmYWU2NGRhZmQ0MTg0MzIwNzA2OTM3NTJjOTk2MmE1MzIwMzkzYjllMjAyNzg)
+- [Twitter](https://twitter.com/ActiveLoginSE)
 
 ### License & acknowledgements
 
@@ -330,7 +366,7 @@ Active Login is built on or uses the following great open source products:
 
 ### Sponsors
 
-Active Solution is the main sponsor of Active Login.
+Active Solution is the main sponsor of Active Login. Active Solution is located in Stockholm (Sweden) and provides IT consulting with focus on web, cloud and AI.
 
 ![Active Solution](https://activese-assets-prod.azureedge.net/graphics/activesolution-logo.svg)
 
