@@ -346,7 +346,7 @@ Please see our [contribution guidelines](CONTRIBUTING.md) before getting started
 
 The three primary ways to interact and stay updated with Active Login are:
 
-- [Watch our GitHub repo](https://github.com/ActiveLogin/ActiveLogin.Authentication/watchers)
+- [Watch our GitHub repo](https://github.com/ActiveLogin/ActiveLogin.Identity/watchers)
 - [Slack](https://join.slack.com/t/activelogin/shared_invite/enQtODQ0ODYyMTgxMjg0LWJhODhiZmFmODYyMWMzZWEwMjdmYWU2NGRhZmQ0MTg0MzIwNzA2OTM3NTJjOTk2MmE1MzIwMzkzYjllMjAyNzg)
 - [Twitter](https://twitter.com/ActiveLoginSE)
 
