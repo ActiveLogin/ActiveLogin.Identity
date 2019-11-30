@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using ActiveLogin.Identity.Swedish;
 using ActiveLogin.Identity.Swedish.Extensions;
 using ActiveLogin.Identity.Swedish.TestData;
@@ -110,8 +110,11 @@ namespace ConsoleSample
 
         private static void Sample_ShowSwedishCoordinationNumberTestData()
         {
-            WriteHeader("A Coordination Number that can be used for testing:");
-            WriteLine(SwedishCoordinationNumberTestData.GetRandom().ToString());
+            WriteHeader("A Coordination Number that can be used for testing, represented as 10 digit string:");
+            WriteLine(SwedishCoordinationNumberTestData.GetRandom().To10DigitString());
+
+            WriteHeader("A Coordination Number that can be used for testing, represented as 12 digit string:");
+            WriteLine(SwedishCoordinationNumberTestData.GetRandom().To12DigitString());
 
             WriteHeader("A Coordination Number that can be used for testing:");
             WriteSwedishCoordinationNumberInfo(SwedishCoordinationNumberTestData.GetRandom());
