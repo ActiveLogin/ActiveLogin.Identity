@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using ActiveLogin.Identity.Swedish.Extensions;
 using ActiveLogin.Identity.Swedish.FSharp;
 using ActiveLogin.Identity.Swedish.TestData;
@@ -18,7 +18,7 @@ namespace ConsoleSample
             "180101-2392", // Swedish personal identity number
             "180101.2392", // Swedish personal identity number
 
-            "199008672397", // Swedish coordination number
+            "900778-2395", // Swedish coordination number
 
             "ABC", // Invalid
         };
