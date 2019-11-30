@@ -95,7 +95,7 @@ public class SampleDataModel
 
 The `SwedishPersonalIdentityNumber` attribute is available through a separate package:
 
-```powershell
+```console
 dotnet add package ActiveLogin.Identity.Swedish.AspNetCore
 ```
 
