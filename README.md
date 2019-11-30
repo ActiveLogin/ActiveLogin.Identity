@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://dev.azure.com/activesolution/ActiveLogin/_apis/build/status/ActiveLogin.Identity?branchName=master)](https://activesolution.visualstudio.com/ActiveLogin/_build/latest?definitionId=190&branchName=master)
 
-ActiveLogin.Identity provides parsing and validation of Swedish identities such as Personal Identity Number (svenskt personnummer). Built on NET Standard and packaged as NuGet-packages they are easy to install and use on multiple platforms.
+ActiveLogin.Identity provides parsing and validation of Swedish identities such as Personal Identity Number (svenskt personnummer) and Coordination Number (samordningsnummer). Built on NET Standard and packaged as NuGet-packages they are easy to install and use on multiple platforms.
 
 ## Features
 - :id: .NET parser for Swedish Personal Identity Number (Svenskt personnummer)
@@ -20,7 +20,7 @@ ActiveLogin.Identity provides parsing and validation of Swedish identities such 
 | ------- | ----------- | ----- |
 | [ActiveLogin.Identity.Swedish](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/src/ActiveLogin.Identity.Swedish) | .NET classes handling Personal Identity Number | [![NuGet](https://img.shields.io/nuget/v/ActiveLogin.Identity.Swedish.svg)](https://www.nuget.org/packages/ActiveLogin.Identity.Swedish/) |
 | [ActiveLogin.Identity.Swedish.AspNetCore](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/src/ActiveLogin.Identity.Swedish.AspNetCore) | Validation attributes for ASP.NET Core. | [![NuGet](https://img.shields.io/nuget/v/ActiveLogin.Identity.Swedish.AspNetCore.svg)](https://www.nuget.org/packages/ActiveLogin.Identity.Swedish.AspNetCore/) |
-| [ActiveLogin.Identity.Swedish.TestData](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/src/ActiveLogin.Identity.Swedish.TestData) | Provides Swedish Personal Identity Numbers test data. | [![NuGet](https://img.shields.io/nuget/v/ActiveLogin.Identity.Swedish.TestData.svg)](https://www.nuget.org/packages/ActiveLogin.Identity.Swedish.TestData/) |
+| [ActiveLogin.Identity.Swedish.TestData](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/src/ActiveLogin.Identity.Swedish.TestData) | Provides Swedish Identity Numbers test data. | [![NuGet](https://img.shields.io/nuget/v/ActiveLogin.Identity.Swedish.TestData.svg)](https://www.nuget.org/packages/ActiveLogin.Identity.Swedish.TestData/) |
 
 CI-builds from master of all packages are available in [our Azure DevOps Artifacts feed](https://dev.azure.com/activesolution/ActiveLogin/_packaging?_a=feed&feed=ActiveLogin-CI).
 
@@ -30,14 +30,8 @@ CI-builds from master of all packages are available in [our Azure DevOps Artifac
 
 ActiveLogin.Identity is distributed as [packages on NuGet](https://www.nuget.org/profiles/ActiveLogin), install using the tool of your choice, for example _dotnet cli_:
 
-```powershell
+```console
 dotnet add package ActiveLogin.Identity.Swedish
-```
-
-or
-
-```powershell
-dotnet add package ActiveLogin.Identity.Swedish.AspNetCore
 ```
 
 ### 2. Use the library in your C# project
@@ -97,6 +91,12 @@ public class SampleDataModel
     [SwedishPersonalIdentityNumber]
     public string SwedishPersonalIdentityNumber { get; set; }
 }
+```
+
+The `SwedishPersonalIdentityNumber` attribute is available through a separate package:
+
+```console
+dotnet add package ActiveLogin.Identity.Swedish.AspNetCore
 ```
 
 ### SwedishCoordinationNumber
@@ -228,6 +228,10 @@ And basically anything else that can be cleaned and parsed :)
 * **BBB:** Birth number
 * **C:** Checksum
 
+### What formats of a Swedish Coordination Number do you support parsing?
+
+TODO
+
 ### What definition of Swedish Personal Identity Number are the implementations based on?
 
 The implementation is primarily based on the definition defined in Swedish Law:
@@ -241,6 +245,10 @@ But when there have been ambiguities we have also read more info and samples fro
 
 Worth noticing is that the date part is not guaranteed to be the exact date you were born, but can be changed for another date within the same month.
 
+### What definition of Swedish Coordination Number are the implementations based on?
+
+TODO
+
 ### Why are you calling it "Swedish Personal Identity Number" and not Social Security Number?
 
 The Swedish word "personnummer" is translated into ["personal identity number" by Skatteverket](https://www.skatteverket.se/servicelankar/otherlanguages/inenglish/individualsandemployees/livinginsweden/personalidentitynumberandcoordinationnumber.4.2cf1b5cd163796a5c8b4295.html) and that's the translation we decided on using as it's used in official documents.
@@ -253,7 +261,7 @@ To comply with GDPR and not no expose any real PINs, we are using the official t
 
 If you need to use test numbers yourself, for example if you need to write tests using personal identity numbers, but want to avoid violating GDPR, we provide a [nuget package](https://www.nuget.org/packages/ActiveLogin.Identity.Swedish.TestData/) with a simple api to get random test numbers or strings. You can also check if a personal identity number is a test number.
 
-#### C#
+#### C# : Swedish Personal Identity Number
 ```csharp
 using ActiveLogin.Identity.Swedish.TestData; 
 
@@ -261,7 +269,15 @@ var aTestNumber = SwedishPersonalIdentityNumberTestData.GetRandom();
 aTestNumber.IsTestNumber(); // => true
 ```
 
-#### F#
+#### C# : Swedish Coordination Number
+```csharp
+using ActiveLogin.Identity.Swedish.TestData; 
+
+var aTestNumber = SwedishCoordinationNumberTestData.GetRandom();
+aTestNumber.IsTestNumber(); // => true
+```
+
+#### F# : Swedish Personal Identity Number
 ```fsharp
 open ActiveLogin.Identity.Swedish.TestData.FSharp
 
@@ -269,9 +285,17 @@ let aTestNumber = SwedishPersonalIdentityNumberTestData.getRandom()
 aTestNumber |> SwedishPersonalIdentityNumber.isTestNumber // => true
 ```
 
+#### F# : Swedish Coordination Identity Number
+```fsharp
+open ActiveLogin.Identity.Swedish.TestData.FSharp
+
+let aTestNumber = SwedishCoordinationNumberTestData.getRandom()
+aTestNumber |> SwedishCoordinationNumber.isTestNumber // => true
+```
+
 ### When should I use `...InSpecificYear(...)`?
 
-Some forms of a Swedish Personal Identity Number depends of the age of the person it represents.
+Some forms of a Swedish Personal Identity Number and Swedish Coordination Number depends of the age of the person it represents.
 The "-" will be replaced with a "+" on January 1st the year a person turns 100 years old. Therefore these methods (`.To10DigitStringInSpecificYear(...)`, `.ParseInSpecificYear(...)`, `.TryParseInSpecificYear(...)`) exists to define at what year the the data should be represented or parsed.
 Useful for parsing old data or printing data for the future.
 
