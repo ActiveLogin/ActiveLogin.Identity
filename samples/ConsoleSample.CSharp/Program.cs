@@ -1,7 +1,10 @@
 using System;
-using ActiveLogin.Identity.Swedish;
 using ActiveLogin.Identity.Swedish.Extensions;
+using ActiveLogin.Identity.Swedish.FSharp;
 using ActiveLogin.Identity.Swedish.TestData;
+using IndividualIdentityNumber = ActiveLogin.Identity.Swedish.IndividualIdentityNumber;
+using SwedishCoordinationNumber = ActiveLogin.Identity.Swedish.SwedishCoordinationNumber;
+using SwedishPersonalIdentityNumber = ActiveLogin.Identity.Swedish.SwedishPersonalIdentityNumber;
 
 namespace ConsoleSample
 {
@@ -74,6 +77,7 @@ namespace ConsoleSample
                 }
             }
         }
+<<<<<<< HEAD
 
         private static void Sample_ShowSwedishPersonalIdentityNumberTestData()
         {
@@ -132,6 +136,63 @@ namespace ConsoleSample
             }
         }
 
+=======
+
+        private static void Sample_ShowSwedishPersonalIdentityNumberTestData()
+        {
+            WriteHeader("A Personal Identity Number that can be used for testing, represented as 10 digit string:");
+            WriteLine(SwedishPersonalIdentityNumberTestData.GetRandom().To10DigitString());
+
+            WriteHeader("A Personal Identity Number that can be used for testing, represented as 12 digit string:");
+            WriteLine(SwedishPersonalIdentityNumberTestData.GetRandom().To12DigitString());
+
+            WriteHeader("A Personal Identity Number that can be used for testing:");
+            WriteSwedishPersonalIdentityNumberInfo(SwedishPersonalIdentityNumberTestData.GetRandom());
+        }
+
+        #endregion
+
+        #region Samples_SwedishCoordinationNumbers
+
+        private static void Sample_ParseSwedishCoordinationNumbers()
+        {
+            foreach (var input in RawInputs)
+            {
+                WriteHeader($"Input: {input}");
+                if (SwedishCoordinationNumber.TryParse(input, out var identityNumber))
+                {
+                    WriteSwedishCoordinationNumberInfo(identityNumber);
+                }
+                else
+                {
+                    Console.Error.WriteLine("Unable to parse the input as a SwedishCoordinationNumber.");
+                    WriteSpace();
+                }
+            }
+        }
+
+        private static void Sample_ShowSwedishCoordinationNumberTestData()
+        {
+            WriteHeader("A Coordination Number that can be used for testing:");
+            WriteLine(TestData.SwedishCoordinationNumberTestData.getRandom().ToString());
+
+            WriteHeader("A Coordination Number that can be used for testing:");
+            //WriteSwedishCoordinationNumberInfo(TestData.SwedishCoordinationNumberTestData.getRandom());
+        }
+
+        #endregion
+
+        #region Samples_IndiviudalIdentityNumbers
+
+        private static void Sample_ParseIndividualIdentityNumbers()
+        {
+            foreach (var input in RawInputs)
+            {
+                WriteIndividualIdentityNumberInfo(input);
+            }
+        }
+
+>>>>>>> Update sample
         private static void Sample_ParseUserInput()
         {
             WriteHeader("What is your (Swedish) Personal Identity Number or Coordination Number?");
@@ -198,11 +259,14 @@ namespace ConsoleSample
                 // IsTestNumber is an extension method from the package ActiveLogin.Identity.Swedish.TestData
                 WriteKeyValueInfo("   .IsTestNumber()", identityNumber.SwedishPersonalIdentityNumber.IsTestNumber().ToString());
             }
+<<<<<<< HEAD
             if (identityNumber.IsSwedishCoordinationNumber)
             {
                 // IsTestNumber is an extension method from the package ActiveLogin.Identity.Swedish.TestData
                 WriteKeyValueInfo("   .IsTestNumber()", identityNumber.SwedishCoordinationNumber.IsTestNumber().ToString());
             }
+=======
+>>>>>>> Update sample
 
             WriteSpace();
         }
@@ -210,6 +274,11 @@ namespace ConsoleSample
         private static void WriteLine(string info)
         {
             Console.WriteLine(info);
+<<<<<<< HEAD
+        }
+
+        private static void WriteHeader(string header, bool withTopSpace = true)
+=======
         }
 
         private static void WriteHeader(string header, bool withTopSpace = true)
@@ -224,6 +293,7 @@ namespace ConsoleSample
         }
 
         private static void WriteSection(string header, bool withTopSpace = true)
+>>>>>>> Update sample
         {
             if (withTopSpace)
             {
@@ -231,6 +301,20 @@ namespace ConsoleSample
             }
 
             Console.WriteLine(header);
+<<<<<<< HEAD
+            Console.WriteLine("---------------------------------------");
+        }
+
+        private static void WriteSection(string header, bool withTopSpace = true)
+        {
+            if (withTopSpace)
+            {
+                Console.WriteLine();
+            }
+
+            Console.WriteLine(header);
+=======
+>>>>>>> Update sample
             Console.WriteLine("###################################################################");
             Console.WriteLine();
         }
