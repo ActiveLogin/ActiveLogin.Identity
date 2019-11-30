@@ -1,10 +1,7 @@
 ﻿using System;
+using ActiveLogin.Identity.Swedish;
 using ActiveLogin.Identity.Swedish.Extensions;
-using ActiveLogin.Identity.Swedish.FSharp;
 using ActiveLogin.Identity.Swedish.TestData;
-using IndividualIdentityNumber = ActiveLogin.Identity.Swedish.IndividualIdentityNumber;
-using SwedishCoordinationNumber = ActiveLogin.Identity.Swedish.SwedishCoordinationNumber;
-using SwedishPersonalIdentityNumber = ActiveLogin.Identity.Swedish.SwedishPersonalIdentityNumber;
 
 namespace ConsoleSample
 {
@@ -114,10 +111,10 @@ namespace ConsoleSample
         private static void Sample_ShowSwedishCoordinationNumberTestData()
         {
             WriteHeader("A Coordination Number that can be used for testing:");
-            WriteLine(TestData.SwedishCoordinationNumberTestData.getRandom().ToString());
+            WriteLine(SwedishCoordinationNumberTestData.GetRandom().ToString());
 
             WriteHeader("A Coordination Number that can be used for testing:");
-            //WriteSwedishCoordinationNumberInfo(TestData.SwedishCoordinationNumberTestData.getRandom());
+            WriteSwedishCoordinationNumberInfo(SwedishCoordinationNumberTestData.GetRandom());
         }
 
         #endregion
@@ -197,6 +194,11 @@ namespace ConsoleSample
             {
                 // IsTestNumber is an extension method from the package ActiveLogin.Identity.Swedish.TestData
                 WriteKeyValueInfo("   .IsTestNumber()", identityNumber.SwedishPersonalIdentityNumber.IsTestNumber().ToString());
+            }
+            if (identityNumber.IsSwedishCoordinationNumber)
+            {
+                // IsTestNumber is an extension method from the package ActiveLogin.Identity.Swedish.TestData
+                WriteKeyValueInfo("   .IsTestNumber()", identityNumber.SwedishCoordinationNumber.IsTestNumber().ToString());
             }
 
             WriteSpace();
