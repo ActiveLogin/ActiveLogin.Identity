@@ -32,6 +32,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{64C47C
 	ProjectSection(SolutionItems) = preProject
 		docs\images\active-login-logo-fingerprint-blue-256x256.png = docs\images\active-login-logo-fingerprint-blue-256x256.png
 		docs\images\active-login-logo-fingerprint-blue-v2-256x256.png = docs\images\active-login-logo-fingerprint-blue-v2-256x256.png
+		docs\images\coordination_number_definition.png = docs\images\coordination_number_definition.png
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ActiveLogin.Identity.Swedish.AspNetCore.Test", "test\ActiveLogin.Identity.Swedish.AspNetCore.Test\ActiveLogin.Identity.Swedish.AspNetCore.Test.csproj", "{A414F554-17C9-47F2-BE7B-70FEA9385529}"

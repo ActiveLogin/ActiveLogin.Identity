@@ -273,6 +273,8 @@ When asked for some public documentation on this, the closest thing Skatteverket
 
 In "[Bilaga 7 XML-struktur](https://www.skatteverket.se/download/18.515a6be615c637b9aa47c35/1558443238091/na_bilaga7_XML_struktur.docx)" there is a definition under "5.1.2 Personid" that states that Month has a range of 00-12 and Day has a range of 60-91 (00-31 when subtracting 60).
 
+![Definition of Coordination Number](docs/images/coordination_number_definition.png)
+
 We would have liked this to be a little bit more official, than a note in a developer documentation. But according to our conversation with Skatteverket, this is legit and we have therefore choosen to support it.
 
 ### What formats do you support parsing?
