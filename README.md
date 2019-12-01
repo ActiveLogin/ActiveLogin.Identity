@@ -261,8 +261,8 @@ There is one issue though, in reality Skatteverket themselfes does not follow ei
 When we looked into the dataset of [official testdata](https://skatteverket.entryscape.net/store/9/resource/164) we noticed three specific issues:
 
 - There are cases when the month part (YY*MM*DD-IIIC) is set to 00
-- There are cases when the day part (YYMM*DD*-IIIC) is set to 60 (00)
-- There are cases when the day part (YYMM*DD*-IIIC) is set to 31 (91) in a month that only have 30 days
+- There are cases when the day part (YYMM*DD*-IIIC) is set to 60 (Day would equal: 00)
+- There are cases when the day part (YYMM*DD*-IIIC) is set to 91 (Day would equal: 31) in a month that only have 30 days
 
 When we asked Skatteverket explicitly about this distinction between law/definition and reality we were given this expanation:
 
