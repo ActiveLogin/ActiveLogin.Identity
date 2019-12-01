@@ -27,10 +27,8 @@ ActiveLogin.Identity provides parsing and validation of Swedish identities such 
     + [3. Use the library in your F# project](#3-use-the-library-in-your-f-project)
     + [4. Browse tests and samples](#4-browse-tests-and-samples)
 * [FAQ](#faq)
-    + [What formats of a Swedish Personal Identity Number do you support parsing?](#what-formats-of-a-swedish-personal-identity-number-do-you-support-parsing)
-    + [What formats of a Swedish Coordination Number do you support parsing?](#what-formats-of-a-swedish-coordination-number-do-you-support-parsing)
-    + [What definition of Swedish Personal Identity Number are the implementations based on?](#what-definition-of-swedish-personal-identity-number-are-the-implementations-based-on)
-    + [What definition of Swedish Coordination Number are the implementations based on?](#what-definition-of-swedish-coordination-number-are-the-implementations-based-on)
+    + [What definition are the implementations based on?](#what-definition-are-the-implementations-based-on)
+    + [What formats do you support parsing?](#what-formats-do-you-support-parsing)
     + [Why are you calling it "Swedish Personal Identity Number" and not Social Security Number?](#why-are-you-calling-it-swedish-personal-identity-number-and-not-social-security-number)
     + [What data are you using for tests and samples?](#what-data-are-you-using-for-tests-and-samples)
     + [When should I use `...InSpecificYear(...)`?](#when-should-i-use-inspecificyear)
@@ -227,9 +225,62 @@ For more usecases, samples and inspiration; feel free to browse our unit tests a
 
 ## FAQ
 
-### What formats of a Swedish Personal Identity Number do you support parsing?
+### What definition are the implementations based on?
+
+#### Swedish Personal Identity Number
+
+The implementation is primarily based on the definition defined in Swedish Law:
+
+* [Folkbokföringslagen (FOL 18 §)](https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18)
+
+But when there have been ambiguities we have also read more info and samples from these links from Swedish authorities:
+
+* [Skatteverket (English)](https://www.skatteverket.se/servicelankar/otherlanguages/inenglish/individualsandemployees/livinginsweden/personalidentitynumberandcoordinationnumber.4.2cf1b5cd163796a5c8b4295.html)
+* [Skatteverket (Swedish)](https://www.skatteverket.se/privat/folkbokforing/personnummerochsamordningsnummer.4.3810a01c150939e893f18c29.html)
+* [Statistiska Centralbyrån (Swedish)](https://www.scb.se/contentassets/8d9d985ca9c84c6e8d879cc89a8ae479/ov9999_2016a01_br_be96br1601.pdf)
+
+Worth noticing is that the date part is not guaranteed to be the exact date you were born, but can be changed for another date within the same month.
+
+#### Swedish Coordination Number
+
+The implementation is primarily based on the definition defined in Swedish Law:
+
+* [Folkbokföringslagen (FOL 18a §)](https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18a)
+
+But when there have been ambiguities we have also read more info and samples from these links from Swedish authorities:
+
+* [Skatteverket (Swedish)](https://www4.skatteverket.se/rattsligvagledning/edition/2019.8/330243.html)
+* [Skatteverket (Swedish)](https://www4.skatteverket.se/rattsligvagledning/edition/2019.8/330251.html)
+* [Skatteverket (English)](https://www.skatteverket.se/servicelankar/otherlanguages/inenglish/individualsandemployees/livinginsweden/personalidentitynumberandcoordinationnumber.4.2cf1b5cd163796a5c8b4295.html#h-Coordinationnumber)
+
+In summary, by these definitions a coordination number is the same thing as a personal identity number, but you add 60 to the day part.
+
+##### Exceptions to the definition
+
+There is one issue though, in reality Skatteverket themselfes does not follow either the definition in law or the definition on their own website.
+When we looked into the dataset of [official testdata](https://skatteverket.entryscape.net/store/9/resource/164) we noticed three specific issues:
+
+- There are cases when the month part (YY*MM*DD-IIIC) is set to 00
+- There are cases when the day part (YYMM*DD*-IIIC) is set to 60 (00)
+- There are cases when the day part (YYMM*DD*-IIIC) is set to 31 (91) in a month that only have 30 days
+
+When we asked Skatteverket explicitly about this distinction between law/definition and reality we were given this expanation:
+
+"A coordination can be issued even when the data (Date of birth) can not be confirmed. In this case, 00 might appear both for month and for day."
+
+When asked for some public documentation on this, the closest thing Skatteverket has is the developer documentation for [Navet](https://www.skatteverket.se/foretagochorganisationer/myndigheter/informationsutbytemellanmyndigheter/navethamtauppgifteromfolkbokforing.4.18e1b10334ebe8bc80001754.html?q=Navet
+).
+
+In "[Bilaga 7 XML-struktur](https://www.skatteverket.se/download/18.515a6be615c637b9aa47c35/1558443238091/na_bilaga7_XML_struktur.docx)" there is a definition under "5.1.2 Personid" that states that Month has a range of 00-12 and Day has a range of 60-91 (00-31 when subtracting 60).
+
+We would have liked this to be a little bit more official, than a note in a developer documentation. But according to our conversation with Skatteverket, this is legit and we have therefore choosen to support it.
+
+### What formats do you support parsing?
+
+#### Swedish Personal Identity Number
 
 It will try cleaning away any invalid chars, while still preserving digits and + when that applies.
+
 The "standard" ways of input would be in any of these formats:
 
 * YYMMDD-BBBC
@@ -247,7 +298,7 @@ But it also supports other variations such as:
 
 And basically anything else that can be cleaned and parsed :)
 
-#### Explanations
+##### Explanations
 
 * **YY:** Year
 * **MM:** Month
@@ -255,26 +306,28 @@ And basically anything else that can be cleaned and parsed :)
 * **BBB:** Birth number
 * **C:** Checksum
 
-### What formats of a Swedish Coordination Number do you support parsing?
+#### Swedish Coordination Number
 
-TODO
+As the definition of coordination number is very close to personal identity number, the section above aplies to coordination number as well.
+It will try cleaning away any invalid chars, while still preserving digits and + when that applies.
 
-### What definition of Swedish Personal Identity Number are the implementations based on?
+The "standard" ways of input would be in any of these formats:
 
-The implementation is primarily based on the definition defined in Swedish Law:
+* YYMMDD-IIIC
+* YYMMDD+IIIC
+* YYMMDDIIIC
+* YYYYMMDDIIIC
 
-* [Folkbokföringslagen (FOL 18 §)](https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18)
+But, as described in [Exceptions to the definition](#exceptions-to-the-definition), a coordination number can have 00 for month and 60 (00) for day.
+Also, for a coordinaiton number we have an individual number instead of birth number.
 
-But when there have been ambiguities we have also read more info and samples from these links from Swedish authorities:
-* [Skatteverket (English)](https://www.skatteverket.se/servicelankar/otherlanguages/inenglish/individualsandemployees/livinginsweden/personalidentitynumberandcoordinationnumber.4.2cf1b5cd163796a5c8b4295.html)
-* [Skatteverket (Swedish)](https://www.skatteverket.se/privat/folkbokforing/personnummerochsamordningsnummer.4.3810a01c150939e893f18c29.html)
-* [Statistiska Centralbyrån (Swedish)](https://www.scb.se/contentassets/8d9d985ca9c84c6e8d879cc89a8ae479/ov9999_2016a01_br_be96br1601.pdf)
+##### Explanations
 
-Worth noticing is that the date part is not guaranteed to be the exact date you were born, but can be changed for another date within the same month.
-
-### What definition of Swedish Coordination Number are the implementations based on?
-
-TODO
+* **YY:** Year
+* **MM:** Month
+* **DD:** Day
+* **III:** Individual number
+* **C:** Checksum
 
 ### Why are you calling it "Swedish Personal Identity Number" and not Social Security Number?
 
