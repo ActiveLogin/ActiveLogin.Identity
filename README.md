@@ -257,14 +257,14 @@ In summary: According to these definitions a coordination number is the same thi
 
 ##### Exceptions to the definition
 
-There is one issue though, in reality Skatteverket themselfes does not follow either the definition in law or the definition on their own website.
+There is one issue though, in reality Skatteverket themselves does not follow either the definition in law or the definition on their own website.
 When we looked into the dataset of [official testdata](https://skatteverket.entryscape.net/store/9/resource/164) we noticed three specific issues:
 
 - There are cases when the month part (YY*MM*DD-IIIC) is set to 00
 - There are cases when the day part (YYMM*DD*-IIIC) is set to 60 (Day would equal: 00)
-- There are cases when the day part (YYMM*DD*-IIIC) is set to 91 (Day would equal: 31) in a month that only have 30 days
+- There are cases when the day part (YYMM*DD*-IIIC) is set to 89, 90 and 91 (Day would equal: 29, 30, 31) in a months where those dates do not exists. I.e. 29 and 30 in february (non leap year), 30 in february (leap year) and 31 in months that only have 30 days.
 
-When we asked Skatteverket explicitly about this distinction between law/definition and reality we were given this expanation:
+When we asked Skatteverket explicitly about this distinction between law/definition and reality we were given this explanation:
 
 "A coordination can be issued even when the data (Date of birth) can not be confirmed. In this case, 00 might appear both for month and for day."
 
@@ -275,7 +275,7 @@ In "[Bilaga 7 XML-struktur](https://www.skatteverket.se/download/18.515a6be615c6
 
 ![Definition of Coordination Number](docs/images/coordination_number_definition.png)
 
-We would have liked this to be a little bit more official, than a note in a developer documentation. But according to our conversation with Skatteverket, this is legit and we have therefore choosen to support it.
+We do not agree that it follows from **Day has a range of 60-91** (00-31 when subtracting 60) that days in the range **29-31** are valid days for **any** month in the year. Skatteverket has not been able to present us with any official documentation to support their interpretation. Nevertheless we have decided to go with the less strict interpretation in our implementation simply because we want to avoid false negatives when parsing an identity number.
 
 ### What formats do you support parsing?
 
@@ -310,7 +310,7 @@ And basically anything else that can be cleaned and parsed :)
 
 #### Swedish Coordination Number
 
-As the definition of coordination number is very close to personal identity number, the section above aplies to coordination number as well.
+As the definition of coordination number is very close to personal identity number, the section above applies to coordination number as well.
 It will try cleaning away any invalid chars, while still preserving digits and + when that applies.
 
 The "standard" ways of input would be in any of these formats:
@@ -321,7 +321,7 @@ The "standard" ways of input would be in any of these formats:
 * YYYYMMDDIIIC
 
 But, as described in [Exceptions to the definition](#exceptions-to-the-definition), a coordination number can have 00 for month and 60 (00) for day.
-Also, for a coordinaiton number we have an individual number instead of birth number.
+Also, for a coordination number we have an individual number instead of birth number.
 
 ##### Explanations
 
