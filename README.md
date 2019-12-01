@@ -2,6 +2,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://dev.azure.com/activesolution/ActiveLogin/_apis/build/status/ActiveLogin.Identity?branchName=master)](https://activesolution.visualstudio.com/ActiveLogin/_build/latest?definitionId=190&branchName=master)
+[![Slack](https://img.shields.io/badge/slack-@ActiveLogin-blue.svg?logo=slack)](https://join.slack.com/t/activelogin/shared_invite/enQtODQ0ODYyMTgxMjg0LWJhODhiZmFmODYyMWMzZWEwMjdmYWU2NGRhZmQ0MTg0MzIwNzA2OTM3NTJjOTk2MmE1MzIwMzkzYjllMjAyNzg)
+[![Twitter Follow](https://img.shields.io/badge/Twitter-@ActiveLoginSE-blue.svg?logo=twitter)](https://twitter.com/ActiveLoginSE)
 
 ActiveLogin.Identity provides parsing and validation of Swedish identities such as Personal Identity Number (svenskt personnummer) and Coordination Number (samordningsnummer). Built on NET Standard and packaged as NuGet-packages they are easy to install and use on multiple platforms.
 
@@ -14,15 +16,38 @@ ActiveLogin.Identity provides parsing and validation of Swedish identities such 
 - :large_blue_diamond: Written in F# and C# and works great with VB.NET as well
 - :white_check_mark: Well tested
 
-## Continuous integration & Packages overview
+## Table of contents
+
+* [Project & Packages overview](#project--packages-overview)
+* [Getting started](#getting-started)
+    + [1. Install the NuGet package](#1-install-the-nuget-package)
+    + [2. Use the library in your C# project](#2-use-the-library-in-your-c-project)
+        - [SwedishPersonalIdentityNumber](#swedishpersonalidentitynumber)
+        - [SwedishCoordinationNumber](#swedishcoordinationnumber)
+    + [3. Use the library in your F# project](#3-use-the-library-in-your-f-project)
+    + [4. Browse tests and samples](#4-browse-tests-and-samples)
+* [FAQ](#faq)
+    + [What definition are the implementations based on?](#what-definition-are-the-implementations-based-on)
+    + [What formats do you support parsing?](#what-formats-do-you-support-parsing)
+    + [Why are you calling it "Swedish Personal Identity Number" and not Social Security Number?](#why-are-you-calling-it-swedish-personal-identity-number-and-not-social-security-number)
+    + [What data are you using for tests and samples?](#what-data-are-you-using-for-tests-and-samples)
+    + [When should I use `...InSpecificYear(...)`?](#when-should-i-use-inspecificyear)
+* [Active Login](#active-login)
+    + [Contribute](#contribute)
+    + [Stay updated and join the discussion](#stay-updated-and-join-the-discussion)
+    + [License & acknowledgements](#license--acknowledgements)
+    + [Sponsors](#sponsors)
+    + [Support & Training](#support--training)
+
+## Project & Packages overview
+
+CI-builds from master of all packages are available in [our Azure DevOps Artifacts feed](https://dev.azure.com/activesolution/ActiveLogin/_packaging?_a=feed&feed=ActiveLogin-CI).
 
 | Project | Description | NuGet |
 | ------- | ----------- | ----- |
 | [ActiveLogin.Identity.Swedish](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/src/ActiveLogin.Identity.Swedish) | .NET classes handling Personal Identity Number | [![NuGet](https://img.shields.io/nuget/v/ActiveLogin.Identity.Swedish.svg)](https://www.nuget.org/packages/ActiveLogin.Identity.Swedish/) |
 | [ActiveLogin.Identity.Swedish.AspNetCore](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/src/ActiveLogin.Identity.Swedish.AspNetCore) | Validation attributes for ASP.NET Core. | [![NuGet](https://img.shields.io/nuget/v/ActiveLogin.Identity.Swedish.AspNetCore.svg)](https://www.nuget.org/packages/ActiveLogin.Identity.Swedish.AspNetCore/) |
 | [ActiveLogin.Identity.Swedish.TestData](https://github.com/ActiveLogin/ActiveLogin.Identity/tree/master/src/ActiveLogin.Identity.Swedish.TestData) | Provides Swedish Identity Numbers test data. | [![NuGet](https://img.shields.io/nuget/v/ActiveLogin.Identity.Swedish.TestData.svg)](https://www.nuget.org/packages/ActiveLogin.Identity.Swedish.TestData/) |
-
-CI-builds from master of all packages are available in [our Azure DevOps Artifacts feed](https://dev.azure.com/activesolution/ActiveLogin/_packaging?_a=feed&feed=ActiveLogin-CI).
 
 ## Getting started
 
@@ -200,9 +225,64 @@ For more usecases, samples and inspiration; feel free to browse our unit tests a
 
 ## FAQ
 
-### What formats of a Swedish Personal Identity Number do you support parsing?
+### What definition are the implementations based on?
+
+#### Swedish Personal Identity Number
+
+The implementation is primarily based on the definition defined in Swedish Law:
+
+* [Folkbokföringslagen (FOL 18 §)](https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18)
+
+But when there have been ambiguities we have also read more info and samples from these links from Swedish authorities:
+
+* [Skatteverket (English)](https://www.skatteverket.se/servicelankar/otherlanguages/inenglish/individualsandemployees/livinginsweden/personalidentitynumberandcoordinationnumber.4.2cf1b5cd163796a5c8b4295.html)
+* [Skatteverket (Swedish)](https://www.skatteverket.se/privat/folkbokforing/personnummerochsamordningsnummer.4.3810a01c150939e893f18c29.html)
+* [Statistiska Centralbyrån (Swedish)](https://www.scb.se/contentassets/8d9d985ca9c84c6e8d879cc89a8ae479/ov9999_2016a01_br_be96br1601.pdf)
+
+Worth noticing is that the date part is not guaranteed to be the exact date you were born, but can be changed for another date within the same month.
+
+#### Swedish Coordination Number
+
+The implementation is primarily based on the definition defined in Swedish Law:
+
+* [Folkbokföringslagen (FOL 18a §)](https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18a)
+
+But when there have been ambiguities we have also read more info and samples from these links from Swedish authorities:
+
+* [Skatteverket (Swedish)](https://www4.skatteverket.se/rattsligvagledning/edition/2019.8/330243.html)
+* [Skatteverket (Swedish)](https://www4.skatteverket.se/rattsligvagledning/edition/2019.8/330251.html)
+* [Skatteverket (English)](https://www.skatteverket.se/servicelankar/otherlanguages/inenglish/individualsandemployees/livinginsweden/personalidentitynumberandcoordinationnumber.4.2cf1b5cd163796a5c8b4295.html#h-Coordinationnumber)
+
+In summary: According to these definitions a coordination number is the same thing as a personal identity number, but you add 60 to the day part.
+
+##### Exceptions to the definition
+
+There is one issue though, in reality Skatteverket themselves does not follow either the definition in law or the definition on their own website.
+When we looked into the dataset of [official testdata](https://skatteverket.entryscape.net/store/9/resource/164) we noticed three specific issues:
+
+- There are cases when the month part (YY*MM*DD-IIIC) is set to 00
+- There are cases when the day part (YYMM*DD*-IIIC) is set to 60 (Day would equal: 00)
+- There are cases when the day part (YYMM*DD*-IIIC) is set to 89, 90 and 91 (Day would equal: 29, 30, 31) in a months where those dates do not exists. I.e. 29 and 30 in february (non leap year), 30 in february (leap year) and 31 in months that only have 30 days.
+
+When we asked Skatteverket explicitly about this distinction between law/definition and reality we were given this explanation:
+
+"A coordination can be issued even when the data (Date of birth) can not be confirmed. In this case, 00 might appear both for month and for day."
+
+When asked for some public documentation on this, the closest thing Skatteverket has is the developer documentation for [Navet](https://www.skatteverket.se/foretagochorganisationer/myndigheter/informationsutbytemellanmyndigheter/navethamtauppgifteromfolkbokforing.4.18e1b10334ebe8bc80001754.html?q=Navet
+).
+
+In "[Bilaga 7 XML-struktur](https://www.skatteverket.se/download/18.515a6be615c637b9aa47c35/1558443238091/na_bilaga7_XML_struktur.docx)" there is a definition under "5.1.2 Personid" that states that Month has a range of 00-12 and Day has a range of 60-91 (00-31 when subtracting 60).
+
+![Definition of Coordination Number](docs/images/coordination_number_definition.png)
+
+We do not agree that it follows from **Day has a range of 60-91** (00-31 when subtracting 60) that days in the range **29-31** are valid days for **any** month in the year. Skatteverket has not been able to present us with any official documentation to support their interpretation. Nevertheless we have decided to go with the less strict interpretation in our implementation simply because we want to avoid false negatives when parsing an identity number.
+
+### What formats do you support parsing?
+
+#### Swedish Personal Identity Number
 
 It will try cleaning away any invalid chars, while still preserving digits and + when that applies.
+
 The "standard" ways of input would be in any of these formats:
 
 * YYMMDD-BBBC
@@ -220,7 +300,7 @@ But it also supports other variations such as:
 
 And basically anything else that can be cleaned and parsed :)
 
-#### Explanations
+##### Explanations
 
 * **YY:** Year
 * **MM:** Month
@@ -228,26 +308,28 @@ And basically anything else that can be cleaned and parsed :)
 * **BBB:** Birth number
 * **C:** Checksum
 
-### What formats of a Swedish Coordination Number do you support parsing?
+#### Swedish Coordination Number
 
-TODO
+As the definition of coordination number is very close to personal identity number, the section above applies to coordination number as well.
+It will try cleaning away any invalid chars, while still preserving digits and + when that applies.
 
-### What definition of Swedish Personal Identity Number are the implementations based on?
+The "standard" ways of input would be in any of these formats:
 
-The implementation is primarily based on the definition defined in Swedish Law:
+* YYMMDD-IIIC
+* YYMMDD+IIIC
+* YYMMDDIIIC
+* YYYYMMDDIIIC
 
-* [Folkbokföringslagen (FOL 18 §)](https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18)
+But, as described in [Exceptions to the definition](#exceptions-to-the-definition), a coordination number can have 00 for month and 60 (00) for day.
+Also, for a coordination number we have an individual number instead of birth number.
 
-But when there have been ambiguities we have also read more info and samples from these links from Swedish authorities:
-* [Skatteverket (English)](https://www.skatteverket.se/servicelankar/otherlanguages/inenglish/individualsandemployees/livinginsweden/personalidentitynumberandcoordinationnumber.4.2cf1b5cd163796a5c8b4295.html)
-* [Skatteverket (Swedish)](https://www.skatteverket.se/privat/folkbokforing/personnummerochsamordningsnummer.4.3810a01c150939e893f18c29.html)
-* [Statistiska Centralbyrån (Swedish)](https://www.scb.se/contentassets/8d9d985ca9c84c6e8d879cc89a8ae479/ov9999_2016a01_br_be96br1601.pdf)
+##### Explanations
 
-Worth noticing is that the date part is not guaranteed to be the exact date you were born, but can be changed for another date within the same month.
-
-### What definition of Swedish Coordination Number are the implementations based on?
-
-TODO
+* **YY:** Year
+* **MM:** Month
+* **DD:** Day
+* **III:** Individual number
+* **C:** Checksum
 
 ### Why are you calling it "Swedish Personal Identity Number" and not Social Security Number?
 
@@ -312,7 +394,16 @@ In addition, Active Login also contain convenient modules that help you work wit
 
 ### Contribute
 
-We are very open to community contributions to Active Login. You'll need a basic understanding of Git and GitHub to get started. The easiest way to contribute is to open an issue and start a discussion. If you make code changes, submit a pull request with the changes and a description. Don’t forget to always provide tests that cover the code changes. 
+We are very open to community contributions to Active Login.
+Please see our [contribution guidelines](CONTRIBUTING.md) before getting started.
+
+### Stay updated and join the discussion
+
+The three primary ways to interact and stay updated with Active Login are:
+
+- [Watch our GitHub repo](https://github.com/ActiveLogin/ActiveLogin.Identity/watchers)
+- [Slack](https://join.slack.com/t/activelogin/shared_invite/enQtODQ0ODYyMTgxMjg0LWJhODhiZmFmODYyMWMzZWEwMjdmYWU2NGRhZmQ0MTg0MzIwNzA2OTM3NTJjOTk2MmE1MzIwMzkzYjllMjAyNzg)
+- [Twitter](https://twitter.com/ActiveLoginSE)
 
 ### License & acknowledgements
 
@@ -330,7 +421,7 @@ Active Login is built on or uses the following great open source products:
 
 ### Sponsors
 
-Active Solution is the main sponsor of Active Login.
+Active Solution is the main sponsor of Active Login. Active Solution is located in Stockholm (Sweden) and provides IT consulting with focus on web, cloud and AI.
 
 ![Active Solution](https://activese-assets-prod.azureedge.net/graphics/activesolution-logo.svg)
 
