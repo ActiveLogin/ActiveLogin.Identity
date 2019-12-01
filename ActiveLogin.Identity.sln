@@ -17,10 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution files", "Solution 
 		azure-pipelines.yml = azure-pipelines.yml
 		CODE_OF_CONDUCT.md = CODE_OF_CONDUCT.md
 		CONTRIBUTING.md = CONTRIBUTING.md
-		.github\FUNDING.yml = .github\FUNDING.yml
 		global.json = global.json
 		LICENSE.md = LICENSE.md
-		.github\pull_request_template.md = .github\pull_request_template.md
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -47,6 +45,18 @@ EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "ActiveLogin.Identity.Swedish.Benchmarks", "test\ActiveLogin.Identity.Swedish.Benchmarks\ActiveLogin.Identity.Swedish.Benchmarks.fsproj", "{823B4D48-9D0D-4BF2-B9DF-FDD654DCDBB1}"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "ActiveLogin.Identity.Swedish.FSharp.Test", "test\ActiveLogin.Identity.Swedish.FSharp.Test\ActiveLogin.Identity.Swedish.FSharp.Test.fsproj", "{74037699-2583-4482-B5E9-5065750C2041}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{3004FBFE-0F1D-4C26-A6B4-1C4E81827950}"
+	ProjectSection(SolutionItems) = preProject
+		.github\FUNDING.yml = .github\FUNDING.yml
+		.github\pull_request_template.md = .github\pull_request_template.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ISSUE_TEMPLATE", "ISSUE_TEMPLATE", "{58E5121D-5631-432E-8FD7-7DE848657ACD}"
+	ProjectSection(SolutionItems) = preProject
+		.github\ISSUE_TEMPLATE\bug_report.md = .github\ISSUE_TEMPLATE\bug_report.md
+		.github\ISSUE_TEMPLATE\feature_request.md = .github\ISSUE_TEMPLATE\feature_request.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -105,6 +115,8 @@ Global
 		{92E53830-40AF-4475-ACBE-20EB0B68DA3A} = {9A0CF459-87CC-448D-B49D-EFC3D6482AA6}
 		{823B4D48-9D0D-4BF2-B9DF-FDD654DCDBB1} = {12A0FDF2-523E-42C7-81FE-4FDCA5E66A69}
 		{74037699-2583-4482-B5E9-5065750C2041} = {12A0FDF2-523E-42C7-81FE-4FDCA5E66A69}
+		{3004FBFE-0F1D-4C26-A6B4-1C4E81827950} = {A62CB923-FBEA-4F05-A776-47F8F7569DA8}
+		{58E5121D-5631-432E-8FD7-7DE848657ACD} = {3004FBFE-0F1D-4C26-A6B4-1C4E81827950}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2076F58C-968B-489D-94CA-B3729F5DE10D}
