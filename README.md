@@ -253,7 +253,7 @@ But when there have been ambiguities we have also read more info and samples fro
 * [Skatteverket (Swedish)](https://www4.skatteverket.se/rattsligvagledning/edition/2019.8/330251.html)
 * [Skatteverket (English)](https://www.skatteverket.se/servicelankar/otherlanguages/inenglish/individualsandemployees/livinginsweden/personalidentitynumberandcoordinationnumber.4.2cf1b5cd163796a5c8b4295.html#h-Coordinationnumber)
 
-In summary, by these definitions a coordination number is the same thing as a personal identity number, but you add 60 to the day part.
+In summary: According to these definitions a coordination number is the same thing as a personal identity number, but you add 60 to the day part.
 
 ##### Exceptions to the definition
 
