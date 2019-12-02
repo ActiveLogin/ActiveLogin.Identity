@@ -3,8 +3,8 @@ module ActiveLogin.Identity.Swedish.FSharp.Test.SwedishPersonalIdentityNumber_pa
 open System
 open Swensen.Unquote
 open Expecto
-open ActiveLogin.Identity.Swedish.FSharp
-open ActiveLogin.Identity.Swedish.FSharp.TestData
+open ActiveLogin.Identity.Swedish
+open ActiveLogin.Identity.Swedish.TestData
 open FsCheck
 
 
@@ -17,20 +17,17 @@ let private isInvalidNumberOfDigits (str: string) =
 
 let private validPinTests = testList "valid pins" [
     testProp "roundtrip for 12 digit string" <| fun (Gen.Pin.ValidPin pin) ->
-        pin
-        |> SwedishPersonalIdentityNumber.to12DigitString
-        |> SwedishPersonalIdentityNumber.parse =! pin
+        pin.To12DigitString()
+        |> SwedishPersonalIdentityNumber.Parse =! pin
 
     testProp "roundtrip for 10 digit string with delimiter" <| fun (Gen.Pin.ValidPin pin) ->
-        pin
-        |> SwedishPersonalIdentityNumber.to10DigitString
-        |> SwedishPersonalIdentityNumber.parse =! pin
+        pin.To10DigitString()
+        |> SwedishPersonalIdentityNumber.Parse =! pin
 
     testProp "roundtrip for 10 digit string without hyphen-delimiter" <| fun (Gen.Pin.ValidPin pin) ->
-        pin
-        |> SwedishPersonalIdentityNumber.to10DigitString
+        pin.To10DigitString()
         |> removeHyphen
-        |> SwedishPersonalIdentityNumber.parse =! pin
+        |> SwedishPersonalIdentityNumber.Parse =! pin
 
     testProp "roundtrip for 12 digit string mixed with 'non-digits'"
         <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
@@ -38,10 +35,9 @@ let private validPinTests = testList "valid pins" [
                 charArray
                 |> Array.filter (isDigit >> not)
 
-            pin
-            |> SwedishPersonalIdentityNumber.to12DigitString
+            pin.To12DigitString()
             |> surroundEachChar charsWithoutDigits
-            |> SwedishPersonalIdentityNumber.parse =! pin
+            |> SwedishPersonalIdentityNumber.Parse =! pin
 
     testProp "roundtrip for 10 digit string mixed with 'non-digits' except plus"
         <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
@@ -51,10 +47,9 @@ let private validPinTests = testList "valid pins" [
                 charArray
                 |> Array.filter (isDigitOrPlus >> not)
 
-            pin
-            |> SwedishPersonalIdentityNumber.to10DigitString
+            pin.To10DigitString()
             |> (surroundEachChar charsWithoutPlus)
-            |> SwedishPersonalIdentityNumber.parse =! pin
+            |> SwedishPersonalIdentityNumber.Parse =! pin
 
     testProp "roundtrip for 10 digit string without hyphen delimiter, mixed with 'non-digits' except plus"
         <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
@@ -64,47 +59,44 @@ let private validPinTests = testList "valid pins" [
                 charArray
                 |> Array.filter (isDigitOrPlus >> not)
 
-            pin
-            |> SwedishPersonalIdentityNumber.to10DigitString
+            pin.To10DigitString()
             |> removeHyphen
             |> (surroundEachChar charsWithoutPlus)
-            |> SwedishPersonalIdentityNumber.parse =! pin
+            |> SwedishPersonalIdentityNumber.Parse =! pin
 
     testPropWithMaxTest 400 "roundtrip for 12 digit string 'in specific year'" <| fun (Gen.Pin.ValidPin pin) ->
         let offset = rng.Next (0, 200)
         let year = pin.Year + offset
 
-        pin
-        |> SwedishPersonalIdentityNumber.to12DigitString
-        |> SwedishPersonalIdentityNumber.parseInSpecificYear year =! pin
+        (pin.To12DigitString(), year)
+        |> SwedishPersonalIdentityNumber.ParseInSpecificYear =! pin
 
     testPropWithMaxTest 400 "roundtrip for 10 digit string 'in specific year'" <| fun (Gen.Pin.ValidPin pin) ->
         let offset = rng.Next (0, 200)
         let year = pin.Year + offset
 
-        pin
-        |> SwedishPersonalIdentityNumber.to10DigitStringInSpecificYear year
-        |> (SwedishPersonalIdentityNumber.parseInSpecificYear year) = pin
+        (pin.To10DigitStringInSpecificYear year, year)
+        |> SwedishPersonalIdentityNumber.ParseInSpecificYear = pin
 
     testPropWithMaxTest 400 "roundtrip for 10 digit string without hyphen delimeter 'in specific year'"
         <| fun (Gen.Pin.ValidPin pin) ->
             let offset = rng.Next (0, 200)
             let year = pin.Year + offset
 
-            pin
-            |> SwedishPersonalIdentityNumber.to10DigitStringInSpecificYear year
-            |> removeHyphen
-            |> (SwedishPersonalIdentityNumber.parseInSpecificYear year) = pin
+            let str =
+                pin.To10DigitStringInSpecificYear year
+                |> removeHyphen
+            SwedishPersonalIdentityNumber.ParseInSpecificYear(str, year) =! pin
     ]
 
 let invalidPinTests = testList "invalid pins" [
     test "null string returns argument null error" {
-        toAction SwedishPersonalIdentityNumber.parse null
+        toAction SwedishPersonalIdentityNumber.Parse null
         |> Expect.throwsWithType<ArgumentNullException>
     }
 
     testProp "empty string returns parsing error" <| fun (Gen.EmptyString str) ->
-        let f = toAction SwedishPersonalIdentityNumber.parse str
+        let f = toAction SwedishPersonalIdentityNumber.Parse str
         Expect.throwsWithType<FormatException> f
         Expect.throwsWithMessage
             "String was not recognized as a valid SwedishPersonalIdentityNumber. Cannot be empty string or whitespace."
@@ -113,21 +105,21 @@ let invalidPinTests = testList "invalid pins" [
     testProp "invalid number of digits returns parsing error" <| fun (Gen.Digits digits) ->
         isInvalidNumberOfDigits digits ==>
             lazy
-                ( let f = toAction SwedishPersonalIdentityNumber.parse digits
+                ( let f = toAction SwedishPersonalIdentityNumber.Parse digits
                   Expect.throwsWithType<FormatException> f
                   Expect.throwsWithMessage "String was not recognized as a valid SwedishPersonalIdentityNumber." f )
 
     testProp "invalid pin returns parsing error" <| fun (Gen.Pin.InvalidPinString str) ->
-        toAction SwedishPersonalIdentityNumber.parse str
+        toAction SwedishPersonalIdentityNumber.Parse str
         |> Expect.throwsWithMessage "String was not recognized as a valid SwedishPersonalIdentityNumber."
 
     testProp "parseInSpecificYear with empty string returns parsing error" <| fun (Gen.EmptyString str, Gen.ValidYear year) ->
-        let f  = toAction2 SwedishPersonalIdentityNumber.parseInSpecificYear year str
+        let f  = toAction SwedishPersonalIdentityNumber.ParseInSpecificYear (str, year)
         Expect.throwsWithType<FormatException> f
         Expect.throwsWithMessage "String was not recognized as a valid SwedishPersonalIdentityNumber. Cannot be empty string or whitespace." f
 
     testProp "parseInSpecificYear with null string returns argument null error" <| fun (Gen.ValidYear year) ->
-        toAction2 SwedishPersonalIdentityNumber.parseInSpecificYear year null
+        toAction SwedishPersonalIdentityNumber.ParseInSpecificYear (null, year)
         |> Expect.throwsWithType<ArgumentNullException>
 
     testPropWithMaxTest 400 "cannot convert a pin to 10 digit string in a specific year when the person would be 200 years or older"
@@ -137,7 +129,7 @@ let invalidPinTests = testList "invalid pins" [
                 rng.Next(200, maxYear)
             let year = pin.Year + offset
 
-            toAction2 SwedishPersonalIdentityNumber.to10DigitStringInSpecificYear year pin
+            toAction pin.To10DigitStringInSpecificYear year
             |> Expect.throwsWithMessage "SerializationYear cannot be a more than 199 years after the person was born"
 
     testPropWithMaxTest 400 "cannot convert a pin to 10 digit string in a specific year before the person was born"
@@ -145,7 +137,7 @@ let invalidPinTests = testList "invalid pins" [
             let offset = rng.Next(1, pin.Year)
             let year = pin.Year - offset
 
-            toAction2 SwedishPersonalIdentityNumber.to10DigitStringInSpecificYear year pin
+            toAction pin.To10DigitStringInSpecificYear year
             |> Expect.throwsWithMessage "SerializationYear cannot be a year before the person was born" ]
 
 [<Tests>]

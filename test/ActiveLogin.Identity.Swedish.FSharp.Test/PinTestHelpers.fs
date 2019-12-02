@@ -1,10 +1,9 @@
 [<AutoOpen>]
 module ActiveLogin.Identity.Swedish.FSharp.Test.PinTestHelpers
-open ActiveLogin.Identity.Swedish.FSharp
-open ActiveLogin.Identity.Swedish.FSharp.TestData
 open Expecto
 open System
 open System.Threading
+open ActiveLogin.Identity.Swedish
 
 let toAction f arg =
     fun _ -> f arg |> ignore
