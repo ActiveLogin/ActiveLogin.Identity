@@ -2,20 +2,19 @@
 /// Tested with offical test Personal Identity Numbers from Skatteverket:
 /// https://skatteverket.entryscape.net/catalog/9/datasets/147
 /// </remarks>
-module ActiveLogin.Identity.Swedish.FSharp.Test.SwedishPersonalIdentityNumber_create
+module ActiveLogin.Identity.Swedish.FSharp.Test.SwedishPersonalIdentityNumber_Constructor
 
 open Swensen.Unquote
 open Expecto
 open FsCheck
 open ActiveLogin.Identity.Swedish
 open System.Reflection
-open ActiveLogin.Identity.Swedish.TestData
 open PinTestHelpers
 
 
 [<Tests>]
 let tests =
-    testList "SwedishPersonalIdentityNumber.create" [
+    testList "SwedishPersonalIdentityNumber constructor" [
         testProp "roundtrip 12DigitString -> create -> to12DigitString" <| fun (Gen.Pin.Valid12Digit str) ->
             let pin =
                 str

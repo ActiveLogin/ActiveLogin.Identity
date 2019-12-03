@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -13,16 +13,16 @@
     <Compile Include="Generators.fs" />
     <Compile Include="PinTestHelpers.fs" />
     <Compile Include="TestDataTests.fs" />
-    <Compile Include="SwedishPersonalIdentityNumber_create.fs" />
-    <Compile Include="SwedishCoordinationNumber_create.fs" />
-    <Compile Include="SwedishPersonalIdentityNumber_equality.fs" />
-    <Compile Include="SwedishCoordinationNumber_equality.fs" />
-    <Compile Include="SwedishPersonalIdentityNumber_hash.fs" />
-    <Compile Include="SwedishCoordinationNumber_hash.fs" />
-    <Compile Include="SwedishPersonalIdentityNumber_parse.fs" />
-    <Compile Include="SwedishCoordinationNumber_parse.fs" />
-    <Compile Include="SwedishPersonalIdentityNumber_hints.fs" />
-    <Compile Include="SwedishCoordinationNumber_hints.fs" />
+    <Compile Include="SwedishPersonalIdentityNumber_Constructor.fs" />
+    <Compile Include="SwedishCoordinationNumber_Constructor.fs" />
+    <Compile Include="SwedishPersonalIdentityNumber_Equality.fs" />
+    <Compile Include="SwedishCoordinationNumber_Equality.fs" />
+    <Compile Include="SwedishPersonalIdentityNumber_GetHashCode.fs" />
+    <Compile Include="SwedishCoordinationNumber_GetHashCode.fs" />
+    <Compile Include="SwedishPersonalIdentityNumber_Parse.fs" />
+    <Compile Include="SwedishCoordinationNumber_Parse.fs" />
+    <Compile Include="SwedishPersonalIdentityNumber_Hints.fs" />
+    <Compile Include="SwedishCoordinationNumber_Hints.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

@@ -2,19 +2,18 @@
 /// Tested with offical test Personal Identity Numbers from Skatteverket:
 /// https://skatteverket.entryscape.net/catalog/9/datasets/147
 /// </remarks>
-module ActiveLogin.Identity.Swedish.FSharp.Test.SwedishCoordinationNumber_create
+module ActiveLogin.Identity.Swedish.FSharp.Test.SwedishCoordinationNumber_Constructor
 
 open Swensen.Unquote
 open Expecto
 open FsCheck
 open ActiveLogin.Identity.Swedish
-open ActiveLogin.Identity.Swedish.TestData
 open System.Reflection
 
 
 [<Tests>]
 let tests =
-    testList "SwedishCoordinationNumber.create" [
+    testList "SwedishCoordinationNumber constructor" [
         testProp "roundtrip 12DigitString -> create -> to12DigitString" <| fun (Gen.CoordNum.Valid12Digit str) ->
             let pin =
                 str
