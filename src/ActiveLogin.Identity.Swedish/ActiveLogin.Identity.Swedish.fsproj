@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
@@ -28,7 +28,6 @@
         <PackageProjectUrl>https://github.com/ActiveLogin/ActiveLogin.Identity</PackageProjectUrl>
         <PackageIcon>icon.png</PackageIcon>
         <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-        <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
 
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/ActiveLogin/ActiveLogin.Identity.git</RepositoryUrl>
@@ -40,7 +39,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-19554-01" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
         <PackageReference Update="FSharp.Core" Version="4.7.0" />
     </ItemGroup>
 
