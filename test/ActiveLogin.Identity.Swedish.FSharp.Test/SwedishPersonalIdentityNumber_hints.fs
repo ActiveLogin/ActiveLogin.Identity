@@ -2,7 +2,7 @@
 /// Tested with offical test Personal Identity Numbers from Skatteverket:
 /// https://skatteverket.entryscape.net/catalog/9/datasets/147
 /// </remarks>
-module ActiveLogin.Identity.Swedish.FSharp.Test.SwedishPersonalIdentityNumber_hints
+module ActiveLogin.Identity.Swedish.FSharp.Test.SwedishPersonalIdentityNumber_Hints
 
 open Swensen.Unquote
 open Expecto

@@ -1,4 +1,4 @@
-module ActiveLogin.Identity.Swedish.FSharp.Test.SwedishPersonalIdentityNumber_parse
+module ActiveLogin.Identity.Swedish.FSharp.Test.SwedishPersonalIdentityNumber_Parse
 
 open System
 open Swensen.Unquote

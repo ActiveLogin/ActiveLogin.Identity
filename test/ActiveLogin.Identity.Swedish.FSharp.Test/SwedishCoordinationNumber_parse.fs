@@ -1,4 +1,4 @@
-module ActiveLogin.Identity.Swedish.FSharp.Test.SwedishCoordinationNumber_parse
+module ActiveLogin.Identity.Swedish.FSharp.Test.SwedishCoordinationNumber_Parse
 
 open System
 open Swensen.Unquote
