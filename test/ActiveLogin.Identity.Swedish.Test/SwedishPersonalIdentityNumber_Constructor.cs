@@ -77,14 +77,5 @@ namespace ActiveLogin.Identity.Swedish.Test
             Assert.Equal(birthNumber, personalIdentityNumber.BirthNumber);
             Assert.Equal(checksum, personalIdentityNumber.Checksum);
         }
-
-        [Fact]
-        public void FSharp_Should_Have_No_Public_Constructor()
-        {
-            var type = typeof(FSharp.SwedishPersonalIdentityNumber);
-            var constructors = type.GetConstructors();
-
-            Assert.Empty(constructors);
-        }
     }
 }

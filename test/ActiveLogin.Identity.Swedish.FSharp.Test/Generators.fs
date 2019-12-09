@@ -1,8 +1,8 @@
 module ActiveLogin.Identity.Swedish.FSharp.Test.Gen
 
 open FsCheck
-open ActiveLogin.Identity.Swedish.FSharp
-open ActiveLogin.Identity.Swedish.FSharp.TestData
+open ActiveLogin.Identity.Swedish
+open ActiveLogin.Identity.Swedish.TestData
 open System
 
 let private chooseFromArray xs =
@@ -134,7 +134,7 @@ module Generators =
         } |> Arb.fromGen
 
     module Pin =
-        let valid12Digit = chooseFromArray SwedishPersonalIdentityNumberTestData.raw12DigitStrings
+        let valid12Digit = chooseFromArray SwedishPersonalIdentityNumberTestData.Raw12DigitStrings
         let valid12DigitGen() = valid12Digit |> Gen.map Pin.Valid12Digit |> Arb.fromGen
         let validDay year month =
             let daysInMonth = DateTime.DaysInMonth(year, month)
@@ -167,11 +167,11 @@ module Generators =
                 let! (Pin.ValidValues values) = validValues
                 let pin1 =
                     values
-                    |> SwedishPersonalIdentityNumber.createOrFail
+                    |> SwedishPersonalIdentityNumber
 
                 let pin2 =
                     values
-                    |> SwedishPersonalIdentityNumber.createOrFail
+                    |> SwedishPersonalIdentityNumber
 
                 return (pin1, pin2) |> Pin.TwoEqualPins
             }
@@ -180,15 +180,15 @@ module Generators =
 
         let twoPinsGen() =
             gen {
-                let pin1 = SwedishPersonalIdentityNumberTestData.getRandom()
-                let pin2 = SwedishPersonalIdentityNumberTestData.getRandom()
+                let pin1 = SwedishPersonalIdentityNumberTestData.GetRandom()
+                let pin2 = SwedishPersonalIdentityNumberTestData.GetRandom()
                 return (pin1, pin2) |> Pin.TwoPins
             }
             |> Arb.fromGen
 
 
         let validPinGen() =
-            gen { return SwedishPersonalIdentityNumberTestData.getRandom() |> Pin.ValidPin }
+            gen { return SwedishPersonalIdentityNumberTestData.GetRandom() |> Pin.ValidPin }
             |> Arb.fromGen
 
         let invalidPinStringGen() =
@@ -224,9 +224,9 @@ module Generators =
 
         let leapDayPins =
             let isLeapDay (pin: SwedishPersonalIdentityNumber) =
-                pin.Month.Value = 2 && pin.Day.Value = 29
+                pin.Month = 2 && pin.Day = 29
 
-            SwedishPersonalIdentityNumberTestData.allPinsShuffled()
+            SwedishPersonalIdentityNumberTestData.AllPinsShuffled()
             |> Seq.filter isLeapDay
             |> Seq.toArray
 
@@ -239,10 +239,10 @@ module Generators =
     module CoordNum =
 
         let validCoordNumGen() =
-            gen { return SwedishCoordinationNumberTestData.getRandom() |> CoordNum.ValidNum }
+            gen { return SwedishCoordinationNumberTestData.GetRandom() |> CoordNum.ValidNum }
             |> Arb.fromGen
 
-        let valid12Digit = chooseFromArray SwedishCoordinationNumberTestData.raw12DigitStrings
+        let valid12Digit = chooseFromArray SwedishCoordinationNumberTestData.Raw12DigitStrings
         let valid12DigitGen() = valid12Digit |> Gen.map CoordNum.Valid12Digit |> Arb.fromGen
 
         let validValues = valid12Digit |> Gen.map (stringToValues >> CoordNum.ValidValues)
@@ -293,11 +293,11 @@ module Generators =
                 let! (CoordNum.ValidValues values) = validValues
                 let num1 =
                     values
-                    |> SwedishCoordinationNumber.createOrFail
+                    |> SwedishCoordinationNumber
 
                 let num2 =
                     values
-                    |> SwedishCoordinationNumber.createOrFail
+                    |> SwedishCoordinationNumber
 
                 return (num1, num2) |> CoordNum.TwoEqualCoordNums
             }
@@ -305,8 +305,8 @@ module Generators =
 
         let twoCoordNumsGen() =
             gen {
-                let coordNum1 = SwedishCoordinationNumberTestData.getRandom()
-                let coordNum2 = SwedishCoordinationNumberTestData.getRandom()
+                let coordNum1 = SwedishCoordinationNumberTestData.GetRandom()
+                let coordNum2 = SwedishCoordinationNumberTestData.GetRandom()
                 return (coordNum1, coordNum2) |> CoordNum.TwoCoordNums
             }
             |> Arb.fromGen
@@ -336,9 +336,9 @@ module Generators =
 
         let leapDayCoordNums =
             let isLeapDay (num: SwedishCoordinationNumber) =
-                num.Month.Value = 2 && num.RealDay = 29
+                num.Month = 2 && num.RealDay = 29
 
-            SwedishCoordinationNumberTestData.allCoordNumsShuffled()
+            SwedishCoordinationNumberTestData.AllCoordinationNumbersShuffled()
             |> Seq.filter isLeapDay
             |> Seq.toArray
 

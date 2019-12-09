@@ -1,10 +1,57 @@
 [<AutoOpen>]
 module ActiveLogin.Identity.Swedish.FSharp.Test.PinTestHelpers
-open ActiveLogin.Identity.Swedish.FSharp
-open ActiveLogin.Identity.Swedish.FSharp.TestData
 open Expecto
 open System
 open System.Threading
+open ActiveLogin.Identity.Swedish
+
+let toAction f arg =
+    fun _ -> f arg |> ignore
+
+let toAction2 f arg1 arg2 =
+    fun _ -> f arg1 arg2 |> ignore
+
+let (|Even|Odd|) num =
+    match num % 2 with
+    | 0 -> Even
+    | _ -> Odd
+
+
+module Expect =
+    let throwsWithType<'texn> f =
+        Expect.throwsT<'texn>
+            f
+            "Should throw with expected type"
+
+    let throwsWithMessages (msgs: string list) f =
+        Expect.throwsC
+            f
+            (fun exn ->
+                let failureMessage msg = sprintf "Should contain expected error message: %s" msg
+                msgs
+                |> List.iter
+                    (fun msg ->
+                        Expect.stringContains exn.Message msg (failureMessage msg))
+                    )
+
+    let throwsWithMessage (msg:string) f = throwsWithMessages [ msg ] f
+
+    let doesNotThrowWithMessage (msg:string) f arg =
+        let thrown =
+            try
+                f arg |> ignore
+                None
+            with e ->
+                Some e
+
+        match thrown with
+            | None ->
+                // Ok does not throw
+                ()
+            | Some exn ->
+                if exn.Message.ToLower().Contains(msg.ToLower())
+                then
+                    failtestf "Should not throw exception with message: %s" msg
 
 let private arbTypes = [ typeof<Gen.ValueGenerators> ]
 let private config =
@@ -16,26 +63,21 @@ let ftestPropWithMaxTest maxTest name = ftestPropertyWithConfig { config with ma
 
 let tee f x = f x |> ignore; x
 
-let quickParseR (str:string) =
+let quickParse (str:string) =
     let values =
         ( str.[ 0..3 ] |> int,
           str.[ 4..5 ] |> int,
           str.[ 6..7 ] |> int,
           str.[ 8..10 ] |> int,
           str.[ 11..11 ] |> int )
-    SwedishPersonalIdentityNumber.create values
-
-let quickParse str =
-    match quickParseR str with
-    | Ok p -> p
-    | Error e -> e.ToString() |> failwithf "Test setup error %s"
+    SwedishPersonalIdentityNumber values
 
 let pinToValues (pin:SwedishPersonalIdentityNumber) =
-    ( pin.Year |> Year.value,
-      pin.Month |> Month.value,
-      pin.Day |> Day.value,
-      pin.BirthNumber |> BirthNumber.value,
-      pin.Checksum |> Checksum.value )
+    ( pin.Year,
+      pin.Month,
+      pin.Day,
+      pin.BirthNumber,
+      pin.Checksum )
 
 
 type Rng =
@@ -69,5 +111,5 @@ let surroundEachChar (chars:char[]) (pin:string) =
     |> Array.ofSeq
     |> System.String
 
-
 let isDigit (c:char) = "0123456789".Contains(c)
+

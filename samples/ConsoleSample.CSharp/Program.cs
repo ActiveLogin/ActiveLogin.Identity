@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using ActiveLogin.Identity.Swedish;
 using ActiveLogin.Identity.Swedish.Extensions;
 using ActiveLogin.Identity.Swedish.TestData;

@@ -48,7 +48,6 @@
         <Compile Include="AllPins.fs" />
         <Compile Include="AllCoordNums.fs" />
         <Compile Include="TestData.fs" />
-        <Compile Include="TestDataCSharp.fs" />
     </ItemGroup>
 
     <ItemGroup>

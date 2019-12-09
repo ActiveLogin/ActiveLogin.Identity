@@ -5,14 +5,14 @@ open ActiveLogin.Identity.Swedish
 open ActiveLogin.Identity.Swedish.FSharp
 
 [<Extension>]
-type SwedishPersonalIdentityNumberCSharpHintExtensions() =
+type SwedishPersonalIdentityNumberHintExtensions() =
 
     /// <summary>
     /// Date of birth for the person according to the personal identity number.
     /// Not always the actual date of birth due to the limited quantity of personal identity numbers per day.
     /// </summary>
     [<Extension>]
-    static member GetDateOfBirthHint(pin : SwedishPersonalIdentityNumberCSharp) = 
+    static member GetDateOfBirthHint(pin : SwedishPersonalIdentityNumber) =
         SwedishPersonalIdentityNumber.Hints.getDateOfBirthHint pin.IdentityNumber
 
     /// <summary>
@@ -21,7 +21,7 @@ type SwedishPersonalIdentityNumberCSharpHintExtensions() =
     /// Even number: Female
     /// </summary>
     [<Extension>]
-    static member GetGenderHint(pin : SwedishPersonalIdentityNumberCSharp) = 
+    static member GetGenderHint(pin : SwedishPersonalIdentityNumber) =
         SwedishPersonalIdentityNumber.Hints.getGenderHint pin.IdentityNumber
 
     /// <summary>
@@ -32,7 +32,7 @@ type SwedishPersonalIdentityNumberCSharpHintExtensions() =
     /// <param name="date">The date when to calculate the age.</param>
     /// <returns></returns>
     [<Extension>]
-    static member GetAgeHint(pin : SwedishPersonalIdentityNumberCSharp, date : DateTime) =
+    static member GetAgeHint(pin : SwedishPersonalIdentityNumber, date : DateTime) =
         SwedishPersonalIdentityNumber.Hints.getAgeHintOnDate date pin.IdentityNumber
         |> function
         | None -> invalidArg "pin" "The person is not yet born."
@@ -43,7 +43,7 @@ type SwedishPersonalIdentityNumberCSharpHintExtensions() =
     /// Not always the actual date of birth due to the limited quantity of personal identity numbers per day.
     /// </summary>
     [<Extension>]
-    static member GetAgeHint(pin : SwedishPersonalIdentityNumberCSharp) =
+    static member GetAgeHint(pin : SwedishPersonalIdentityNumber) =
         SwedishPersonalIdentityNumber.Hints.getAgeHint pin.IdentityNumber
         |> function
         | None -> invalidArg "pin" "The person is not yet born."
