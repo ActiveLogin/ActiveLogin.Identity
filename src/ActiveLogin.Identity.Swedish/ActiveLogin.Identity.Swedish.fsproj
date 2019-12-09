@@ -46,13 +46,16 @@
 
     <ItemGroup>
         <None Include="StrongNameKey.snk" />
-        <Compile Include="ResultBuilder.fs" />
         <Compile Include="Gender.fs" />
         <Compile Include="Types.fs" />
         <Compile Include="Parse.fs" />
         <Compile Include="SwedishPersonalIdentityNumber.fs" />
         <Compile Include="SwedishPersonalIdentityNumberCSharp.fs" />
         <Compile Include="SwedishPersonalIdentityNumberCSharpHintExtensions.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\ActiveLogin.Identity.Common\ActiveLogin.Identity.Common.fsproj" />
     </ItemGroup>
 
     <ItemGroup>

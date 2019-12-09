@@ -1,10 +1,10 @@
-namespace ActiveLogin.Identity.Swedish.FSharp
+namespace ActiveLogin.Identity.Common.FSharp
 
-type internal ResultBuilder() =
+type ResultBuilder() =
     member __.Return x = Ok x
     member __.Bind(xResult, f) = Result.bind f xResult
     member __.ReturnFrom(x) = x
 
 [<AutoOpen>]
-module internal ResultBuilder =
+module ResultBuilder =
     let result = ResultBuilder()
