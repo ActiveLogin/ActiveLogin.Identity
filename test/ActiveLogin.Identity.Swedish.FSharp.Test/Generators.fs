@@ -40,6 +40,7 @@ module CoordNum =
     type TwoEqualCoordNums = TwoEqualCoordNums of SwedishCoordinationNumber * SwedishCoordinationNumber
     type ValidValues = ValidValues of IdentityNumberValues
     type TwoCoordNums = TwoCoordNums of SwedishCoordinationNumber * SwedishCoordinationNumber
+    type WithInvalidCoordinationMonth = WithInvalidMonth of IdentityNumberValues
     type WithInvalidDay = WithInvalidDay of IdentityNumberValues
     type WithValidDay = WithValidDay of IdentityNumberValues
     type LeapDayCoordNum = LeapDayCoordNum of SwedishCoordinationNumber
@@ -95,7 +96,6 @@ module Generators =
         ||> outsideRange
         |> Gen.map InvalidMonth
         |> Arb.fromGen
-
 
     let private validMonth =
         (1, 12)
@@ -248,13 +248,6 @@ module Generators =
         let validValues = valid12Digit |> Gen.map (stringToValues >> CoordNum.ValidValues)
         let validValuesGen() = validValues |> Arb.fromGen
 
-        let invalidCoordinationDay daysInMonth =
-            gen {
-                let tooLow = Gen.choose(0,60)
-                let tooHigh = Gen.choose(daysInMonth + 61, 99)
-                return! Gen.oneof [ tooLow; tooHigh ]
-            }
-
         let invalidNumStringGen() =
             gen {
                 let! valid12Digit = valid12Digit
@@ -270,11 +263,10 @@ module Generators =
                     }
                 let withInvalidDay =
                     gen {
-                        let year = valid12Digit.[0..3] |> int
-                        let month = valid12Digit.[4..5] |> int
-                        let daysInMonth = DateTime.DaysInMonth(year, month)
-                        let day = invalidCoordinationDay daysInMonth
-                        let! dayStr = day |> Gen.map (fun num -> num.ToString("00"))
+                        let tooLow = Gen.choose(0,59)
+                        let tooHigh = Gen.choose(92,99)
+                        let invalidDay = Gen.oneof [ tooLow; tooHigh ]
+                        let! dayStr = invalidDay |> Gen.map (fun num -> num.ToString("00"))
                         return valid12Digit.[0..5] + dayStr + valid12Digit.[8..]
                     }
                 let withInvalidBirthNumber =
@@ -314,40 +306,30 @@ module Generators =
 
         let withInvalidDay =
             gen {
-                let! (CoordNum.ValidValues (year, month, day, birthNumber, checksum)) = validValues
-                let daysInMonth = DateTime.DaysInMonth(year, month)
-                let! invalidDay = invalidCoordinationDay daysInMonth
-                return (year, month, invalidDay, birthNumber, checksum) |> CoordNum.WithInvalidDay
+                let! (CoordNum.ValidValues (year, month, _, individualNumber, checksum)) = validValues
+                let! invalidDay = outsideRange 60 91
+                return (year, month, invalidDay, individualNumber, checksum) |> CoordNum.WithInvalidDay
             }
 
         let withInvalidDayGen() = withInvalidDay |> Arb.fromGen
 
-        let validCoordinationDay year month =
-            Pin.validDay year month |> Gen.map (fun d -> d + 60)
-
         let withValidCoordinationDay =
             gen {
-                let! (CoordNum.ValidValues (year, month, day, birthNumber, checksum)) = validValues
-                let! validDay = validCoordinationDay year month
-                return (year, month, validDay, birthNumber, checksum) |> CoordNum.WithValidDay
+                let! (CoordNum.ValidValues (year, month, day, individualNumber, checksum)) = validValues
+                let! validDay = Gen.choose(60, 91)
+                return (year, month, validDay, individualNumber, checksum) |> CoordNum.WithValidDay
             }
 
         let withValidDayGen() = withValidCoordinationDay |> Arb.fromGen
 
-        let leapDayCoordNums =
-            let isLeapDay (num: SwedishCoordinationNumber) =
-                num.Month = 2 && num.RealDay = 29
+        let withInvalidCoordinationMonth =
+            gen {
+                let! (CoordNum.ValidValues (year, _, day, individualNumber, checksum)) = validValues
+                let! invalidMonth = outsideRange 0 12
+                return (year, invalidMonth, day, individualNumber, checksum) |> CoordNum.WithInvalidMonth
+            }
 
-            SwedishCoordinationNumberTestData.AllCoordinationNumbersShuffled()
-            |> Seq.filter isLeapDay
-            |> Seq.toArray
-
-        let leapDayCoordNumGen() =
-            if leapDayCoordNums.Length < 1 then failwith "The test data does not contain any coordination numbers with leap days"
-            leapDayCoordNums
-            |> chooseFromArray
-            |> Gen.map CoordNum.LeapDayCoordNum
-            |> Arb.fromGen
+        let withInvalidCoordinationMonthGen() = withInvalidCoordinationMonth |> Arb.fromGen
 
 open Generators
 
@@ -380,4 +362,4 @@ type ValueGenerators() =
     static member ValidCoordNumValues() = CoordNum.validValuesGen()
     static member CoordNumWithInvalidDay() = CoordNum.withInvalidDayGen()
     static member CoordNumWithValidDay() = CoordNum.withValidDayGen()
-    static member LeapDayCoordNum() = CoordNum.leapDayCoordNumGen()
+    static member CoordNumWithInvalidMonth() = CoordNum.withInvalidCoordinationMonthGen()

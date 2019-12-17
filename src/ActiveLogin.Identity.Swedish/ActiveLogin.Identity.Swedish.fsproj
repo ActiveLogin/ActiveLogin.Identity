@@ -49,8 +49,7 @@
         <Compile Include="Gender.fs" />
         <Compile Include="Types.fs" />
         <Compile Include="Parse.fs" />
-        <Compile Include="StringHelpers.fs" />
-        <Compile Include="HintsHelper.fs" />
+        <Compile Include="Shared.fs" />
         <Compile Include="SwedishPersonalIdentityNumber.fs" />
         <Compile Include="SwedishCoordinationNumber.fs" />
         <Compile Include="IndividualIdentityNumber.fs" />

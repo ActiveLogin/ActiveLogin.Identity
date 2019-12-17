@@ -1,7 +1,6 @@
 namespace ActiveLogin.Identity.Swedish
 
 open ActiveLogin.Identity.Swedish.FSharp
-open System
 open System.Runtime.InteropServices //for OutAttribute
 
 
@@ -43,27 +42,25 @@ module internal IndividualIdentityNumber =
         | Error _ -> None
 
     let to10DigitStringInSpecificYear serializationYear (num: IndividualIdentityNumberInternal) =
-        num
-        |> StringHelpers.to10DigitStringInSpecificYear serializationYear
-        |> Error.handle
+        match num with
+        | Personal pin ->
+            pin |> SwedishPersonalIdentityNumber.to10DigitStringInSpecificYear serializationYear
+        | Coordination num ->
+            num |> SwedishCoordinationNumber.to10DigitStringInSpecificYear serializationYear
 
     let to10DigitString (num : IndividualIdentityNumberInternal) =
-        num
-        |> StringHelpers.to10DigitString
-        |> Error.handle
+        match num with
+        | Personal pin ->
+            pin |> SwedishPersonalIdentityNumber.to10DigitString
+        | Coordination num ->
+            num |> SwedishCoordinationNumber.to10DigitString
 
     let to12DigitString num =
-        num
-        |> StringHelpers.to12DigitString
-
-    module Hints =
-        let getDateOfBirthHint num = HintsHelper.getDateOfBirthHint num
-
-        let getAgeHintOnDate date num = HintsHelper.getAgeHintOnDate date num
-
-        let getAgeHint num = HintsHelper.getAgeHint num
-
-        let getGenderHint (num: IndividualIdentityNumberInternal) = HintsHelper.getGenderHint num
+        match num with
+        | Personal pin ->
+            pin |> SwedishPersonalIdentityNumber.to12DigitString
+        | Coordination num ->
+            num |> SwedishCoordinationNumber.to12DigitString
 
 open IndividualIdentityNumber
 
@@ -100,33 +97,10 @@ type IndividualIdentityNumber private(num: IndividualIdentityNumberInternal) =
         | Coordination num -> num |> SwedishCoordinationNumber
         | _ -> Unchecked.defaultof<SwedishCoordinationNumber>
 
-    /// <summary>
-    /// The year for date of birth.
-    /// </summary>
-    member __.Year = num.Year
-
-    /// <summary>
-    /// The month for date of birth.
-    /// </summary>
-    member __.Month = num.Month
-
-    /// <summary>
-    /// The coordination day (this is the day for date of birth + 60)
-    /// </summary>
-    member __.Day = num.Day
-
-    /// <summary>
-    /// A birth number (födelsenummer) to distinguish people born on the same day.
-    /// </summary>
-    member __.BirthNumber = num.BirthNumber
-
-    /// <summary>
-    /// A checksum (kontrollsiffra) used for validation. Last digit in the number.
-    /// </summary>
-    member __.Checksum = num.Checksum
-
+    /// <summary>Returns a value indicating whether this instance is a SwedishPersonalIdentityNumber.</summary>
     member __.IsSwedishPersonalIdentityNumber = num.IsSwedishPersonalIdentityNumber
 
+    /// <summary>Returns a value indicating whether this instance is a SwedishCoordinationNumber.</summary>
     member __.IsSwedishCoordinationNumber = num.IsSwedishCoordinationNumber
 
     /// <summary>

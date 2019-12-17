@@ -5,7 +5,7 @@ using ActiveLogin.Identity.Swedish.Extensions;
 namespace ActiveLogin.Identity.Swedish.Test
 {
     /// <remarks>
-    /// Tested with offical test Personal Identity Numbers from Skatteverket:
+    /// Tested with official test Personal Identity Numbers from Skatteverket:
     /// https://skatteverket.entryscape.net/catalog/9/datasets/147
     /// </remarks>
     public class SwedishPersonalIdentityNumberHintExtensions_GetDateOfBirthHint

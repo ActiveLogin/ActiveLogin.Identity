@@ -4,7 +4,7 @@ using Xunit;
 namespace ActiveLogin.Identity.Swedish.Test
 {
     /// <remarks>
-    /// Tested with offical test Personal Identity Numbers from Skatteverket:
+    /// Tested with official test Personal Identity Numbers from Skatteverket:
     /// https://skatteverket.entryscape.net/catalog/9/datasets/147
     /// </remarks>
     public class SwedishPersonalIdentityNumber_Parse
@@ -269,7 +269,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         {
             var ex = Assert.Throws<ArgumentNullException>(() => SwedishPersonalIdentityNumber.Parse(null));
 
-            Assert.Contains("personalIdentityNumber", ex.Message);
+            Assert.Contains("input", ex.Message);
         }
 
         [Fact]
@@ -295,7 +295,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         {
             var ex = Assert.Throws<ArgumentNullException>(() => SwedishPersonalIdentityNumber.ParseInSpecificYear(null, 2018));
 
-            Assert.Contains("personalIdentityNumber", ex.Message);
+            Assert.Contains("input", ex.Message);
         }
 
         [Theory]

@@ -107,8 +107,18 @@ module SwedishCoordinationNumberTestDataInternal =
     let internal isTestNumberTuple (year, month, day, birthNumber, checksum) =
         allCoordNums |> Array.contains (year, month, day, birthNumber, checksum)
 
+    let internal toTuple (coordNum: SwedishCoordinationNumber) =
+        let numStr = coordNum.To12DigitString()
+        let year = numStr.[0..3] |> int
+        let month = numStr.[4..5] |> int
+        let day = numStr.[6..7] |> int
+        let individualNum = numStr.[8..10] |> int
+        let checksum = numStr.[11..11] |> int
+        (year, month, day, individualNum, checksum)
+
     let isTestNumber (coordNum: SwedishCoordinationNumber) =
-        (coordNum.Year, coordNum.Month, coordNum.CoordinationDay, coordNum.BirthNumber, coordNum.Checksum)
+        coordNum
+        |> toTuple
         |> isTestNumberTuple
 
 open SwedishCoordinationNumberTestDataInternal
@@ -117,7 +127,9 @@ open SwedishCoordinationNumberTestDataInternal
 /// from Skatteverket
 type SwedishCoordinationNumberTestData() =
     static let toCoordNum (num: SwedishCoordinationNumber) =
-        SwedishCoordinationNumber(num.Year, num.Month, num.CoordinationDay, num.BirthNumber, num.Checksum)
+        num
+        |> toTuple
+        |> SwedishCoordinationNumber
 
     /// All the testdata from Skatteverket presented as an array of 12 digit strings.
     static member Raw12DigitStrings = raw12DigitStrings
@@ -142,7 +154,8 @@ type SwedishCoordinationNumberTestData() =
     /// </summary>
     /// <param name="pin">A SwedishCoordinationNumber</param>
     static member IsTestNumber (num:SwedishCoordinationNumber) =
-        (num.Year, num.Month, num.CoordinationDay, num.BirthNumber, num.Checksum)
+        num
+        |> toTuple
         |> isTestNumberTuple
 
 open System.Runtime.CompilerServices
