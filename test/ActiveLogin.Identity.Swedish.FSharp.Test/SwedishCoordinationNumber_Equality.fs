@@ -4,6 +4,7 @@
 /// </remarks>
 module ActiveLogin.Identity.Swedish.FSharp.Test.SwedishCoordinationNumber_equality
 
+open ActiveLogin.Identity.Swedish
 open Swensen.Unquote
 open Expecto
 open FsCheck
@@ -15,6 +16,14 @@ let tests = testList "SwedishCoordinationNumber.equality" [
         fun (Gen.CoordNum.TwoEqualCoordNums (num1, num2)) ->
             num1 = num2 =! true
             num2 = num1 =! true
+            SwedishCoordinationNumber.op_Equality(num1, num2) =! true
+            SwedishCoordinationNumber.op_Equality(num2, num1) =! true
+    testProp "identical numbers are not unequal when using operator" <|
+        fun (Gen.CoordNum.TwoEqualCoordNums (num1, num2)) ->
+            num1 <> num2 =! false
+            num2 <> num1 =! false
+            SwedishCoordinationNumber.op_Inequality(num1, num2) =! false
+            SwedishCoordinationNumber.op_Inequality(num2, num1) =! false
     testProp "identical numbers are equal when using .Equals()" <|
         fun (Gen.CoordNum.TwoEqualCoordNums (num1, num2)) ->
             num1.Equals(num2) =! true

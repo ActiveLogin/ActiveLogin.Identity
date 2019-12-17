@@ -240,3 +240,9 @@ type SwedishCoordinationNumber internal(num : SwedishCoordinationNumberInternal)
         | (null, null) -> true
         | (null, _) | (_, null) -> false
         | _ -> left.IdentityNumber = right.IdentityNumber
+
+    static member op_Inequality (left: SwedishCoordinationNumber, right: SwedishCoordinationNumber) =
+        match box left, box right with
+        | (null, null) -> false
+        | (null, _) | (_, null) -> true
+        | _ -> left.IdentityNumber <> right.IdentityNumber

@@ -4,6 +4,7 @@
 /// </remarks>
 module ActiveLogin.Identity.Swedish.FSharp.Test.SwedishPersonalIdentityNumber_equality
 
+open ActiveLogin.Identity.Swedish
 open Swensen.Unquote
 open Expecto
 open FsCheck
@@ -15,6 +16,14 @@ let tests = testList "SwedishPersonalIdentityNumber.equality" [
         fun (Gen.Pin.TwoEqualPins (pin1, pin2)) ->
             pin1 = pin2 =! true
             pin2 = pin1 =! true
+            SwedishPersonalIdentityNumber.op_Equality(pin1, pin2) =! true
+            SwedishPersonalIdentityNumber.op_Equality(pin2, pin1) =! true
+    testProp "identical pins are not unequal when using operator" <|
+        fun (Gen.Pin.TwoEqualPins (pin1, pin2)) ->
+            pin1 <> pin2 =! false
+            pin2 <> pin1 =! false
+            SwedishPersonalIdentityNumber.op_Inequality(pin1, pin2) =! false
+            SwedishPersonalIdentityNumber.op_Inequality(pin2, pin1) =! false
     testProp "identical pins are equal when using .Equals()" <|
         fun (Gen.Pin.TwoEqualPins (pin1, pin2)) ->
             pin1.Equals(pin2) =! true
