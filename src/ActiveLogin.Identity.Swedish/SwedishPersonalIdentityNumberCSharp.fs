@@ -175,3 +175,9 @@ type SwedishPersonalIdentityNumberCSharp private(pin : SwedishPersonalIdentityNu
         | (null, null) -> true
         | (null, _) | (_, null) -> false
         | _ -> left.IdentityNumber = right.IdentityNumber
+
+    static member op_Inequality (left: SwedishPersonalIdentityNumberCSharp, right: SwedishPersonalIdentityNumberCSharp) =
+        match box left, box right with
+        | (null, null) -> false
+        | (null, _) | (_, null) -> true
+        | _ -> left.IdentityNumber <> right.IdentityNumber

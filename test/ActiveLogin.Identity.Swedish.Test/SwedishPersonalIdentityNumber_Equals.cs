@@ -40,6 +40,17 @@ namespace ActiveLogin.Identity.Swedish.Test
 
             Assert.True(equals);
         }
+        
+        [Fact]
+        public void Two_Identical_PIN_Are_Not_Unequal_Using_Operator()
+        {
+            var personalIdentityNumberString = "199908072391";
+            var personalIdentityNumber1 = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
+            var personalIdentityNumber2 = SwedishPersonalIdentityNumber.Parse(personalIdentityNumberString);
+            var notEquals = personalIdentityNumber1 != personalIdentityNumber2;
+
+            Assert.False(notEquals);
+        }
 
         [Fact]
         public void Two_Different_PIN_Are_Not_Equal_Using_Method()
