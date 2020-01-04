@@ -8,42 +8,35 @@ open ActiveLogin.Identity.Swedish.FSharp.Shared
 
 module internal SwedishCoordinationNumber =
     let internal create (year, month, day, individualNumber, checksum) =
-        result {
-            let! y = year |> Year.create
-            let! m = month |> CoordinationMonth.create
-            let! d = day |> CoordinationDay.create
-            let! s = individualNumber |> IndividualNumber.create
-            let! c = checksum |> Checksum.create y (Choice2Of2 m) (Choice2Of2 d) (Choice2Of2 s)
-            return { Year = y
-                     CoordinationMonth = m
-                     CoordinationDay = d
-                     IndividualNumber = s
-                     Checksum = c }
-        }
+            let y = year |> Year.create
+            let m = month |> CoordinationMonth.create
+            let d = day |> CoordinationDay.create
+            let s = individualNumber |> IndividualNumber.create
+            let c = checksum |> Checksum.create y (Choice2Of2 m) (Choice2Of2 d) (Choice2Of2 s)
+            { Year = y
+              CoordinationMonth = m
+              CoordinationDay = d
+              IndividualNumber = s
+              Checksum = c }
 
     let to10DigitStringInSpecificYear serializationYear (num: SwedishCoordinationNumberInternal) =
-        result {
-            let! validYear = validSerializationYear serializationYear num.Year
+            let validYear = validSerializationYear serializationYear num.Year
             let delimiter =
                 if validYear - (num.Year.Value) >= 100 then "+"
                 else "-"
 
-            return sprintf "%02i%02i%02i%s%03i%1i"
+            sprintf "%02i%02i%02i%s%03i%1i"
                 (num.Year.Value % 100)
                 num.CoordinationMonth.Value
                 num.CoordinationDay.Value
                 delimiter
                 num.IndividualNumber.Value
                 num.Checksum.Value
-        } |> Error.handle
 
     let to10DigitString (pin : SwedishCoordinationNumberInternal) =
         let year =
             DateTime.UtcNow.Year
             |> Year.create
-            |> function
-            | Ok y -> y
-            | Error _ -> invalidArg "year" "DateTime.Year wasn't a valid year"
         to10DigitStringInSpecificYear year.Value pin
 
     let to12DigitString pin =
@@ -55,28 +48,26 @@ module internal SwedishCoordinationNumber =
             pin.Checksum.Value
 
     let internal parseInSpecificYearInternal parseYear str =
-        result {
-            let! pYear = Year.create parseYear
-            return! Parse.parseInSpecificYear create pYear str
-        }
+        let pYear = Year.create parseYear
+        Parse.parseInSpecificYear create pYear str
 
     let parseInSpecificYear parseYear str =
         parseInSpecificYearInternal parseYear str
-        |> Error.handle
 
     let tryParseInSpecificYear parseYear str =
-        match parseInSpecificYearInternal parseYear str with
-        | Ok num -> Some num
-        | Error _ -> None
+        try
+            parseInSpecificYearInternal parseYear str
+            |> Some
+        with
+            exn -> None
 
-    let internal parseInternal str = Parse.parse create str
-
-    let parse = parseInternal >> Error.handle
+    let parse str = Parse.parse create str
 
     let tryParse str =
-        match parseInternal str with
-        | Ok num -> Some num
-        | Error _ -> None
+        try
+            parse str |> Some
+        with
+            exn -> None
 
 open SwedishCoordinationNumber
 
@@ -103,7 +94,6 @@ type SwedishCoordinationNumber internal(num : SwedishCoordinationNumberInternal)
         let idNum =
             (year, month, day, birthNumber, checksum)
             |> create
-            |> Error.handle
 
         SwedishCoordinationNumber(idNum)
 
@@ -185,9 +175,6 @@ type SwedishCoordinationNumber internal(num : SwedishCoordinationNumberInternal)
     /// </param>
     member __.To10DigitStringInSpecificYear(serializationYear : int) =
         to10DigitStringInSpecificYear serializationYear num
-//        match serializationYear |> Year.create with
-//        | Error _ -> raise (ArgumentOutOfRangeException("year", serializationYear, "Invalid year."))
-//        | Ok year -> to10DigitStringInSpecificYear year num |> Error.handle
 
     /// <summary>
     /// Converts the value of the current <see cref="SwedishCoordinationNumber" /> object to its equivalent short string representation.

@@ -45,7 +45,6 @@
 
     <ItemGroup>
         <None Include="StrongNameKey.snk" />
-        <Compile Include="ResultBuilder.fs" />
         <Compile Include="Gender.fs" />
         <Compile Include="Types.fs" />
         <Compile Include="Parse.fs" />

@@ -1,45 +1,44 @@
 namespace ActiveLogin.Identity.Swedish
 
+open System
 open ActiveLogin.Identity.Swedish.FSharp
 open System.Runtime.InteropServices //for OutAttribute
 
 
 module internal IndividualIdentityNumber =
     let internal create values =
-        match SwedishPersonalIdentityNumber.create values, SwedishCoordinationNumber.create values with
-        | Ok pin, Error _ ->
-            pin |> Personal |> Ok
-        | Error _, Ok num ->
-            num |> Coordination |> Ok
-        | Error pinError, Error coordError ->
-            let msg = sprintf "Not a valid pin or coordination number. PinError: %A, CoordinationError: %A" pinError coordError
-            ParsingError.Invalid msg |> ParsingError |> Error
-        | Ok _, Ok _ ->
-            // A number can't be a valid pin and coordination number at the same time. Ending up here is a bug.
-            failwith "This should not have happened! There is an application error for either SwedishPersonalIdentityNumber or SwedishCoordinationNumber"
+        try
+            SwedishPersonalIdentityNumber.create values |> Personal
+        with
+            pinException ->
+                try
+                    SwedishCoordinationNumber.create values |> Coordination
+                with
+                    coordnumException ->
+                        let msg = sprintf "Not a valid pin or coordination number. PinError: %s, CoordinationError: %s" pinException.Message coordnumException.Message
+                        FormatException(sprintf "String was not recognized as a valid IndividualIdentityNumber. %s" msg) |> raise
+
+
     let internal parseInSpecificYearInternal parseYear str =
-        result {
-            let! pYear = parseYear |> Year.create
-            return! Parse.parseInSpecificYear create pYear str
-        }
+        let pYear = parseYear |> Year.create
+        Parse.parseInSpecificYear create pYear str
 
     let parseInSpecificYear parseYear str =
         parseInSpecificYearInternal parseYear str
-        |> Error.handle
 
     let tryParseInSpecificYear parseYear str =
-        match parseInSpecificYearInternal parseYear str with
-        | Ok num -> Some num
-        | Error _ -> None
+        try
+            parseInSpecificYearInternal parseYear str |> Some
+        with
+            exn -> None
 
-    let internal parseInternal str = Parse.parse create str
-
-    let parse = parseInternal >> Error.handle
+    let parse str = Parse.parse create str
 
     let tryParse str =
-        match parseInternal str with
-        | Ok num -> Some num
-        | Error _ -> None
+        try
+            parse str |> Some
+        with
+            exn -> None
 
     let to10DigitStringInSpecificYear serializationYear (num: IndividualIdentityNumberInternal) =
         match num with
@@ -79,11 +78,11 @@ type IndividualIdentityNumber private(num: IndividualIdentityNumberInternal) =
     /// <param name="day">The day part.</param>
     /// <param name="birthNumber">The birth number part.</param>
     /// <param name="checksum">The checksum part.</param>
-    /// <returns>An instance of <see cref="IdentityNumber"/> if all the paramaters are valid by themselfes and in combination.</returns>
+    /// <returns>An instance of <see cref="IdentityNumber"/> if all the parameters are valid by themselves and in combination.</returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when any of the range arguments is invalid.</exception>
     /// <exception cref="ArgumentException">Thrown when checksum is invalid.</exception>
     private new(year, month, day, birthNumber, checksum) =
-        let idNum = (year, month, day, birthNumber, checksum) |> create |> Error.handle
+        let idNum = (year, month, day, birthNumber, checksum) |> create
 
         IndividualIdentityNumber(idNum)
 

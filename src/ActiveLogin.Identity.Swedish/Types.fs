@@ -3,16 +3,6 @@ module internal ActiveLogin.Identity.Swedish.FSharp.Types
 
 open System
 
-type ParsingError =
-    | Empty
-    | Length
-    | Invalid of string
-type Error =
-    | ArgumentOutOfRange of parameter: string * value: int * message: string
-    | ArgumentError of parameter: string * message: string
-    | ArgumentNullError
-    | ParsingError of ParsingError
-
 type Year = private Year of int
 type Month = private Month of int
 type Day = private Day of int
@@ -40,50 +30,14 @@ type IndividualIdentityNumberInternal =
     | Personal of SwedishPersonalIdentityNumberInternal
     | Coordination of SwedishCoordinationNumberInternal
 
-module ParsingError =
-    let toParsingError err =
-        match err with
-        | ArgumentOutOfRange (value = v; message = msg) ->
-            sprintf "%s %i" msg v |> ParsingError.Invalid |> ParsingError
-        | ArgumentError (parameter = name; message = msg) ->
-            sprintf "%s: %s" name msg |> ParsingError.Invalid |> ParsingError
-        | ParsingError err -> ParsingError err
-        | ArgumentNullError -> ArgumentNullError
-
-module Error =
-    let handle result =
-        match result with
-        | Ok res -> res
-        | Error e ->
-            match e with
-            | ArgumentOutOfRange (parameter = name; value = v; message = msg) ->
-                raise (ArgumentOutOfRangeException(name, v , msg))
-            | ArgumentError (parameter = name; message = msg) ->
-                raise (ArgumentException(msg, name))
-            | ArgumentNullError ->
-                raise (ArgumentNullException("input"))
-            | ParsingError p ->
-                match p with
-                | Empty ->
-                    raise
-                        (FormatException("String was not recognized as a valid SwedishPersonalIdentityNumber. Cannot be empty string or whitespace."))
-                | Length ->
-                    raise
-                        (FormatException("String was not recognized as a valid SwedishPersonalIdentityNumber."))
-                | Invalid msg ->
-                    raise
-                        (FormatException(sprintf "String was not recognized as a valid SwedishPersonalIdentityNumber. %s" msg))
-
 module Year =
     let create year =
         let isValidYear = year >= DateTime.MinValue.Year && year <= DateTime.MaxValue.Year
         if isValidYear then
             year
             |> Year
-            |> Ok
         else
-            ArgumentOutOfRange("year", year, "Invalid year.")
-            |> Error
+            ArgumentOutOfRangeException("year", year, "Invalid year.") |> raise
 
     let value (Year year) = year
 
@@ -96,11 +50,10 @@ module Month =
         if isValidMonth then
             month
             |> Month
-            |> Ok
         else
 
-            ArgumentOutOfRange("month", month, "Invalid month.")
-            |> Error
+            ArgumentOutOfRangeException("month", month, "Invalid month.")
+            |> raise
 
     let value (Month month) = month
 
@@ -113,11 +66,11 @@ module Day =
         let isValidDay = day >= 1 && day <= daysInMonth
 
         if isValidDay then
-            day |> Day |> Ok
+            day |> Day
         else
 
-            ArgumentOutOfRange("day", day, "Invalid day of month.")
-            |> Error
+            ArgumentOutOfRangeException("day", day, "Invalid day of month.")
+            |> raise
 
     let value (Day day) = day
 
@@ -127,10 +80,10 @@ type Day with
 module CoordinationMonth =
     let create month =
         if month < 0 || month > 12 then
-            ArgumentOutOfRange("coordination month", month, "Invalid month for coordination number")
-            |> Error
+            ArgumentOutOfRangeException("coordination month", month, "Invalid month for coordination number")
+            |> raise
         else
-            month |> CoordinationMonth |> Ok
+            month |> CoordinationMonth
 
     let value (CoordinationMonth month) = month
 
@@ -141,12 +94,11 @@ module CoordinationDay =
     let create day =
 
         if day < 60 || day > 91 then
-            ArgumentOutOfRange("day", day, "Invalid coordination day.")
-            |> Error
+            ArgumentOutOfRangeException("day", day, "Invalid coordination day.")
+            |> raise
         else
             day
             |> CoordinationDay
-            |> Ok
 
     let value (CoordinationDay day) = day
 
@@ -160,10 +112,9 @@ module BirthNumber =
         if isValidBirthNumber then
             num
             |> BirthNumber
-            |> Ok
         else
-            ArgumentOutOfRange("num", num, "Invalid birth number.")
-            |> Error
+            ArgumentOutOfRangeException("num", num, "Invalid birth number.")
+            |> raise
 
     let value (BirthNumber num) = num
 
@@ -176,10 +127,9 @@ module IndividualNumber =
         if isValidIndividualNumber then
             num
             |> IndividualNumber
-            |> Ok
         else
-            ArgumentOutOfRange("num", num, "Invalid individual number.")
-            |> Error
+            ArgumentOutOfRangeException("num", num, "Invalid individual number.")
+            |> raise
 
     let value (IndividualNumber num) = num
 
@@ -208,10 +158,9 @@ module Checksum =
         if isValidChecksum then
             checksum
             |> Checksum
-            |> Ok
         else
-            ArgumentError(parameter = "checksum", message = "Invalid checksum.")
-            |> Error
+            ArgumentException("checksum", "Invalid checksum.")
+            |> raise
 
     let create
         (Year y)

@@ -8,42 +8,33 @@ open System.Runtime.InteropServices //for OutAttribute
 
 module internal SwedishPersonalIdentityNumber =
     let create (year, month, day, birthNumber, checksum) =
-        result {
-            let! y = year |> Year.create
-            let! m = month |> Month.create
-            let! d = day |> Day.create y m
-            let! birthNum = birthNumber |> BirthNumber.create
-            let! c = checksum |> Checksum.create y (Choice1Of2 m) (Choice1Of2 d) (Choice1Of2 birthNum)
-            return { SwedishPersonalIdentityNumberInternal.Year = y
-                     Month = m
-                     Day = d
-                     BirthNumber = birthNum
-                     Checksum = c }
-        }
+            let y = year |> Year.create
+            let m = month |> Month.create
+            let d = day |> Day.create y m
+            let birthNum = birthNumber |> BirthNumber.create
+            let c = checksum |> Checksum.create y (Choice1Of2 m) (Choice1Of2 d) (Choice1Of2 birthNum)
+            { SwedishPersonalIdentityNumberInternal.Year = y
+              Month = m
+              Day = d
+              BirthNumber = birthNum
+              Checksum = c }
 
     let to10DigitStringInSpecificYear serializationYear (pin: SwedishPersonalIdentityNumberInternal) =
-        result {
-            let! validYear = validSerializationYear serializationYear pin.Year
+            let validYear = validSerializationYear serializationYear pin.Year
             let delimiter =
                 if validYear - (pin.Year.Value) >= 100 then "+"
                 else "-"
 
-            return sprintf "%02i%02i%02i%s%03i%1i"
+            sprintf "%02i%02i%02i%s%03i%1i"
                 (pin.Year.Value % 100)
                 pin.Month.Value
                 pin.Day.Value
                 delimiter
                 pin.BirthNumber.Value
                 pin.Checksum.Value
-        } |> Error.handle
 
     let to10DigitString (pin : SwedishPersonalIdentityNumberInternal) =
-        let year =
-            DateTime.UtcNow.Year
-            |> Year.create
-            |> function
-            | Ok y -> y
-            | Error _ -> invalidArg "year" "DateTime.Year wasn't a valid year"
+        let year = DateTime.UtcNow.Year |> Year.create
         to10DigitStringInSpecificYear year.Value pin
 
     let to12DigitString (pin: SwedishPersonalIdentityNumberInternal) =
@@ -55,27 +46,28 @@ module internal SwedishPersonalIdentityNumber =
             pin.Checksum.Value
 
     let internal parseInSpecificYearInternal parseYear str =
-        result {
-            let! pYear = parseYear |> Year.create
-            return! Parse.parseInSpecificYear create pYear str
-        }
+        let pYear = parseYear |> Year.create
+        Parse.parseInSpecificYear create pYear str
 
     let parseInSpecificYear parseYear str =
-        parseInSpecificYearInternal parseYear str |> Error.handle
+        parseInSpecificYearInternal parseYear str
 
     let tryParseInSpecificYear parseYear str =
-        match parseInSpecificYearInternal parseYear str with
-        | Ok pin -> Some pin
-        | Error _ -> None
+        try
+            parseInSpecificYearInternal parseYear str
+            |> Some
+        with
+            exn -> None
 
-    let internal parseInternal str = Parse.parse create str
+    let parse str = Parse.parse create str
 
-    let parse = parseInternal >> Error.handle
 
     let tryParse str =
-       match parseInternal str with
-       | Ok pin -> Some pin
-       | Error _ -> None
+       try
+           parse str
+           |> Some
+       with
+           exn -> None
 
 
 open SwedishPersonalIdentityNumber
@@ -101,7 +93,6 @@ type SwedishPersonalIdentityNumber internal(pin : SwedishPersonalIdentityNumberI
         let pin =
             (year, month, day, birthNumber, checksum)
             |> create
-            |> Error.handle
         SwedishPersonalIdentityNumber(pin)
 
     member internal __.IdentityNumber = pin

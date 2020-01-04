@@ -9,7 +9,7 @@ namespace ActiveLogin.Identity.Swedish.Test
     /// </remarks>
     public class SwedishPersonalIdentityNumber_Parse
     {
-        private const string InvalidSwedishPersonalIdentityNumberErrorMessage = "String was not recognized as a valid SwedishPersonalIdentityNumber.";
+        private const string InvalidSwedishPersonalIdentityNumberErrorMessage = "String was not recognized as a valid IdentityNumber.";
 
         [Theory]
         [InlineData("900101+9802", 1890)]

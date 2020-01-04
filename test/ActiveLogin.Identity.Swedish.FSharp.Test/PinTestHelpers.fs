@@ -18,9 +18,7 @@ let (|Even|Odd|) num =
 
 module Expect =
     let throwsWithType<'texn> f =
-        Expect.throwsT<'texn>
-            f
-            "Should throw with expected type"
+        Expect.throwsT<'texn> f "Should throw with expected type"
         f
 
     let throwsWithMessages (msgs: string list) f =
@@ -31,8 +29,7 @@ module Expect =
                 msgs
                 |> List.iter
                     (fun msg ->
-                        Expect.stringContains exn.Message msg (failureMessage msg))
-                    )
+                        Expect.stringContains exn.Message msg (failureMessage msg)))
 
     let throwsWithMessage (msg:string) f = throwsWithMessages [ msg ] f
 
