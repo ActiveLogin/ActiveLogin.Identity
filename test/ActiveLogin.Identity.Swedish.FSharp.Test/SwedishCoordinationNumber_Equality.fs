@@ -1,5 +1,5 @@
 /// <remarks>
-/// Tested with offical test Personal Identity Numbers from Skatteverket:
+/// Tested with official test Personal Identity Numbers from Skatteverket:
 /// https://skatteverket.entryscape.net/catalog/9/datasets/147
 /// </remarks>
 module ActiveLogin.Identity.Swedish.FSharp.Test.SwedishCoordinationNumber_equality

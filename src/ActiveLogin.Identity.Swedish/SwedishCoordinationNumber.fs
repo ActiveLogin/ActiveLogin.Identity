@@ -3,74 +3,74 @@ namespace ActiveLogin.Identity.Swedish
 open ActiveLogin.Identity.Swedish.FSharp
 open System
 open System.Runtime.InteropServices //for OutAttribute
+open ActiveLogin.Identity.Swedish.FSharp.Shared
 
 
 module internal SwedishCoordinationNumber =
-    let internal create (year, month, day, birthNumber, checksum) =
-        result {
-            let! y = year |> Year.create
-            let! m = month |> Month.create
-            let! d = day |> CoordinationDay.create y m
-            let! s = birthNumber |> BirthNumber.create
-            let! c = checksum |> Checksum.create y m (DayInternal.CoordinationDay d) s
-            return { SwedishCoordinationNumberInternal.Year = y
-                     Month = m
-                     CoordinationDay = d
-                     BirthNumber = s
-                     Checksum = c }
-        }
+    let internal create (year, month, day, individualNumber, checksum) =
+            let y = year |> Year.create
+            let m = month |> CoordinationMonth.create
+            let d = day |> CoordinationDay.create
+            let s = individualNumber |> IndividualNumber.create
+            let c = checksum |> Checksum.create y (Choice2Of2 m) (Choice2Of2 d) (Choice2Of2 s)
+            { Year = y
+              CoordinationMonth = m
+              CoordinationDay = d
+              IndividualNumber = s
+              Checksum = c }
 
     let to10DigitStringInSpecificYear serializationYear (num: SwedishCoordinationNumberInternal) =
-        num
-        |> Coordination
-        |> StringHelpers.to10DigitStringInSpecificYear serializationYear
-        |> Error.handle
+            let validYear = validSerializationYear serializationYear num.Year
+            let delimiter =
+                if validYear - (num.Year.Value) >= 100 then "+"
+                else "-"
 
-    let to10DigitString (num : SwedishCoordinationNumberInternal) =
-        num
-        |> Coordination
-        |> StringHelpers.to10DigitString
-        |> Error.handle
+            sprintf "%02i%02i%02i%s%03i%1i"
+                (num.Year.Value % 100)
+                num.CoordinationMonth.Value
+                num.CoordinationDay.Value
+                delimiter
+                num.IndividualNumber.Value
+                num.Checksum.Value
 
-    let to12DigitString num =
-        num
-        |> Coordination
-        |> StringHelpers.to12DigitString
+    let to10DigitString (pin : SwedishCoordinationNumberInternal) =
+        let year =
+            DateTime.UtcNow.Year
+            |> Year.create
+        to10DigitStringInSpecificYear year.Value pin
+
+    let to12DigitString pin =
+        sprintf "%02i%02i%02i%03i%1i"
+            pin.Year.Value
+            pin.CoordinationMonth.Value
+            pin.CoordinationDay.Value
+            pin.IndividualNumber.Value
+            pin.Checksum.Value
 
     let internal parseInSpecificYearInternal parseYear str =
-        result {
-            let! pYear = Year.create parseYear
-            return! Parse.parseInSpecificYear create pYear str
-        }
+        let pYear = Year.create parseYear
+        Parse.parseInSpecificYear create pYear str
 
     let parseInSpecificYear parseYear str =
         parseInSpecificYearInternal parseYear str
-        |> Error.handle
 
     let tryParseInSpecificYear parseYear str =
-        match parseInSpecificYearInternal parseYear str with
-        | Ok num -> Some num
-        | Error _ -> None
+        try
+            parseInSpecificYearInternal parseYear str
+            |> Some
+        with
+            exn -> None
 
-    let internal parseInternal str = Parse.parse create str
-
-    let parse = parseInternal >> Error.handle
+    let parse str = Parse.parse create str
 
     let tryParse str =
-        match parseInternal str with
-        | Ok num -> Some num
-        | Error _ -> None
-
-    module Hints =
-        let getDateOfBirthHint num = HintsHelper.getDateOfBirthHint (Coordination num)
-
-        let getAgeHintOnDate date num = HintsHelper.getAgeHintOnDate date (Coordination num)
-
-        let getAgeHint num = HintsHelper.getAgeHint (Coordination num)
-
-        let getGenderHint num = HintsHelper.getGenderHint (Coordination num)
+        try
+            parse str |> Some
+        with
+            exn -> None
 
 open SwedishCoordinationNumber
+
 
 /// <summary>
 /// Represents a Swedish Coordination Number (Samordningsnummer).
@@ -94,7 +94,6 @@ type SwedishCoordinationNumber internal(num : SwedishCoordinationNumberInternal)
         let idNum =
             (year, month, day, birthNumber, checksum)
             |> create
-            |> Error.handle
 
         SwedishCoordinationNumber(idNum)
 
@@ -104,31 +103,6 @@ type SwedishCoordinationNumber internal(num : SwedishCoordinationNumberInternal)
     /// The year for date of birth.
     /// </summary>
     member __.Year = num.Year.Value
-
-    /// <summary>
-    /// The month for date of birth.
-    /// </summary>
-    member __.Month = num.Month.Value
-
-    /// <summary>
-    /// The coordination day (this is the day for date of birth + 60)
-    /// </summary>
-    member __.CoordinationDay = num.CoordinationDay.Value
-
-    /// <summary>
-    /// The day for date of birth
-    /// </summary>
-    member __.RealDay = num.CoordinationDay.RealDay
-
-    /// <summary>
-    /// A birth number (födelsenummer) to distinguish people born on the same day.
-    /// </summary>
-    member __.BirthNumber = num.BirthNumber.Value
-
-    /// <summary>
-    /// A checksum (kontrollsiffra) used for validation. Last digit in the number.
-    /// </summary>
-    member __.Checksum = num.Checksum.Value
 
     /// <summary>
     /// Converts the string representation of the Swedish coordination number to its <see cref="SwedishCoordinationNumber"/> equivalent.
@@ -201,9 +175,6 @@ type SwedishCoordinationNumber internal(num : SwedishCoordinationNumberInternal)
     /// </param>
     member __.To10DigitStringInSpecificYear(serializationYear : int) =
         to10DigitStringInSpecificYear serializationYear num
-//        match serializationYear |> Year.create with
-//        | Error _ -> raise (ArgumentOutOfRangeException("year", serializationYear, "Invalid year."))
-//        | Ok year -> to10DigitStringInSpecificYear year num |> Error.handle
 
     /// <summary>
     /// Converts the value of the current <see cref="SwedishCoordinationNumber" /> object to its equivalent short string representation.

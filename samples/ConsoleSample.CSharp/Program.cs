@@ -181,16 +181,6 @@ namespace ConsoleSample
             WriteKeyValueInfo("   .ToString()", identityNumber.ToString());
             WriteKeyValueInfo("   .To10DigitString()", identityNumber.To10DigitString());
             WriteKeyValueInfo("   .To12DigitString()", identityNumber.To12DigitString());
-
-            WriteKeyValueInfo("   .Year", identityNumber.Year.ToString());
-            WriteKeyValueInfo("   .Month", identityNumber.Month.ToString());
-            WriteKeyValueInfo("   .Day", identityNumber.Day.ToString());
-            WriteKeyValueInfo("   .BirthNumber", identityNumber.BirthNumber.ToString());
-            WriteKeyValueInfo("   .Checksum", identityNumber.Checksum.ToString());
-
-            WriteKeyValueInfo("   .GetDateOfBirthHint()", identityNumber.GetDateOfBirthHint().ToShortDateString());
-            WriteKeyValueInfo("   .GetAgeHint()", identityNumber.GetAgeHint().ToString());
-
             WriteKeyValueInfo("   .GetGenderHint()", identityNumber.GetGenderHint().ToString());
 
             if (identityNumber.IsSwedishPersonalIdentityNumber)

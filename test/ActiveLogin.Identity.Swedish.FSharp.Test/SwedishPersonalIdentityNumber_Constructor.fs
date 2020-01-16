@@ -1,9 +1,10 @@
 /// <remarks>
-/// Tested with offical test Personal Identity Numbers from Skatteverket:
+/// Tested with official test Personal Identity Numbers from Skatteverket:
 /// https://skatteverket.entryscape.net/catalog/9/datasets/147
 /// </remarks>
 module ActiveLogin.Identity.Swedish.FSharp.Test.SwedishPersonalIdentityNumber_Constructor
 
+open System
 open Swensen.Unquote
 open Expecto
 open FsCheck
@@ -21,46 +22,50 @@ let tests =
                 |> Gen.stringToValues
                 |> SwedishPersonalIdentityNumber
             pin.To12DigitString() =! str
-
-        testPropWithMaxTest 20000 "invalid year returns InvalidYear Error" <|
-            fun (Gen.Pin.ValidValues (y, m, d, b, c), Gen.InvalidYear invalidYear) ->
+        testPropWithMaxTest 20000 "with invalid year throws" <|
+            fun (Gen.Pin.ValidValues (_, m, d, b, c), Gen.InvalidYear invalidYear) ->
                 toAction SwedishPersonalIdentityNumber (invalidYear, m, d, b, c)
+                |> Expect.throwsWithType<ArgumentOutOfRangeException>
                 |> Expect.throwsWithMessage "Invalid year."
 
-        testPropWithMaxTest 20000 "valid year does not return InvalidYear Error" <|
-            fun (Gen.Pin.ValidValues (y, m, d, b, c), Gen.ValidYear validYear) ->
-                toAction SwedishPersonalIdentityNumber (y, m, d, b, c)
-                |> Expect.doesNotThrowWithMessage "year"
+        testPropWithMaxTest 20000 "with valid year does not throw exception for year" <|
+            fun (Gen.Pin.ValidValues (_, m, d, b, c), Gen.ValidYear validYear) ->
+                toAction SwedishPersonalIdentityNumber (validYear, m, d, b, c)
+                |> Expect.doesNotThrowWithMessage "Invalid year"
 
-        testProp "invalid month returns InvalidMonth Error" <|
-            fun (Gen.Pin.ValidValues (y, m, d, b, c), Gen.InvalidMonth invalidMonth) ->
+        testProp "with invalid month throws" <|
+            fun (Gen.Pin.ValidValues (y, _, d, b, c), Gen.InvalidMonth invalidMonth) ->
                 toAction SwedishPersonalIdentityNumber (y, invalidMonth, d, b, c)
+                |> Expect.throwsWithType<ArgumentOutOfRangeException>
                 |> Expect.throwsWithMessage "Invalid month."
 
-        testProp "valid month does not return InvalidMonth Error" <|
-            fun (Gen.Pin.ValidValues (y, m, d, b, c), Gen.ValidMonth validMonth) ->
+        testProp "with valid month does not throw exception for month" <|
+            fun (Gen.Pin.ValidValues (y, _, d, b, c), Gen.ValidMonth validMonth) ->
+                toAction SwedishPersonalIdentityNumber (y, validMonth, d, b, c)
+                |> Expect.doesNotThrowWithMessage "Invalid month"
+
+        testProp "with invalid day throws" <|
+            fun (Gen.Pin.WithInvalidDay (y, m, d, b, c)) ->
                 toAction SwedishPersonalIdentityNumber (y, m, d, b, c)
-                |> Expect.doesNotThrowWithMessage "month"
+                |> Expect.throwsWithType<ArgumentOutOfRangeException>
+                |> Expect.throwsWithMessage "Invalid day of month."
 
-        testProp "invalid day returns InvalidDay Error" <| fun (Gen.Pin.WithInvalidDay (y, m, d, b, c)) ->
+        testProp "with valid day does not throw exception for day" <| fun (Gen.Pin.WithValidDay (y, m, d, b, c)) ->
             toAction SwedishPersonalIdentityNumber (y, m, d, b, c)
-            |> Expect.throwsWithMessage "Invalid day of month."
+            |> Expect.doesNotThrowWithMessage "Invalid day"
 
-        testProp "valid day does not return InvalidDay Error" <| fun (Gen.Pin.WithValidDay (y, m, d, b, c)) ->
-            toAction SwedishPersonalIdentityNumber (y, m, d, b, c)
-            |> Expect.doesNotThrowWithMessage "day"
-
-        testProp "invalid birth number returns InvalidBirthNumber Error" <|
-            fun (Gen.Pin.ValidValues (y, m, d, b, c), Gen.InvalidBirthNumber invalidBirthNumber) ->
+        testProp "with invalid birth number throws" <|
+            fun (Gen.Pin.ValidValues (y, m, d, _, c), Gen.InvalidBirthNumber invalidBirthNumber) ->
                 toAction SwedishPersonalIdentityNumber (y, m, d, invalidBirthNumber, c)
+                |> Expect.throwsWithType<ArgumentOutOfRangeException>
                 |> Expect.throwsWithMessage "Invalid birth number"
 
-        testPropWithMaxTest 3000 "valid birth number does not return InvalidBirthNumber Error" <|
-            fun (Gen.Pin.ValidValues (y, m, d, b, c), Gen.ValidBirthNumber validBirthNumber) ->
+        testPropWithMaxTest 3000 "with valid birth number does not throw exception for birth number" <|
+            fun (Gen.Pin.ValidValues (y, m, d, _, c), Gen.ValidBirthNumber validBirthNumber) ->
                 toAction SwedishPersonalIdentityNumber (y, m, d, validBirthNumber, c)
-                |> Expect.doesNotThrowWithMessage "birth"
+                |> Expect.doesNotThrowWithMessage "Invalid birth number"
 
-        testProp "invalid checksum returns InvalidChecksum Error" <|
+        testProp "invalid checksum throws" <|
             fun (Gen.Pin.ValidValues (y, m, d, b, c)) ->
                 let invalidChecksums =
                     [ 0..9 ]
@@ -73,6 +78,7 @@ let tests =
                 withInvalidChecksums
                 |> List.iter (fun (y, m, d, b, cs) ->
                     toAction SwedishPersonalIdentityNumber (y, m, d, b, cs)
+                    |> Expect.throwsWithType<ArgumentException>
                     |> Expect.throwsWithMessage "Invalid checksum." )
 
         testCase "fsharp should have no public constructor" <| fun () ->

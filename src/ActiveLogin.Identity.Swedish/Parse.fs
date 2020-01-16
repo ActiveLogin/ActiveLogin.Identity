@@ -9,32 +9,26 @@ type private PinType<'T> =
 let private parseInternal parseYear =
     let toChars str = [ for c in str -> c ]
     let toString = Array.ofList >> String
-
     let requireNotEmpty str =
         match String.IsNullOrWhiteSpace str with
-        | false -> str |> Ok
+        | false -> str
         | true when isNull str ->
-            ArgumentNullError
-            |> Error
+            ArgumentNullException("input")
+            |> raise
         | true ->
-            Empty
-            |> ParsingError
-            |> Error
+            FormatException("String was not recognized as a valid IdentityNumber. Cannot be empty string or whitespace.")
+            |> raise
 
     let requireDigitCount (str : string) =
         let chars = str |> toChars
-
         let numDigits =
             chars
             |> List.filter Char.IsDigit
             |> List.length
         match numDigits with
-        | 10 -> (chars |> TenDigits) |> Ok
-        | 12 -> (chars |> TwelveDigits) |> Ok
-        | _ ->
-            Length
-            |> ParsingError
-            |> Error
+        | 10 -> (chars |> TenDigits)
+        | 12 -> (chars |> TwelveDigits)
+        | _ -> FormatException("String was not recognized as a valid IdentityNumber.") |> raise
 
     let clean numberType =
         let (|IsDigit|IsPlus|NotDigitOrPlus|) char =
@@ -63,53 +57,57 @@ let private parseInternal parseYear =
             |> TenDigits
 
     let parseNumberValues (numberType : PinType<string>) =
-        result {
-            match numberType with
-            | TwelveDigits str ->
-                // YYYYMMDDbbbc
-                // 012345678901
-                let year = str.[0..3] |> int
-                let month = str.[4..5] |> int
-                let day = str.[6..7] |> int
-                let birthNumber = str.[8..10] |> int
-                let checksum = str.[11..11] |> int
-                return (year, month, day, birthNumber, checksum)
-            | TenDigits str ->
-                // YYMMDD-bbbc or YYMMDD+bbbc
-                // 01234567890    01234567890
-                let shortYear = (str.[0..1] |> int)
-                let getCentury (year : int) = (year / 100) * 100
-                let parseYear = Year.value parseYear
-                let parseCentury = getCentury parseYear
-                let fullYearGuess = parseCentury + shortYear
-                let lastDigitsParseYear = parseYear % 100
-                let delimiter = str.[6]
+        match numberType with
+        | TwelveDigits str ->
+            // YYYYMMDDbbbc
+            // 012345678901
+            let year = str.[0..3] |> int
+            let month = str.[4..5] |> int
+            let day = str.[6..7] |> int
+            let birthNumber = str.[8..10] |> int
+            let checksum = str.[11..11] |> int
+            (year, month, day, birthNumber, checksum)
+        | TenDigits str ->
+            // YYMMDD-bbbc or YYMMDD+bbbc
+            // 01234567890    01234567890
+            let shortYear = (str.[0..1] |> int)
+            let getCentury (year : int) = (year / 100) * 100
+            let parseYear = Year.value parseYear
+            let parseCentury = getCentury parseYear
+            let fullYearGuess = parseCentury + shortYear
+            let lastDigitsParseYear = parseYear % 100
+            let delimiter = str.[6]
 
-                let! fullYear =
-                    match delimiter with
-                    | '-' when shortYear <= lastDigitsParseYear -> fullYearGuess |> Ok
-                    | '-' -> fullYearGuess - 100 |> Ok
-                    | '+' when shortYear <= lastDigitsParseYear -> fullYearGuess - 100 |> Ok
-                    | '+' -> fullYearGuess - 200 |> Ok
-                    | _ -> "delimiter" |> Invalid |> ParsingError |> Error
+            let fullYear =
+                match delimiter with
+                | '-' when shortYear <= lastDigitsParseYear -> fullYearGuess
+                | '-' -> fullYearGuess - 100
+                | '+' when shortYear <= lastDigitsParseYear -> fullYearGuess - 100
+                | '+' -> fullYearGuess - 200
+                | _ -> FormatException(sprintf "String was not recognized as a valid SwedishPersonalIdentityNumber. delimiter") |> raise
 
-                let month = str.[2..3] |> int
-                let day = str.[4..5] |> int
-                let birthNumber = str.[7..9] |> int
-                let checksum = str.[10..10] |> int
-                return (fullYear, month, day, birthNumber, checksum)
-        }
+            let month = str.[2..3] |> int
+            let day = str.[4..5] |> int
+            let birthNumber = str.[7..9] |> int
+            let checksum = str.[10..10] |> int
+            (fullYear, month, day, birthNumber, checksum)
 
     requireNotEmpty
-    >> Result.bind requireDigitCount
-    >> Result.map clean
-    >> Result.bind parseNumberValues
+    >> requireDigitCount
+    >> clean
+    >> parseNumberValues
 
 let parseInSpecificYear createFunc parseYear str =
-    match parseInternal parseYear str with
-    | Ok pinValues -> createFunc pinValues
-    | Error error -> Error error
-    |> Result.mapError ParsingError.toParsingError
+    try
+        parseInternal parseYear str
+        |> createFunc
+    with
+        | :? ArgumentOutOfRangeException as ex ->
+            FormatException(sprintf "String was not recognized as a valid IdentityNumber. %s" ex.Message, ex) |> raise
+        | :? ArgumentNullException -> reraise()
+        | :? ArgumentException as ex ->
+            FormatException(sprintf "String was not recognized as a valid IdentityNumber. %s" ex.Message, ex) |> raise
 
-let parse createFunc str = result { let! year = DateTime.UtcNow.Year |> Year.create
-                                    return! parseInSpecificYear createFunc year str }
+let parse createFunc str =
+    let year = DateTime.UtcNow.Year |> Year.create
+    parseInSpecificYear createFunc year str

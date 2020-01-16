@@ -6,7 +6,7 @@ using Xunit;
 namespace ActiveLogin.Identity.Swedish.AspNetCore.Test.Validation
 {
     /// <remarks>
-    /// Tested with offical test Personal Identity Numbers from Skatteverket:
+    /// Tested with official test Personal Identity Numbers from Skatteverket:
     /// https://skatteverket.entryscape.net/catalog/9/datasets/147
     /// </remarks>
     public class SwedishPersonalIdentityNumberAttribute_IsValid

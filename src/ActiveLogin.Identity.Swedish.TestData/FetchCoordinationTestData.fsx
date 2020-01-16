@@ -58,7 +58,7 @@ let nums =
     |> Seq.concat
     |> Seq.sort
     |> Seq.map string
-    |> Seq.filter validCoordinationNum
+    // |> Seq.filter validCoordinationNum
 
 
 sb.Clear()

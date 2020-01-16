@@ -92,35 +92,35 @@ let private validNumberTests = testList "valid coordination numbers" [
 let invalidNumberTests = testList "invalid coordination numbers" [
     test "null string returns argument null error" {
         toAction SwedishCoordinationNumber.Parse null
-        |> Expect.throwsWithType<ArgumentNullException>
+        |> Expect.throwsWithType<ArgumentNullException> |> ignore
     }
 
     testProp "empty string returns parsing error" <| fun (Gen.EmptyString str) ->
-        let f = toAction SwedishCoordinationNumber.Parse str
-        Expect.throwsWithType<FormatException> f
-        Expect.throwsWithMessage
-            "String was not recognized as a valid SwedishPersonalIdentityNumber. Cannot be empty string or whitespace."
-            f
+        toAction SwedishCoordinationNumber.Parse str
+        |> Expect.throwsWithType<FormatException>
+        |> Expect.throwsWithMessage
+            "String was not recognized as a valid IdentityNumber. Cannot be empty string or whitespace."
 
     testProp "invalid number of digits returns parsing error" <| fun (Gen.Digits digits) ->
         isInvalidNumberOfDigits digits ==>
             lazy
-                ( let f = toAction SwedishCoordinationNumber.Parse digits
-                  Expect.throwsWithType<FormatException> f
-                  Expect.throwsWithMessage "String was not recognized as a valid SwedishPersonalIdentityNumber." f )
+                ( toAction SwedishCoordinationNumber.Parse digits
+                  |> Expect.throwsWithType<FormatException>
+                  |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber." )
 
     testProp "invalid num returns parsing error" <| fun (Gen.CoordNum.InvalidNumString str) ->
         toAction SwedishCoordinationNumber.Parse str
-        |> Expect.throwsWithMessage "String was not recognized as a valid SwedishPersonalIdentityNumber."
+        |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber."
 
     testProp "parseInSpecificYear with empty string returns parsing error" <| fun (Gen.EmptyString str, Gen.ValidYear year) ->
-        let f  = toAction SwedishCoordinationNumber.ParseInSpecificYear (str, year)
-        Expect.throwsWithType<FormatException> f
-        Expect.throwsWithMessage "String was not recognized as a valid SwedishPersonalIdentityNumber. Cannot be empty string or whitespace." f
+        toAction SwedishCoordinationNumber.ParseInSpecificYear (str, year)
+        |> Expect.throwsWithType<FormatException>
+        |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber. Cannot be empty string or whitespace."
 
-    testProp "parseInSpecificYear with null string returns argument null error" <| fun (Gen.ValidYear year) ->
+    testProp "parseInSpecificYear with null string throws" <| fun (Gen.ValidYear year) ->
         toAction SwedishCoordinationNumber.ParseInSpecificYear (null, year)
         |> Expect.throwsWithType<ArgumentNullException>
+        |> ignore
 
     testPropWithMaxTest 400 "cannot convert a num to 10 digit string in a specific year when the person would be 200 years or older"
         <| fun (Gen.CoordNum.ValidNum num) ->
@@ -141,4 +141,4 @@ let invalidNumberTests = testList "invalid coordination numbers" [
             |> Expect.throwsWithMessage "SerializationYear cannot be a year before the person was born" ]
 
 [<Tests>]
-let tests = testList "SwedishCoordinationNumber.parse" [ validNumberTests ; invalidNumberTests ]
+let tests = testList "SwedishCoordinationNumber.Parse" [ validNumberTests ; invalidNumberTests ]

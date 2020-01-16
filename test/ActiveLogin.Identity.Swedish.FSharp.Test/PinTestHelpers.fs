@@ -6,22 +6,20 @@ open System.Threading
 open ActiveLogin.Identity.Swedish
 
 let toAction f arg =
-    fun _ -> f arg |> ignore
+    fun () -> f arg |> ignore
 
 let toAction2 f arg1 arg2 =
-    fun _ -> f arg1 arg2 |> ignore
+    fun () -> f arg1 arg2 |> ignore
 
 let (|Even|Odd|) num =
     match num % 2 with
     | 0 -> Even
     | _ -> Odd
 
-
 module Expect =
     let throwsWithType<'texn> f =
-        Expect.throwsT<'texn>
-            f
-            "Should throw with expected type"
+        Expect.throwsT<'texn> f "Should throw with expected type"
+        f
 
     let throwsWithMessages (msgs: string list) f =
         Expect.throwsC
@@ -31,8 +29,7 @@ module Expect =
                 msgs
                 |> List.iter
                     (fun msg ->
-                        Expect.stringContains exn.Message msg (failureMessage msg))
-                    )
+                        Expect.stringContains exn.Message msg (failureMessage msg)))
 
     let throwsWithMessage (msg:string) f = throwsWithMessages [ msg ] f
 
@@ -51,7 +48,7 @@ module Expect =
             | Some exn ->
                 if exn.Message.ToLower().Contains(msg.ToLower())
                 then
-                    failtestf "Should not throw exception with message: %s" msg
+                    failtestf "Should not throw exception with message: %s\nException message: %s" msg exn.Message
 
 let private arbTypes = [ typeof<Gen.ValueGenerators> ]
 let private config =
