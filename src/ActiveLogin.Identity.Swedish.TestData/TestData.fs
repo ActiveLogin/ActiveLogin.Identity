@@ -63,8 +63,8 @@ type SwedishPersonalIdentityNumberTestData() =
     /// <param name="count">The number of numbers to return</param>
     static member GetRandom(count) =
         getRandomWithCount(count)
-        |> Seq.map toPin
         |> List.ofSeq
+        |> Seq.map toPin
     /// A seqence of all test numbers ordered by date descending
     static member AllPinsByDateDesc() = allPinsByDateDesc() |> Seq.map toPin
     /// A sequence of all test numbers in random order
@@ -142,8 +142,8 @@ type SwedishCoordinationNumberTestData() =
     /// <param name="count">The number of numbers to return</param>
     static member GetRandom(count) =
         getRandomWithCount(count)
-        |> Seq.map toCoordNum
         |> List.ofSeq
+        |> Seq.map toCoordNum
     /// A seqence of all test numbers ordered by date descending
     static member AllCoordinationNumbersByDateDesc() = allCoordNumsByDateDesc() |> Seq.map toCoordNum
     /// A sequence of all test numbers in random order
