@@ -78,16 +78,6 @@ type SwedishPersonalIdentityNumberTestData() =
         (pin.Year, pin.Month, pin.Day, pin.BirthNumber, pin.Checksum)
         |> isTestNumberTuple
 
-open System.Runtime.CompilerServices
-
-[<Extension>]
-/// Checks if a SwedishPersonalIdentityNumber is a test number
-type SwedishPersonalIdentityNumberTestDataExtensions() =
-    [<Extension>]
-    static member IsTestNumber(pin : SwedishPersonalIdentityNumber) =
-        SwedishPersonalIdentityNumberTestData.IsTestNumber pin
-
-
 module SwedishCoordinationNumberTestDataInternal =
     open AllCoordNums
     let internal shuffledCoordNums() = allCoordNums |> Array.sortBy Random.random
@@ -158,11 +148,3 @@ type SwedishCoordinationNumberTestData() =
         |> toTuple
         |> isTestNumberTuple
 
-open System.Runtime.CompilerServices
-
-[<Extension>]
-/// Checks if a SwedishCoordinationNumber is a test number
-type SwedishCoordinationNumberTestDataExtensions() =
-    [<Extension>]
-    static member IsTestNumber(pin : SwedishCoordinationNumber) =
-        SwedishCoordinationNumberTestData.IsTestNumber pin
