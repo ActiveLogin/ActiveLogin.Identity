@@ -1,6 +1,7 @@
 module ActiveLogin.Identity.Swedish.FSharp.Test.TestDataTests
 open Swensen.Unquote
 open Expecto
+open ActiveLogin.Identity.Swedish
 open ActiveLogin.Identity.Swedish.FSharp.Test.PinTestHelpers
 open ActiveLogin.Identity.Swedish.TestData
 

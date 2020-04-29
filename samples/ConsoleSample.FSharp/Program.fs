@@ -1,8 +1,6 @@
 ﻿module ConsoleSample.FSharp
 
-open System
 open ActiveLogin.Identity.Swedish
-open ActiveLogin.Identity.Swedish.TestData
 open ActiveLogin.Identity.Swedish.Extensions
 
 let samplePins = [ "990913+9801"; "120211+9986"; "990807-2391"; "180101-2392"; "180101.2392" ]
@@ -27,7 +25,7 @@ module SwedishPersonalIdentityNumber =
         printfn "   .GetDateOfBirthHint(): %s" (num.GetDateOfBirthHint().ToShortDateString())
         printfn "   .GetAgeHint(): %O" (num.GetAgeHint())
         printfn "   .GetGenderHint(): %O" (num.GetGenderHint())
-        printfn "   .IsTestNumber(): %O" (num.IsTestNumber())
+        printfn "   .IsTestNumber(): %O" (num.IsTestNumber)
 
 let sampleStrings = samplePins @ sampleCoordinationNumbers @ sampleInvalidNumbers
 
