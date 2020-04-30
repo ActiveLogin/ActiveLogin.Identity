@@ -34,6 +34,7 @@ module Pin =
     type LeapDayPin = LeapDayPin of SwedishPersonalIdentityNumber
 
 module CoordNum =
+    let [<Literal>] DayOffset = 60
     type ValidNum = ValidNum of SwedishCoordinationNumber
     type Valid12Digit = Valid12Digit of string
     type InvalidNumString = InvalidNumString of string
@@ -263,6 +264,7 @@ module Generators =
                     }
                 let withInvalidDay =
                     gen {
+                        // pseudo-code: if month = 0 then [60,91] is valid else [61-(daysInMonth+60)]
                         let tooLow = Gen.choose(0,59)
                         let tooHigh = Gen.choose(92,99)
                         let invalidDay = Gen.oneof [ tooLow; tooHigh ]
@@ -304,10 +306,11 @@ module Generators =
             |> Arb.fromGen
 
 
+        let maxDaysOfAnyMonth = 31
         let withInvalidDay =
             gen {
                 let! (CoordNum.ValidValues (year, month, _, individualNumber, checksum)) = validValues
-                let! invalidDay = outsideRange 60 91
+                let! invalidDay = outsideRange (CoordNum.DayOffset + 0) (CoordNum.DayOffset + maxDaysOfAnyMonth)
                 return (year, month, invalidDay, individualNumber, checksum) |> CoordNum.WithInvalidDay
             }
 
@@ -316,7 +319,8 @@ module Generators =
         let withValidCoordinationDay =
             gen {
                 let! (CoordNum.ValidValues (year, month, day, individualNumber, checksum)) = validValues
-                let! validDay = Gen.choose(60, 91)
+                let daysInMonth = if month = 0 then maxDaysOfAnyMonth else DateTime.DaysInMonth(year, month)
+                let! validDay = Gen.choose(CoordNum.DayOffset, (CoordNum.DayOffset + daysInMonth))
                 return (year, month, validDay, individualNumber, checksum) |> CoordNum.WithValidDay
             }
 
