@@ -3,6 +3,10 @@ module internal ActiveLogin.Identity.Swedish.FSharp.Types
 
 open System
 
+//-----------------------------------------------------------------------------
+// Domain - Types
+//-----------------------------------------------------------------------------
+
 type Year = private Year of int
 type Month = private Month of int
 type Day = private Day of int
@@ -30,6 +34,10 @@ type IndividualIdentityNumberInternal =
     | Personal of SwedishPersonalIdentityNumberInternal
     | Coordination of SwedishCoordinationNumberInternal
 
+//-----------------------------------------------------------------------------
+// Domain - Modules
+//-----------------------------------------------------------------------------
+
 module Year =
     let create year =
         let isValidYear = year >= DateTime.MinValue.Year && year <= DateTime.MaxValue.Year
@@ -40,9 +48,6 @@ module Year =
             ArgumentOutOfRangeException("year", year, "Invalid year.") |> raise
 
     let value (Year year) = year
-
-type Year with
-    member this.Value = Year.value this
 
 module Month =
     let create month =
@@ -56,9 +61,6 @@ module Month =
             |> raise
 
     let value (Month month) = month
-
-type Month with
-    member this.Value = Month.value this
 
 module Day =
     let create (Year inYear) (Month inMonth) day =
@@ -74,9 +76,6 @@ module Day =
 
     let value (Day day) = day
 
-type Day with
-    member this.Value = Day.value this
-
 module CoordinationMonth =
     let create month =
         if month < 0 || month > 12 then
@@ -87,24 +86,22 @@ module CoordinationMonth =
 
     let value (CoordinationMonth month) = month
 
-type CoordinationMonth with
-    member this.Value = this |> CoordinationMonth.value
-
 module CoordinationDay =
-    let create day =
-
-        if day < 60 || day > 91 then
-            ArgumentOutOfRangeException("day", day, "Invalid coordination day.")
-            |> raise
+    let [<Literal>] DayOffset = 60
+    let create (Year inYear) (CoordinationMonth inMonth) day =
+        if day = 0 then
+            CoordinationDay DayOffset
         else
-            day
-            |> CoordinationDay
+            let daysInMonth =
+                if inMonth = 0 then 31 else DateTime.DaysInMonth(inYear, inMonth)
+
+            if day < DayOffset || day > (daysInMonth + DayOffset) then
+                ArgumentOutOfRangeException("day", day, "Invalid coordination day.")
+                |> raise
+            else
+                CoordinationDay day
 
     let value (CoordinationDay day) = day
-
-type CoordinationDay with
-    member this.Value = this |> CoordinationDay.value
-    member this.RealDay = this.Value - 60
 
 module BirthNumber =
     let create num =
@@ -118,9 +115,6 @@ module BirthNumber =
 
     let value (BirthNumber num) = num
 
-type BirthNumber with
-    member this.Value = BirthNumber.value this
-
 module IndividualNumber =
     let create num =
         let isValidIndividualNumber = num >= 1 && num <= 999
@@ -132,9 +126,6 @@ module IndividualNumber =
             |> raise
 
     let value (IndividualNumber num) = num
-
-type IndividualNumber with
-    member this.Value = this |> IndividualNumber.value
 
 module Checksum =
     let private create' year month day birth checksum =
@@ -170,30 +161,41 @@ module Checksum =
         sum =
         let m =
             match month with
-            | Choice1Of2 m -> m.Value
-            | Choice2Of2 m -> m.Value
+            | Choice1Of2 m -> Month.value m
+            | Choice2Of2 m -> CoordinationMonth.value m
         let d =
             match day with
-            | Choice1Of2 day -> day.Value
-            | Choice2Of2 coordinationDay -> coordinationDay.Value
+            | Choice1Of2 day -> Day.value day
+            | Choice2Of2 coordinationDay -> CoordinationDay.value coordinationDay
         let num =
             match num with
-            | Choice1Of2 birthNumber -> birthNumber.Value
-            | Choice2Of2 individualNumber -> individualNumber.Value
+            | Choice1Of2 birthNumber -> BirthNumber.value birthNumber
+            | Choice2Of2 individualNumber -> IndividualNumber.value individualNumber
 
         create' y m d num sum
 
     let value (Checksum sum) = sum
 
-type Checksum with
-    member this.Value = this |> Checksum.value
+//-----------------------------------------------------------------------------
+// Domain - Type Extensions
+//-----------------------------------------------------------------------------
+
+type Year with member this.Value = Year.value this
+type Month with member this.Value = Month.value this
+type Day with member this.Value = Day.value this
+type CoordinationMonth with member this.Value = this |> CoordinationMonth.value
+type CoordinationDay with
+    member this.Value = this |> CoordinationDay.value
+    member this.RealDay = this.Value - CoordinationDay.DayOffset // TODO handle when RealDay = 0. Throw? Null?
+type BirthNumber with member this.Value = BirthNumber.value this
+type IndividualNumber with member this.Value = this |> IndividualNumber.value
+type Checksum with member this.Value = this |> Checksum.value
 
 type IndividualIdentityNumberInternal with
     member this.IsSwedishPersonalIdentityNumber =
         match this with
         | Personal _ -> true
         | _ -> false
-
     member this.IsSwedishCoordinationNumber =
         match this with
         | Coordination _ -> true
