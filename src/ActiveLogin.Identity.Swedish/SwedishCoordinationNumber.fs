@@ -105,6 +105,21 @@ type SwedishCoordinationNumber internal(num : SwedishCoordinationNumberInternal)
     member __.Year = num.Year.Value
 
     /// <summary>
+    /// The month for date of birth. Can be 0 if month is unknown.
+    /// </summary>
+    member __.Month = num.CoordinationMonth.Value
+
+    /// <summary>
+    /// The coordination day. This is defined as the day for date of birth + 60.
+    /// </summary>
+    member __.Day = num.CoordinationDay.Value
+
+    /// <summary>
+    /// The real day of date of birth. This is the coordination day - 60. Since 60 is a valid coordination day, the "RealDay" can be 0, when the day of date of birth is unknown.
+    /// </summary>
+    member __.RealDay = num.CoordinationDay.RealDay
+
+    /// <summary>
     /// Converts the string representation of the Swedish coordination number to its <see cref="SwedishCoordinationNumber"/> equivalent.
     /// </summary>
     /// <param name="s">A string representation of the Swedish coordination number to parse.</param>
