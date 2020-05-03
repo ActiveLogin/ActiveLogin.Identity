@@ -5,10 +5,6 @@ open ActiveLogin.Identity.Swedish
 open ActiveLogin.Identity.Swedish.TestData
 open System
 
-let private chooseFromArray xs =
-    gen { let! index = Gen.choose (0, (Array.length xs) - 1)
-          return xs.[index] }
-
 type EmptyString = EmptyString of string
 type Digits = Digits of string
 type Max200 = Max200 of int
@@ -25,7 +21,11 @@ type IdentityNumberValues = (int * int * int * int * int)
 module Pin =
     type Valid12Digit = Valid12Digit of string
     type ValidValues = ValidValues of IdentityNumberValues
-    type InvalidPinString = InvalidPinString of string
+    type PinWithInvalidYear = PinWithInvalidYear of string
+    type PinWithInvalidMonth = PinWithInvalidMonth of string
+    type PinWithInvalidDay = PinWithInvalidDay of string
+    type PinWithInvalidIndividualNumber = PinWithInvalidIndividualNumber of string
+    type PinWithInvalidChecksum = PinWithInvalidChecksum of string
     type ValidPin = ValidPin of SwedishPersonalIdentityNumber
     type WithInvalidDay = WithInvalidDay of IdentityNumberValues
     type WithValidDay = WithValidDay of IdentityNumberValues
@@ -37,7 +37,11 @@ module CoordNum =
     let [<Literal>] DayOffset = 60
     type ValidNum = ValidNum of SwedishCoordinationNumber
     type Valid12Digit = Valid12Digit of string
-    type InvalidNumString = InvalidNumString of string
+    type NumWithInvalidYear = NumWithInvalidYear of string
+    type NumWithInvalidMonth = NumWithInvalidMonth of string
+    type NumWithInvalidDay = NumWithInvalidDay of string
+    type NumWithInvalidIndividualNumber = NumWithInvalidIndividualNumber of string
+    type NumWithInvalidChecksum = NumWithInvalidChecksum of string
     type TwoEqualCoordNums = TwoEqualCoordNums of SwedishCoordinationNumber * SwedishCoordinationNumber
     type ValidValues = ValidValues of IdentityNumberValues
     type TwoCoordNums = TwoCoordNums of SwedishCoordinationNumber * SwedishCoordinationNumber
@@ -47,6 +51,11 @@ module CoordNum =
     type LeapDayCoordNum = LeapDayCoordNum of SwedishCoordinationNumber
 
 
+module Gen =
+    let chooseFromArray xs =
+        gen { let! index = Gen.choose (0, (Array.length xs) - 1)
+              return xs.[index] }
+
 let stringToValues (pin: string) =
     ( pin.[0..3] |> int,
       pin.[4..5] |> int,
@@ -54,7 +63,8 @@ let stringToValues (pin: string) =
       pin.[8..10] |> int,
       pin.[11..11] |> int )
 
-module Generators =
+[<AutoOpen>]
+module private Internal =
 
     let max200Gen() = Gen.choose (-100, 200) |> Gen.map Max200 |> Arb.fromGen
 
@@ -134,8 +144,28 @@ module Generators =
             return Age(Years = years, Months = months, Days = days)
         } |> Arb.fromGen
 
+    let numStringWithInvalidYear (valid12Digit: Gen<string>) =
+        gen {
+            let! valid12Digit = valid12Digit
+            return "0000" + valid12Digit.[4..]
+        }
+
+    let numStringWithInvalidIndividualNumber (valid12Digit: Gen<string>) =
+        gen {
+            let! valid12Digit = valid12Digit
+            return valid12Digit.[0..7] + "000" + valid12Digit.[11..]
+        }
+
+    let numStringWithInvalidChecksum (valid12Digit: Gen<string>) =
+        gen {
+            let! valid12Digit = valid12Digit
+            let checksum = valid12Digit.[11..]
+            let invalid = checksum |> int |> fun i -> (i + 1) % 10 |> string
+            return valid12Digit.[0..10] + invalid
+        }
+
     module Pin =
-        let valid12Digit = chooseFromArray SwedishPersonalIdentityNumberTestData.Raw12DigitStrings
+        let valid12Digit = Gen.chooseFromArray SwedishPersonalIdentityNumberTestData.Raw12DigitStrings
         let valid12DigitGen() = valid12Digit |> Gen.map Pin.Valid12Digit |> Arb.fromGen
         let validDay year month =
             let daysInMonth = DateTime.DaysInMonth(year, month)
@@ -146,7 +176,7 @@ module Generators =
 
         let withInvalidDay =
             gen {
-                let! (Pin.ValidValues (year, month, day, birthNumber, checksum)) = validValues
+                let! (Pin.ValidValues (year, month, _, birthNumber, checksum)) = validValues
                 let daysInMonth = DateTime.DaysInMonth(year, month)
                 let! invalidDay = outsideRange 1 daysInMonth
                 return (year, month, invalidDay, birthNumber, checksum) |> Pin.WithInvalidDay
@@ -156,7 +186,7 @@ module Generators =
 
         let withValidDay =
             gen {
-                let! (Pin.ValidValues (year, month, day, birthNumber, checksum)) = validValues
+                let! (Pin.ValidValues (year, month, _, birthNumber, checksum)) = validValues
                 let! validDay = validDay year month
                 return (year, month, validDay, birthNumber, checksum) |> Pin.WithValidDay
             }
@@ -192,36 +222,40 @@ module Generators =
             gen { return SwedishPersonalIdentityNumberTestData.GetRandom() |> Pin.ValidPin }
             |> Arb.fromGen
 
-        let invalidPinStringGen() =
+        let pinStringWithInvalidYearGen() =
+            numStringWithInvalidYear valid12Digit
+            |> Gen.map Pin.PinWithInvalidYear
+            |> Arb.fromGen
+
+        let pinStringWithInvalidMonthGen() =
             gen {
-                let! valid = valid12Digit
-                let withInvalidYear =
-                    gen {
-                        return "0000" + valid.[4..]
-                    }
-                let withInvalidMonth =
-                    gen {
-                        let! month = Gen.choose (13, 99) |> Gen.map string
-                        return valid.[0..3] + month + valid.[6..]
-                    }
-                let withInvalidDay =
-                    gen {
-                        let year = valid.[0..3] |> int
-                        let month = valid.[4..5] |> int
-                        let daysInMonth = DateTime.DaysInMonth(year, month)
-                        let! day = Gen.choose (daysInMonth + 1, 99) |> Gen.map string
-                        return valid.[0..5] + day + valid.[8..]
-                    }
-                let withInvalidBirthNumber =
-                    gen {
-                        return valid.[0..7] + "000" + valid.[11..]
-                    }
-                let withInvalidChecksum =
-                    let checksum = valid.[11..]
-                    let invalid = checksum |> int |> fun i -> (i + 1) % 10 |> string
-                    gen { return valid.[0..10] + invalid }
-                return! Gen.oneof [ withInvalidYear; withInvalidMonth; withInvalidDay; withInvalidBirthNumber; withInvalidChecksum ]
-            } |> Gen.map Pin.InvalidPinString |> Arb.fromGen
+                let! valid12Digit = valid12Digit
+                let! month = Gen.choose (13, 99) |> Gen.map string
+                return valid12Digit.[0..3] + month + valid12Digit.[6..]
+            } |> Gen.map Pin.PinWithInvalidMonth |> Arb.fromGen
+
+        let pinStringWithInvalidDayGen() =
+            gen {
+                let! valid12Digit = valid12Digit
+                let year = valid12Digit.[0..3] |> int
+                let month = valid12Digit.[4..5] |> int
+                let daysInMonth = DateTime.DaysInMonth(year, month)
+                let invalidDays = Array.append [| 0 |] [| daysInMonth + 1 .. 99 |]
+                let! invalidDay =
+                    Gen.chooseFromArray invalidDays
+                    |> Gen.map (fun num -> num.ToString("00"))
+                return valid12Digit.[0..5] + invalidDay + valid12Digit.[8..]
+            } |> Gen.map Pin.PinWithInvalidDay |> Arb.fromGen
+
+        let pinStringWithInvalidIndividualNumberGen() =
+            numStringWithInvalidIndividualNumber valid12Digit
+            |> Gen.map Pin.PinWithInvalidIndividualNumber
+            |> Arb.fromGen
+
+        let pinStringWithInvalidChecksumGen() =
+            numStringWithInvalidChecksum valid12Digit
+            |> Gen.map Pin.PinWithInvalidChecksum
+            |> Arb.fromGen
 
         let leapDayPins =
             let isLeapDay (pin: SwedishPersonalIdentityNumber) =
@@ -233,7 +267,7 @@ module Generators =
 
         let leapDayPinGen() =
             leapDayPins
-            |> chooseFromArray
+            |> Gen.chooseFromArray
             |> Gen.map Pin.LeapDayPin
             |> Arb.fromGen
 
@@ -243,44 +277,50 @@ module Generators =
             gen { return SwedishCoordinationNumberTestData.GetRandom() |> CoordNum.ValidNum }
             |> Arb.fromGen
 
-        let valid12Digit = chooseFromArray SwedishCoordinationNumberTestData.Raw12DigitStrings
+        let valid12Digit = Gen.chooseFromArray SwedishCoordinationNumberTestData.Raw12DigitStrings
         let valid12DigitGen() = valid12Digit |> Gen.map CoordNum.Valid12Digit |> Arb.fromGen
 
         let validValues = valid12Digit |> Gen.map (stringToValues >> CoordNum.ValidValues)
         let validValuesGen() = validValues |> Arb.fromGen
 
-        let invalidNumStringGen() =
+        let numStringWithInvalidYearGen() =
+            numStringWithInvalidYear valid12Digit
+            |> Gen.map CoordNum.NumWithInvalidYear
+            |> Arb.fromGen
+
+        let numStringWithInvalidMonthGen() =
             gen {
                 let! valid12Digit = valid12Digit
+                let! month = Gen.choose (13, 99) |> Gen.map string
+                return valid12Digit.[0..3] + month + valid12Digit.[6..]
+            } |> Gen.map CoordNum.NumWithInvalidMonth |> Arb.fromGen
 
-                let withInvalidYear =
-                    gen {
-                        return "0000" + valid12Digit.[4..]
-                    }
-                let withInvalidMonth =
-                    gen {
-                        let! month = Gen.choose (13, 99) |> Gen.map string
-                        return valid12Digit.[0..3] + month + valid12Digit.[6..]
-                    }
-                let withInvalidDay =
-                    gen {
-                        // pseudo-code: if month = 0 then [60,91] is valid else [61-(daysInMonth+60)]
-                        let tooLow = Gen.choose(0,59)
-                        let tooHigh = Gen.choose(92,99)
-                        let invalidDay = Gen.oneof [ tooLow; tooHigh ]
-                        let! dayStr = invalidDay |> Gen.map (fun num -> num.ToString("00"))
-                        return valid12Digit.[0..5] + dayStr + valid12Digit.[8..]
-                    }
-                let withInvalidBirthNumber =
-                    gen {
-                        return valid12Digit.[0..7] + "000" + valid12Digit.[11..]
-                    }
-                let withInvalidChecksum =
-                    let checksum = valid12Digit.[11..]
-                    let invalid = checksum |> int |> fun i -> (i + 1) % 10 |> string
-                    gen { return valid12Digit.[0..10] + invalid }
-                return! Gen.oneof [ withInvalidYear; withInvalidMonth; withInvalidDay; withInvalidBirthNumber; withInvalidChecksum ]
-            } |> Gen.map CoordNum.InvalidNumString |> Arb.fromGen
+        let numStringWithInvalidDayGen() =
+            gen {
+                let! valid12Digit = valid12Digit
+                // pseudo-code: if month = 0 then [60,91] is valid else [61-(daysInMonth+60)]
+                let year = int valid12Digit.[0..3]
+                let month = int valid12Digit.[4..5]
+                let daysInMonth =
+                    if month = 0 then 31 else DateTime.DaysInMonth(year, month)
+                let tooLowDays = [| 0..(CoordNum.DayOffset - 1) |]
+                let tooHighDays = [| daysInMonth + (CoordNum.DayOffset + 1) .. 99 |]
+                let invalidDays = Array.append tooLowDays tooHighDays
+                let! invalidDay =
+                    Gen.chooseFromArray invalidDays
+                    |> Gen.map (fun num -> num.ToString("00"))
+                return valid12Digit.[0..5] + invalidDay + valid12Digit.[8..]
+            } |> Gen.map CoordNum.NumWithInvalidDay |> Arb.fromGen
+
+        let numStringWithInvalidIndividualNumberGen() =
+            numStringWithInvalidIndividualNumber valid12Digit
+            |> Gen.map CoordNum.NumWithInvalidIndividualNumber
+            |> Arb.fromGen
+
+        let numStringWithInvalidChecksumGen() =
+            numStringWithInvalidChecksum valid12Digit
+            |> Gen.map CoordNum.NumWithInvalidChecksum
+            |> Arb.fromGen
 
         let twoEqualCoordNumsGen() =
             gen {
@@ -305,7 +345,6 @@ module Generators =
             }
             |> Arb.fromGen
 
-
         let maxDaysOfAnyMonth = 31
         let withInvalidDay =
             gen {
@@ -318,7 +357,7 @@ module Generators =
 
         let withValidCoordinationDay =
             gen {
-                let! (CoordNum.ValidValues (year, month, day, individualNumber, checksum)) = validValues
+                let! (CoordNum.ValidValues (year, month, _, individualNumber, checksum)) = validValues
                 let daysInMonth = if month = 0 then maxDaysOfAnyMonth else DateTime.DaysInMonth(year, month)
                 let! validDay = Gen.choose(CoordNum.DayOffset, (CoordNum.DayOffset + daysInMonth))
                 return (year, month, validDay, individualNumber, checksum) |> CoordNum.WithValidDay
@@ -335,8 +374,6 @@ module Generators =
 
         let withInvalidCoordinationMonthGen() = withInvalidCoordinationMonth |> Arb.fromGen
 
-open Generators
-
 type ValueGenerators() =
     static member EmptyString() = emptyStringGen()
     static member Digits() = digitsGen()
@@ -346,7 +383,11 @@ type ValueGenerators() =
     static member InvalidYear() = invalidYearGen()
     static member InvalidMonth() = invalidMonthGen()
     static member ValidYear() = validYearGen()
-    static member InvalidPinString() = Pin.invalidPinStringGen()
+    static member PinStringWithInvalidYear() = Pin.pinStringWithInvalidYearGen()
+    static member PinStringWithInvalidMonth() = Pin.pinStringWithInvalidMonthGen()
+    static member PinStringWithInvalidDay() = Pin.pinStringWithInvalidDayGen()
+    static member PinStringWithInvalidIndividualNumber() = Pin.pinStringWithInvalidIndividualNumberGen()
+    static member PinStringWithInvalidChecksum() = Pin.pinStringWithInvalidChecksumGen()
     static member ValidPin() = Pin.validPinGen()
     static member ValidMonth() = validMonthGen()
     static member PinWithInvalidDay() = Pin.withInvalidDayGen()
@@ -359,7 +400,11 @@ type ValueGenerators() =
     static member Age() = age()
     static member LeapDayPin() = Pin.leapDayPinGen()
     static member ValidCoordNum() = CoordNum.validCoordNumGen()
-    static member InvalidCoordNumString() = CoordNum.invalidNumStringGen()
+    static member CoordNumStringWithInvalidYear() = CoordNum.numStringWithInvalidYearGen()
+    static member CoordNumStringWithInvalidMonth() = CoordNum.numStringWithInvalidMonthGen()
+    static member CoordNumStringWithInvalidDay() = CoordNum.numStringWithInvalidDayGen()
+    static member CoordNumStringWithInvalidIndividualNumber() = CoordNum.numStringWithInvalidIndividualNumberGen()
+    static member CoordNumStringWithInvalidChecksum() = CoordNum.numStringWithInvalidChecksumGen()
     static member TwoEqualCoordNums() = CoordNum.twoEqualCoordNumsGen()
     static member TwoCoordNums() = CoordNum.twoCoordNumsGen()
     static member Valid12DigitCoordNum() = CoordNum.valid12DigitGen()

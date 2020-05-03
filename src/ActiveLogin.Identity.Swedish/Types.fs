@@ -89,8 +89,8 @@ module CoordinationMonth =
 module CoordinationDay =
     let [<Literal>] DayOffset = 60
     let create (Year inYear) (CoordinationMonth inMonth) day =
-        if day = 0 then
-            CoordinationDay DayOffset
+        if day = DayOffset then
+            CoordinationDay DayOffset // Real day = 0, this is valid when the day of date of birth is unknown.
         else
             let daysInMonth =
                 if inMonth = 0 then 31 else DateTime.DaysInMonth(inYear, inMonth)
