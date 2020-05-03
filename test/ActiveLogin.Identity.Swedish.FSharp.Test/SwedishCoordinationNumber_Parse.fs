@@ -108,9 +108,25 @@ let invalidNumberTests = testList "invalid coordination numbers" [
                   |> Expect.throwsWithType<FormatException>
                   |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber." )
 
-    testProp "invalid num returns parsing error" <| fun (Gen.CoordNum.InvalidNumString str) ->
+    testProp "num with invalid year returns parsing error" <| fun (Gen.CoordNum.NumWithInvalidYear str) ->
         toAction SwedishCoordinationNumber.Parse str
-        |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber."
+        |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid year" ]
+
+    testProp "num with invalid month returns parsing error" <| fun (Gen.CoordNum.NumWithInvalidMonth str) ->
+        toAction SwedishCoordinationNumber.Parse str
+        |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; " Invalid month for coordination number"]
+
+    testProp "num with invalid day returns parsing error" <| fun (Gen.CoordNum.NumWithInvalidDay str) ->
+        toAction SwedishCoordinationNumber.Parse str
+        |> Expect.throwsWithMessages ["String was not recognized as a valid IdentityNumber."; "Invalid coordination day"]
+
+    testProp "num with invalid individual number returns parsing error" <| fun (Gen.CoordNum.NumWithInvalidIndividualNumber str) ->
+        toAction SwedishCoordinationNumber.Parse str
+        |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid individual number" ]
+
+    testProp "num with invalid checksum returns parsing error" <| fun (Gen.CoordNum.NumWithInvalidChecksum str) ->
+        toAction SwedishCoordinationNumber.Parse str
+        |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid checksum" ]
 
     testProp "parseInSpecificYear with empty string returns parsing error" <| fun (Gen.EmptyString str, Gen.ValidYear year) ->
         toAction SwedishCoordinationNumber.ParseInSpecificYear (str, year)

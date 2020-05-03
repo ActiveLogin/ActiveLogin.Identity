@@ -109,10 +109,25 @@ let invalidPinTests = testList "invalid pins" [
                   |> Expect.throwsWithType<FormatException>
                   |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber." )
 
-    testProp "invalid pin returns throws" <| fun (Gen.Pin.InvalidPinString str) ->
+    testProp "pin with invalid year returns parsing error" <| fun (Gen.Pin.PinWithInvalidYear str) ->
         toAction SwedishPersonalIdentityNumber.Parse str
-        |> Expect.throwsWithType<FormatException>
-        |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber."
+        |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid year" ]
+
+    testProp "pin with invalid month returns parsing error" <| fun (Gen.Pin.PinWithInvalidMonth str) ->
+        toAction SwedishPersonalIdentityNumber.Parse str
+        |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; " Invalid month"]
+
+    testProp "pin with invalid day returns parsing error" <| fun (Gen.Pin.PinWithInvalidDay str) ->
+        toAction SwedishPersonalIdentityNumber.Parse str
+        |> Expect.throwsWithMessages ["String was not recognized as a valid IdentityNumber."; "Invalid day"]
+
+    testProp "pin with invalid individual number returns parsing error" <| fun (Gen.Pin.PinWithInvalidIndividualNumber str) ->
+        toAction SwedishPersonalIdentityNumber.Parse str
+        |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid birth number" ]
+
+    testProp "pin with invalid checksum returns parsing error" <| fun (Gen.Pin.PinWithInvalidChecksum str) ->
+        toAction SwedishPersonalIdentityNumber.Parse str
+        |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid checksum" ]
 
     testProp "parseInSpecificYear with empty string throws" <| fun (Gen.EmptyString str, Gen.ValidYear year) ->
         toAction SwedishPersonalIdentityNumber.ParseInSpecificYear (str, year)
