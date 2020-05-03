@@ -1,15 +1,14 @@
 namespace ActiveLogin.Identity.Swedish.Extensions
 open System.Runtime.CompilerServices
 open ActiveLogin.Identity.Swedish
-open ActiveLogin.Identity.Swedish.FSharp
 
 module internal IndividualIdentityNumberHints =
     let getGenderHint (num: IndividualIdentityNumberInternal) =
         match num with
         | Personal pin ->
-            pin |> SwedishPersonalIdentityNumberHints.getGenderHint
+            pin |> PersonalIdentityNumberHints.getGenderHint
         | Coordination num ->
-            num |> SwedishCoordinationNumberHints.getGenderHint
+            num |> CoordinationNumberHints.getGenderHint
 
 [<Extension>]
 type IdentityNumberHintExtensions() =

@@ -26,29 +26,29 @@ module Pin =
     type PinWithInvalidDay = PinWithInvalidDay of string
     type PinWithInvalidIndividualNumber = PinWithInvalidIndividualNumber of string
     type PinWithInvalidChecksum = PinWithInvalidChecksum of string
-    type ValidPin = ValidPin of SwedishPersonalIdentityNumber
+    type ValidPin = ValidPin of PersonalIdentityNumber
     type WithInvalidDay = WithInvalidDay of IdentityNumberValues
     type WithValidDay = WithValidDay of IdentityNumberValues
-    type TwoEqualPins = TwoEqualPins of SwedishPersonalIdentityNumber * SwedishPersonalIdentityNumber
-    type TwoPins = TwoPins of SwedishPersonalIdentityNumber * SwedishPersonalIdentityNumber
-    type LeapDayPin = LeapDayPin of SwedishPersonalIdentityNumber
+    type TwoEqualPins = TwoEqualPins of PersonalIdentityNumber * PersonalIdentityNumber
+    type TwoPins = TwoPins of PersonalIdentityNumber * PersonalIdentityNumber
+    type LeapDayPin = LeapDayPin of PersonalIdentityNumber
 
 module CoordNum =
     let [<Literal>] DayOffset = 60
-    type ValidNum = ValidNum of SwedishCoordinationNumber
+    type ValidNum = ValidNum of CoordinationNumber
     type Valid12Digit = Valid12Digit of string
     type NumWithInvalidYear = NumWithInvalidYear of string
     type NumWithInvalidMonth = NumWithInvalidMonth of string
     type NumWithInvalidDay = NumWithInvalidDay of string
     type NumWithInvalidIndividualNumber = NumWithInvalidIndividualNumber of string
     type NumWithInvalidChecksum = NumWithInvalidChecksum of string
-    type TwoEqualCoordNums = TwoEqualCoordNums of SwedishCoordinationNumber * SwedishCoordinationNumber
+    type TwoEqualCoordNums = TwoEqualCoordNums of CoordinationNumber * CoordinationNumber
     type ValidValues = ValidValues of IdentityNumberValues
-    type TwoCoordNums = TwoCoordNums of SwedishCoordinationNumber * SwedishCoordinationNumber
+    type TwoCoordNums = TwoCoordNums of CoordinationNumber * CoordinationNumber
     type WithInvalidCoordinationMonth = WithInvalidMonth of IdentityNumberValues
     type WithInvalidDay = WithInvalidDay of IdentityNumberValues
     type WithValidDay = WithValidDay of IdentityNumberValues
-    type LeapDayCoordNum = LeapDayCoordNum of SwedishCoordinationNumber
+    type LeapDayCoordNum = LeapDayCoordNum of CoordinationNumber
 
 
 module Gen =
@@ -165,7 +165,7 @@ module private Internal =
         }
 
     module Pin =
-        let valid12Digit = Gen.chooseFromArray SwedishPersonalIdentityNumberTestData.Raw12DigitStrings
+        let valid12Digit = Gen.chooseFromArray PersonalIdentityNumberTestData.Raw12DigitStrings
         let valid12DigitGen() = valid12Digit |> Gen.map Pin.Valid12Digit |> Arb.fromGen
         let validDay year month =
             let daysInMonth = DateTime.DaysInMonth(year, month)
@@ -198,11 +198,11 @@ module private Internal =
                 let! (Pin.ValidValues values) = validValues
                 let pin1 =
                     values
-                    |> SwedishPersonalIdentityNumber
+                    |> PersonalIdentityNumber
 
                 let pin2 =
                     values
-                    |> SwedishPersonalIdentityNumber
+                    |> PersonalIdentityNumber
 
                 return (pin1, pin2) |> Pin.TwoEqualPins
             }
@@ -211,15 +211,15 @@ module private Internal =
 
         let twoPinsGen() =
             gen {
-                let pin1 = SwedishPersonalIdentityNumberTestData.GetRandom()
-                let pin2 = SwedishPersonalIdentityNumberTestData.GetRandom()
+                let pin1 = PersonalIdentityNumberTestData.GetRandom()
+                let pin2 = PersonalIdentityNumberTestData.GetRandom()
                 return (pin1, pin2) |> Pin.TwoPins
             }
             |> Arb.fromGen
 
 
         let validPinGen() =
-            gen { return SwedishPersonalIdentityNumberTestData.GetRandom() |> Pin.ValidPin }
+            gen { return PersonalIdentityNumberTestData.GetRandom() |> Pin.ValidPin }
             |> Arb.fromGen
 
         let pinStringWithInvalidYearGen() =
@@ -258,10 +258,10 @@ module private Internal =
             |> Arb.fromGen
 
         let leapDayPins =
-            let isLeapDay (pin: SwedishPersonalIdentityNumber) =
+            let isLeapDay (pin: PersonalIdentityNumber) =
                 pin.Month = 2 && pin.Day = 29
 
-            SwedishPersonalIdentityNumberTestData.AllPinsShuffled()
+            PersonalIdentityNumberTestData.AllPinsShuffled()
             |> Seq.filter isLeapDay
             |> Seq.toArray
 
@@ -274,10 +274,10 @@ module private Internal =
     module CoordNum =
 
         let validCoordNumGen() =
-            gen { return SwedishCoordinationNumberTestData.GetRandom() |> CoordNum.ValidNum }
+            gen { return CoordinationNumberTestData.GetRandom() |> CoordNum.ValidNum }
             |> Arb.fromGen
 
-        let valid12Digit = Gen.chooseFromArray SwedishCoordinationNumberTestData.Raw12DigitStrings
+        let valid12Digit = Gen.chooseFromArray CoordinationNumberTestData.Raw12DigitStrings
         let valid12DigitGen() = valid12Digit |> Gen.map CoordNum.Valid12Digit |> Arb.fromGen
 
         let validValues = valid12Digit |> Gen.map (stringToValues >> CoordNum.ValidValues)
@@ -327,11 +327,11 @@ module private Internal =
                 let! (CoordNum.ValidValues values) = validValues
                 let num1 =
                     values
-                    |> SwedishCoordinationNumber
+                    |> CoordinationNumber
 
                 let num2 =
                     values
-                    |> SwedishCoordinationNumber
+                    |> CoordinationNumber
 
                 return (num1, num2) |> CoordNum.TwoEqualCoordNums
             }
@@ -339,8 +339,8 @@ module private Internal =
 
         let twoCoordNumsGen() =
             gen {
-                let coordNum1 = SwedishCoordinationNumberTestData.GetRandom()
-                let coordNum2 = SwedishCoordinationNumberTestData.GetRandom()
+                let coordNum1 = CoordinationNumberTestData.GetRandom()
+                let coordNum2 = CoordinationNumberTestData.GetRandom()
                 return (coordNum1, coordNum2) |> CoordNum.TwoCoordNums
             }
             |> Arb.fromGen

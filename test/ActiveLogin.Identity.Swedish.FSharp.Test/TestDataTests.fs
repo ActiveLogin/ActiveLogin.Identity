@@ -10,18 +10,18 @@ open ActiveLogin.Identity.Swedish.TestData
 let tests =
     testList "TestData"
         [ test "raw12DigitStrings returns valid strings" {
-            SwedishPersonalIdentityNumberTestData.Raw12DigitStrings
+            PersonalIdentityNumberTestData.Raw12DigitStrings
             |> Array.head
             |> quickParse
             |> ignore
 
           }
           test "isTestNumber returns true for a test number" {
-            let pin = SwedishPersonalIdentityNumberTestData.GetRandom()
+            let pin = PersonalIdentityNumberTestData.GetRandom()
             pin.IsTestNumber() =! true
           }
           test "getRandomWithCount returns expected number of unique test numbers" {
-              let pins = SwedishPersonalIdentityNumberTestData.GetRandom 3 |> List.ofSeq
+              let pins = PersonalIdentityNumberTestData.GetRandom 3 |> List.ofSeq
               pins |> List.distinct |> List.length =! 3
           }
           test "getRandom returns random" {
@@ -29,7 +29,7 @@ let tests =
               // too many tests are running in parallel.
               let numUnique =
                   seq { 1..5 }
-                  |> Seq.map (fun _ -> SwedishPersonalIdentityNumberTestData.GetRandom())
+                  |> Seq.map (fun _ -> PersonalIdentityNumberTestData.GetRandom())
                   |> Seq.distinct
                   |> Seq.length
               numUnique >! 1

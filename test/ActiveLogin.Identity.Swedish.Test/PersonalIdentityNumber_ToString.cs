@@ -6,12 +6,12 @@ namespace ActiveLogin.Identity.Swedish.Test
     /// Tested with official test Personal Identity Numbers from Skatteverket:
     /// https://skatteverket.entryscape.net/catalog/9/datasets/147
     /// </remarks>
-    public class SwedishPersonalIdentityNumber_ToString
+    public class PersonalIdentityNumber_ToString
     {
         [Fact]
         public void ToString_Returns_12DigitString()
         {
-            var personalIdentityNumber = new SwedishPersonalIdentityNumber(1999, 08, 07, 239, 1);
+            var personalIdentityNumber = new PersonalIdentityNumber(1999, 08, 07, 239, 1);
             Assert.Equal("199908072391", personalIdentityNumber.ToString());
         }
 

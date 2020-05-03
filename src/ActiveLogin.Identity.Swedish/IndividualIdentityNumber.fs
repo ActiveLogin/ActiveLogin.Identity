@@ -1,18 +1,17 @@
 namespace ActiveLogin.Identity.Swedish
 
 open System
-open ActiveLogin.Identity.Swedish.FSharp
 open System.Runtime.InteropServices //for OutAttribute
 
 
 module internal IndividualIdentityNumber =
     let internal create values =
         try
-            SwedishPersonalIdentityNumber.create values |> Personal
+            PersonalIdentityNumber.create values |> Personal
         with
             pinException ->
                 try
-                    SwedishCoordinationNumber.create values |> Coordination
+                    CoordinationNumber.create values |> Coordination
                 with
                     coordnumException ->
                         let msg = sprintf "Not a valid pin or coordination number. PinError: %s, CoordinationError: %s" pinException.Message coordnumException.Message
@@ -43,23 +42,23 @@ module internal IndividualIdentityNumber =
     let to10DigitStringInSpecificYear serializationYear (num: IndividualIdentityNumberInternal) =
         match num with
         | Personal pin ->
-            pin |> SwedishPersonalIdentityNumber.to10DigitStringInSpecificYear serializationYear
+            pin |> PersonalIdentityNumber.to10DigitStringInSpecificYear serializationYear
         | Coordination num ->
-            num |> SwedishCoordinationNumber.to10DigitStringInSpecificYear serializationYear
+            num |> CoordinationNumber.to10DigitStringInSpecificYear serializationYear
 
     let to10DigitString (num : IndividualIdentityNumberInternal) =
         match num with
         | Personal pin ->
-            pin |> SwedishPersonalIdentityNumber.to10DigitString
+            pin |> PersonalIdentityNumber.to10DigitString
         | Coordination num ->
-            num |> SwedishCoordinationNumber.to10DigitString
+            num |> CoordinationNumber.to10DigitString
 
     let to12DigitString num =
         match num with
         | Personal pin ->
-            pin |> SwedishPersonalIdentityNumber.to12DigitString
+            pin |> PersonalIdentityNumber.to12DigitString
         | Coordination num ->
-            num |> SwedishCoordinationNumber.to12DigitString
+            num |> CoordinationNumber.to12DigitString
 
 open IndividualIdentityNumber
 
@@ -86,21 +85,21 @@ type IndividualIdentityNumber private(num: IndividualIdentityNumberInternal) =
 
         IndividualIdentityNumber(idNum)
 
-    member this.SwedishPersonalIdentityNumber =
+    member this.PersonalIdentityNumber =
         match num with
-        | Personal pin -> pin |> SwedishPersonalIdentityNumber
-        | _ -> Unchecked.defaultof<SwedishPersonalIdentityNumber>
+        | Personal pin -> pin |> PersonalIdentityNumber
+        | _ -> Unchecked.defaultof<PersonalIdentityNumber>
 
-    member this.SwedishCoordinationNumber =
+    member this.CoordinationNumber =
         match num with
-        | Coordination num -> num |> SwedishCoordinationNumber
-        | _ -> Unchecked.defaultof<SwedishCoordinationNumber>
+        | Coordination num -> num |> CoordinationNumber
+        | _ -> Unchecked.defaultof<CoordinationNumber>
 
-    /// <summary>Returns a value indicating whether this instance is a SwedishPersonalIdentityNumber.</summary>
-    member __.IsSwedishPersonalIdentityNumber = num.IsSwedishPersonalIdentityNumber
+    /// <summary>Returns a value indicating whether this instance is a PersonalIdentityNumber.</summary>
+    member __.IsPersonalIdentityNumber = num.IsPersonalIdentityNumber
 
-    /// <summary>Returns a value indicating whether this instance is a SwedishCoordinationNumber.</summary>
-    member __.IsSwedishCoordinationNumber = num.IsSwedishCoordinationNumber
+    /// <summary>Returns a value indicating whether this instance is a CoordinationNumber.</summary>
+    member __.IsCoordinationNumber = num.IsCoordinationNumber
 
     /// <summary>
     /// Converts the string representation of the Swedish identity number to its <see cref="IdentityNumber"/> equivalent.
@@ -166,17 +165,17 @@ type IndividualIdentityNumber private(num: IndividualIdentityNumberInternal) =
     /// <summary>
     /// Creates an instance of a <see cref="IdentityNumber"/> out of a swedish personal identity number.
     /// </summary>
-    /// <param name="pin">The SwedishPersonalIdentityNumber.</param>
+    /// <param name="pin">The PersonalIdentityNumber.</param>
     /// <returns>An instance of <see cref="IdentityNumber"/></returns>
-    static member FromSwedishPersonalIdentityNumber(pin: SwedishPersonalIdentityNumber) =
+    static member FromPersonalIdentityNumber(pin: PersonalIdentityNumber) =
         IndividualIdentityNumber(Personal pin.IdentityNumber)
 
     /// <summary>
     /// Creates an instance of a <see cref="IdentityNumber"/> out of a swedish coordination number.
     /// </summary>
-    /// <param name="pin">The SwedishCoordinationNumber.</param>
+    /// <param name="pin">The CoordinationNumber.</param>
     /// <returns>An instance of <see cref="IdentityNumber"/></returns>
-    static member FromSwedishCoordinationNumber(num: SwedishCoordinationNumber) =
+    static member FromCoordinationNumber(num: CoordinationNumber) =
         IndividualIdentityNumber(Coordination num.IdentityNumber)
 
     /// <summary>

@@ -1,19 +1,18 @@
 namespace ActiveLogin.Identity.Swedish.Extensions
 open System.Runtime.CompilerServices
-open ActiveLogin.Identity.Swedish.FSharp
-open ActiveLogin.Identity.Swedish.FSharp.Shared
 open ActiveLogin.Identity.Swedish
+open ActiveLogin.Identity.Swedish.Shared
 
 
-module internal SwedishCoordinationNumberHints =
-    let getGenderHint (num: SwedishCoordinationNumberInternal) =
+module internal CoordinationNumberHints =
+    let getGenderHint (num: CoordinationNumberInternal) =
         match num.IndividualNumber.Value with
         | Even -> Gender.Female
         | Odd -> Gender.Male
 
 
 [<Extension>]
-type SwedishCoordinationNumberHintExtensions() =
+type CoordinationNumberHintExtensions() =
 
     /// <summary>
     /// Gender (juridiskt kön) in Sweden according to the last digit of the birth number in the coordination number.
@@ -21,5 +20,5 @@ type SwedishCoordinationNumberHintExtensions() =
     /// Even number: Female
     /// </summary>
     [<Extension>]
-    static member GetGenderHint(num : SwedishCoordinationNumber) =
-        SwedishCoordinationNumberHints.getGenderHint num.IdentityNumber
+    static member GetGenderHint(num : CoordinationNumber) =
+        CoordinationNumberHints.getGenderHint num.IdentityNumber

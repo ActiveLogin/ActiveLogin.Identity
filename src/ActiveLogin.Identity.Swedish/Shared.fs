@@ -1,6 +1,5 @@
-module internal ActiveLogin.Identity.Swedish.FSharp.Shared
+module internal ActiveLogin.Identity.Swedish.Shared
 open System
-open ActiveLogin.Identity.Swedish.FSharp
 
 
 let validSerializationYear (serializationYear: int) (pinYear: Year) =

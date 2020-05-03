@@ -1,12 +1,12 @@
 namespace ActiveLogin.Identity.Swedish
 
-open ActiveLogin.Identity.Swedish.FSharp
+open ActiveLogin.Identity.Swedish
 open System
 open System.Runtime.InteropServices //for OutAttribute
-open ActiveLogin.Identity.Swedish.FSharp.Shared
+open ActiveLogin.Identity.Swedish.Shared
 
 
-module internal SwedishCoordinationNumber =
+module internal CoordinationNumber =
     let internal create (year, month, day, individualNumber, checksum) =
             let y = year |> Year.create
             let m = month |> CoordinationMonth.create
@@ -19,7 +19,7 @@ module internal SwedishCoordinationNumber =
               IndividualNumber = s
               Checksum = c }
 
-    let to10DigitStringInSpecificYear serializationYear (num: SwedishCoordinationNumberInternal) =
+    let to10DigitStringInSpecificYear serializationYear (num: CoordinationNumberInternal) =
             let validYear = validSerializationYear serializationYear num.Year
             let delimiter =
                 if validYear - (num.Year.Value) >= 100 then "+"
@@ -33,7 +33,7 @@ module internal SwedishCoordinationNumber =
                 num.IndividualNumber.Value
                 num.Checksum.Value
 
-    let to10DigitString (pin : SwedishCoordinationNumberInternal) =
+    let to10DigitString (pin : CoordinationNumberInternal) =
         let year =
             DateTime.UtcNow.Year
             |> Year.create
@@ -69,7 +69,7 @@ module internal SwedishCoordinationNumber =
         with
             exn -> None
 
-open SwedishCoordinationNumber
+open CoordinationNumber
 
 
 /// <summary>
@@ -77,17 +77,17 @@ open SwedishCoordinationNumber
 /// https://en.wikipedia.org/wiki/Personal_identity_number_(Sweden)
 /// https://sv.wikipedia.org/wiki/Personnummer_i_Sverige
 /// </summary>
-type SwedishCoordinationNumber internal(num : SwedishCoordinationNumberInternal) =
+type CoordinationNumber internal(num : CoordinationNumberInternal) =
 
     /// <summary>
-    /// Creates an instance of <see cref="SwedishCoordinationNumber"/> out of the individual parts.
+    /// Creates an instance of <see cref="CoordinationNumber"/> out of the individual parts.
     /// </summary>
     /// <param name="year">The year part.</param>
     /// <param name="month">The month part.</param>
     /// <param name="day">The day part.</param>
     /// <param name="birthNumber">The birth number part.</param>
     /// <param name="checksum">The checksum part.</param>
-    /// <returns>An instance of <see cref="SwedishCoordinationNumber"/> if all the paramaters are valid by themselfes and in combination.</returns>
+    /// <returns>An instance of <see cref="CoordinationNumber"/> if all the paramaters are valid by themselfes and in combination.</returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when any of the range arguments is invalid.</exception>
     /// <exception cref="ArgumentException">Thrown when checksum is invalid.</exception>
     new(year, month, day, birthNumber, checksum) =
@@ -95,7 +95,7 @@ type SwedishCoordinationNumber internal(num : SwedishCoordinationNumberInternal)
             (year, month, day, birthNumber, checksum)
             |> create
 
-        SwedishCoordinationNumber(idNum)
+        CoordinationNumber(idNum)
 
     member internal __.IdentityNumber = num
 
@@ -120,7 +120,7 @@ type SwedishCoordinationNumber internal(num : SwedishCoordinationNumberInternal)
     member __.RealDay = num.CoordinationDay.RealDay
 
     /// <summary>
-    /// Converts the string representation of the Swedish coordination number to its <see cref="SwedishCoordinationNumber"/> equivalent.
+    /// Converts the string representation of the Swedish coordination number to its <see cref="CoordinationNumber"/> equivalent.
     /// </summary>
     /// <param name="s">A string representation of the Swedish coordination number to parse.</param>
     /// <param name="parseYear">
@@ -130,23 +130,23 @@ type SwedishCoordinationNumber internal(num : SwedishCoordinationNumberInternal)
     /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
     /// </param>
     /// <exception cref="ArgumentNullException">Thrown when string input is null.</exception>
-    /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid SwedishCoordinationNumber.</exception>
+    /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid CoordinationNumber.</exception>
     static member ParseInSpecificYear((s : string), parseYear : int) =
         parseInSpecificYear parseYear s
-        |> SwedishCoordinationNumber
+        |> CoordinationNumber
 
     /// <summary>
-    /// Converts the string representation of the Swedish coordination number to its <see cref="SwedishCoordinationNumber"/> equivalent.
+    /// Converts the string representation of the Swedish coordination number to its <see cref="CoordinationNumber"/> equivalent.
     /// </summary>
     /// <param name="s">A string representation of the Swedish coordination number to parse.</param>
     /// <exception cref="ArgumentNullException">Thrown when string input is null.</exception>
-    /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid SwedishCoordinationNumber.</exception>
+    /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid CoordinationNumber.</exception>
     static member Parse(s) =
         parse s
-        |> SwedishCoordinationNumber
+        |> CoordinationNumber
 
     /// <summary>
-    /// Converts the string representation of the coordination number to its <see cref="SwedishCoordinationNumber"/>
+    /// Converts the string representation of the coordination number to its <see cref="CoordinationNumber"/>
     /// equivalent and returns a value that indicates whether the conversion succeeded.
     /// </summary>
     /// <param name="s">A string representation of the Swedish coordination number to parse.</param>
@@ -156,30 +156,30 @@ type SwedishCoordinationNumber internal(num : SwedishCoordinationNumberInternal)
     ///
     /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
     /// </param>
-    /// <param name="parseResult">If valid, an instance of <see cref="SwedishCoordinationNumber"/></param>
+    /// <param name="parseResult">If valid, an instance of <see cref="CoordinationNumber"/></param>
     static member TryParseInSpecificYear((s : string), (parseYear : int),
-                                         [<Out>] parseResult : SwedishCoordinationNumber byref) =
+                                         [<Out>] parseResult : CoordinationNumber byref) =
         match tryParseInSpecificYear parseYear s with
         | Some num ->
-            parseResult <- (num |> SwedishCoordinationNumber)
+            parseResult <- (num |> CoordinationNumber)
             true
         | None -> false
 
     /// <summary>
-    /// Converts the string representation of the coordination number to its <see cref="SwedishCoordinationNumber"/>
+    /// Converts the string representation of the coordination number to its <see cref="CoordinationNumber"/>
     /// equivalent and returns a value that indicates whether the conversion succeeded.
     /// </summary>
     /// <param name="s">A string representation of the Swedish coordination number to parse.</param>
-    /// <param name="parseResult">If valid, an instance of <see cref="SwedishCoordinationNumber"/></param>
-    static member TryParse((s : string), [<Out>] parseResult : SwedishCoordinationNumber byref) =
+    /// <param name="parseResult">If valid, an instance of <see cref="CoordinationNumber"/></param>
+    static member TryParse((s : string), [<Out>] parseResult : CoordinationNumber byref) =
         match tryParse s with
         | Some num ->
-            parseResult <- (num |> SwedishCoordinationNumber)
+            parseResult <- (num |> CoordinationNumber)
             true
         | None -> false
 
     /// <summary>
-    /// Converts the value of the current <see cref="SwedishCoordinationNumber" /> object to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars.
+    /// Converts the value of the current <see cref="CoordinationNumber" /> object to its equivalent 10 digit string representation. The total length, including the separator, will be 11 chars.
     /// Format is YYMMDDXBBBC, for example <example>990807-2391</example> or <example>120211+9986</example>.
     /// </summary>
     /// <param name="serializationYear">
@@ -192,42 +192,42 @@ type SwedishCoordinationNumber internal(num : SwedishCoordinationNumberInternal)
         to10DigitStringInSpecificYear serializationYear num
 
     /// <summary>
-    /// Converts the value of the current <see cref="SwedishCoordinationNumber" /> object to its equivalent short string representation.
+    /// Converts the value of the current <see cref="CoordinationNumber" /> object to its equivalent short string representation.
     /// Format is YYMMDDXBBBC, for example <example>990807-2391</example> or <example>120211+9986</example>.
     /// </summary>
     member __.To10DigitString() = to10DigitString num
 
     /// <summary>
-    /// Converts the value of the current <see cref="SwedishCoordinationNumber" /> object to its equivalent 12 digit string representation.
+    /// Converts the value of the current <see cref="CoordinationNumber" /> object to its equivalent 12 digit string representation.
     /// Format is YYYYMMDDBBBC, for example <example>19908072391</example> or <example>191202119986</example>.
     /// </summary>
     member __.To12DigitString() = to12DigitString num
 
     /// <summary>
-    /// Converts the value of the current <see cref="SwedishCoordinationNumber" /> object to its equivalent 12 digit string representation.
+    /// Converts the value of the current <see cref="CoordinationNumber" /> object to its equivalent 12 digit string representation.
     /// Format is YYYYMMDDBBBC, for example <example>19908072391</example> or <example>191202119986</example>.
     /// </summary>
     override __.ToString() = __.To12DigitString()
 
     /// <summary>Returns a value indicating whether this instance is equal to a specified object.</summary>
     /// <param name="value">The object to compare to this instance.</param>
-    /// <returns>true if <paramref name="value">value</paramref> is an instance of <see cref="SwedishCoordinationNumber"></see> and equals the value of this instance; otherwise, false.</returns>
+    /// <returns>true if <paramref name="value">value</paramref> is an instance of <see cref="CoordinationNumber"></see> and equals the value of this instance; otherwise, false.</returns>
     override __.Equals(b) =
         match b with
-        | :? SwedishCoordinationNumber as n -> num = n.IdentityNumber
+        | :? CoordinationNumber as n -> num = n.IdentityNumber
         | _ -> false
 
     /// <summary>Returns the hash code for this instance.</summary>
     /// <returns>A 32-bit signed integer hash code.</returns>
     override __.GetHashCode() = hash num
 
-    static member op_Equality (left: SwedishCoordinationNumber, right: SwedishCoordinationNumber) =
+    static member op_Equality (left: CoordinationNumber, right: CoordinationNumber) =
         match box left, box right with
         | (null, null) -> true
         | (null, _) | (_, null) -> false
         | _ -> left.IdentityNumber = right.IdentityNumber
 
-    static member op_Inequality (left: SwedishCoordinationNumber, right: SwedishCoordinationNumber) =
+    static member op_Inequality (left: CoordinationNumber, right: CoordinationNumber) =
         match box left, box right with
         | (null, null) -> false
         | (null, _) | (_, null) -> true

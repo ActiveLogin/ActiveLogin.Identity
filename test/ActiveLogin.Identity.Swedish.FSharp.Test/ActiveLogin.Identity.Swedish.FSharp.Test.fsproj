@@ -13,16 +13,16 @@
     <Compile Include="Generators.fs" />
     <Compile Include="PinTestHelpers.fs" />
     <Compile Include="TestDataTests.fs" />
-    <Compile Include="SwedishPersonalIdentityNumber_Constructor.fs" />
-    <Compile Include="SwedishCoordinationNumber_Constructor.fs" />
-    <Compile Include="SwedishPersonalIdentityNumber_Equality.fs" />
-    <Compile Include="SwedishCoordinationNumber_Equality.fs" />
-    <Compile Include="SwedishPersonalIdentityNumber_GetHashCode.fs" />
-    <Compile Include="SwedishCoordinationNumber_GetHashCode.fs" />
-    <Compile Include="SwedishPersonalIdentityNumber_Parse.fs" />
-    <Compile Include="SwedishCoordinationNumber_Parse.fs" />
-    <Compile Include="SwedishPersonalIdentityNumber_Hints.fs" />
-    <Compile Include="SwedishCoordinationNumber_Hints.fs" />
+    <Compile Include="PersonalIdentityNumber_Constructor.fs" />
+    <Compile Include="CoordinationNumber_Constructor.fs" />
+    <Compile Include="PersonalIdentityNumber_Equality.fs" />
+    <Compile Include="CoordinationNumber_Equality.fs" />
+    <Compile Include="PersonalIdentityNumber_GetHashCode.fs" />
+    <Compile Include="CoordinationNumber_GetHashCode.fs" />
+    <Compile Include="PersonalIdentityNumber_Parse.fs" />
+    <Compile Include="CoordinationNumber_Parse.fs" />
+    <Compile Include="PersonalIdentityNumber_Hints.fs" />
+    <Compile Include="CoordinationNumber_Hints.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

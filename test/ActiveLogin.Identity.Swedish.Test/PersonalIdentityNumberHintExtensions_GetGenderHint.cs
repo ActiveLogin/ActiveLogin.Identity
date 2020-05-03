@@ -7,7 +7,7 @@ namespace ActiveLogin.Identity.Swedish.Test
     /// Tested with official test Personal Identity Numbers from Skatteverket:
     /// https://skatteverket.entryscape.net/catalog/9/datasets/147
     /// </remarks>
-    public class SwedishPersonalIdentityNumberHintExtensions_GetGenderHint
+    public class PersonalIdentityNumberHintExtensions_GetGenderHint
     {
         [Theory]
         [InlineData(1899, 09, 13, 980, 1)]
@@ -15,7 +15,7 @@ namespace ActiveLogin.Identity.Swedish.Test
 
         public void When_Last_Digit_In_birthNumber_Is_Even_It_Is_A_Woman(int year, int month, int day, int birthNumber, int checksum)
         {
-            var personalIdentityNumber = new SwedishPersonalIdentityNumber(year, month, day, birthNumber, checksum);
+            var personalIdentityNumber = new PersonalIdentityNumber(year, month, day, birthNumber, checksum);
             Assert.Equal(Gender.Female, personalIdentityNumber.GetGenderHint());
         }
 
@@ -24,7 +24,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData(2018, 01, 01, 239, 2)]
         public void When_Last_Digit_In_birthNumber_Is_Odd_It_Is_A_Man(int year, int month, int day, int birthNumber, int checksum)
         {
-            var personalIdentityNumber = new SwedishPersonalIdentityNumber(year, month, day, birthNumber, checksum);
+            var personalIdentityNumber = new PersonalIdentityNumber(year, month, day, birthNumber, checksum);
             Assert.Equal(Gender.Male, personalIdentityNumber.GetGenderHint());
         }
     }
