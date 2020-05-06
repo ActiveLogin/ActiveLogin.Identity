@@ -8,30 +8,30 @@ open ActiveLogin.Identity.Swedish.Shared
 
 module internal CoordinationNumber =
     let internal create (year, month, day, individualNumber, checksum) =
-            let y = year |> Year.create
-            let m = month |> CoordinationMonth.create
-            let d = day |> CoordinationDay.create y m
-            let s = individualNumber |> IndividualNumber.create
-            let c = checksum |> Checksum.create y (Choice2Of2 m) (Choice2Of2 d) (Choice2Of2 s)
-            { Year = y
-              CoordinationMonth = m
-              CoordinationDay = d
-              IndividualNumber = s
-              Checksum = c }
+        let y = year |> Year.create
+        let m = month |> CoordinationMonth.create
+        let d = day |> CoordinationDay.create y m
+        let s = individualNumber |> IndividualNumber.create
+        let c = checksum |> Checksum.create y (Choice2Of2 m) (Choice2Of2 d) (Choice2Of2 s)
+        { Year = y
+          CoordinationMonth = m
+          CoordinationDay = d
+          IndividualNumber = s
+          Checksum = c }
 
     let to10DigitStringInSpecificYear serializationYear (num: CoordinationNumberInternal) =
-            let validYear = validSerializationYear serializationYear num.Year
-            let delimiter =
-                if validYear - (num.Year.Value) >= 100 then "+"
-                else "-"
+        let validYear = validSerializationYear serializationYear num.Year
+        let delimiter =
+            if validYear - (num.Year.Value) >= 100 then "+"
+            else "-"
 
-            sprintf "%02i%02i%02i%s%03i%1i"
-                (num.Year.Value % 100)
-                num.CoordinationMonth.Value
-                num.CoordinationDay.Value
-                delimiter
-                num.IndividualNumber.Value
-                num.Checksum.Value
+        sprintf "%02i%02i%02i%s%03i%1i"
+            (num.Year.Value % 100)
+            num.CoordinationMonth.Value
+            num.CoordinationDay.Value
+            delimiter
+            num.IndividualNumber.Value
+            num.Checksum.Value
 
     let to10DigitString (pin : CoordinationNumberInternal) =
         let year =
