@@ -1,5 +1,4 @@
-[<AutoOpen>]
-module internal ActiveLogin.Identity.Swedish.FSharp.Types
+namespace ActiveLogin.Identity.Swedish
 
 open System
 
@@ -7,38 +6,38 @@ open System
 // Domain - Types
 //-----------------------------------------------------------------------------
 
-type Year = private Year of int
-type Month = private Month of int
-type Day = private Day of int
-type BirthNumber = private BirthNumber of int
-type Checksum = private Checksum of int
-type CoordinationMonth = private CoordinationMonth of int
-type CoordinationDay = private CoordinationDay of int
-type IndividualNumber = private IndividualNumber of int
+type internal Year = private Year of int
+type internal Month = private Month of int
+type internal Day = private Day of int
+type internal BirthNumber = private BirthNumber of int
+type internal Checksum = private Checksum of int
+type internal CoordinationMonth = private CoordinationMonth of int
+type internal CoordinationDay = private CoordinationDay of int
+type internal IndividualNumber = private IndividualNumber of int
 
-type SwedishPersonalIdentityNumberInternal =
+type internal PersonalIdentityNumberInternal =
     { Year : Year
       Month : Month
       Day : Day
       BirthNumber : BirthNumber
       Checksum : Checksum }
 
-type SwedishCoordinationNumberInternal =
+type internal CoordinationNumberInternal =
     { Year : Year
       CoordinationMonth : CoordinationMonth
       CoordinationDay : CoordinationDay
       IndividualNumber : IndividualNumber
       Checksum : Checksum }
 
-type IndividualIdentityNumberInternal =
-    | Personal of SwedishPersonalIdentityNumberInternal
-    | Coordination of SwedishCoordinationNumberInternal
+type internal IndividualIdentityNumberInternal =
+    | Personal of PersonalIdentityNumberInternal
+    | Coordination of CoordinationNumberInternal
 
 //-----------------------------------------------------------------------------
 // Domain - Modules
 //-----------------------------------------------------------------------------
 
-module Year =
+module internal Year =
     let create year =
         let isValidYear = year >= DateTime.MinValue.Year && year <= DateTime.MaxValue.Year
         if isValidYear then
@@ -49,7 +48,7 @@ module Year =
 
     let value (Year year) = year
 
-module Month =
+module internal Month =
     let create month =
         let isValidMonth = month >= 1 && month <= 12
         if isValidMonth then
@@ -62,7 +61,7 @@ module Month =
 
     let value (Month month) = month
 
-module Day =
+module internal Day =
     let create (Year inYear) (Month inMonth) day =
         let daysInMonth = DateTime.DaysInMonth(inYear, inMonth)
         let isValidDay = day >= 1 && day <= daysInMonth
@@ -76,7 +75,7 @@ module Day =
 
     let value (Day day) = day
 
-module CoordinationMonth =
+module internal CoordinationMonth =
     let create month =
         if month < 0 || month > 12 then
             ArgumentOutOfRangeException("coordination month", month, "Invalid month for coordination number")
@@ -86,7 +85,7 @@ module CoordinationMonth =
 
     let value (CoordinationMonth month) = month
 
-module CoordinationDay =
+module internal CoordinationDay =
     let [<Literal>] DayOffset = 60
     let create (Year inYear) (CoordinationMonth inMonth) day =
         if day = DayOffset then
@@ -103,7 +102,7 @@ module CoordinationDay =
 
     let value (CoordinationDay day) = day
 
-module BirthNumber =
+module internal BirthNumber =
     let create num =
         let isValidBirthNumber = num >= 1 && num <= 999
         if isValidBirthNumber then
@@ -115,7 +114,7 @@ module BirthNumber =
 
     let value (BirthNumber num) = num
 
-module IndividualNumber =
+module internal IndividualNumber =
     let create num =
         let isValidIndividualNumber = num >= 1 && num <= 999
         if isValidIndividualNumber then
@@ -127,7 +126,7 @@ module IndividualNumber =
 
     let value (IndividualNumber num) = num
 
-module Checksum =
+module internal Checksum =
     let private create' year month day birth checksum =
         let isValidChecksum =
             let calculatedChecksum =
@@ -180,23 +179,23 @@ module Checksum =
 // Domain - Type Extensions
 //-----------------------------------------------------------------------------
 
-type Year with member this.Value = Year.value this
-type Month with member this.Value = Month.value this
-type Day with member this.Value = Day.value this
-type CoordinationMonth with member this.Value = this |> CoordinationMonth.value
-type CoordinationDay with
+type internal Year with member this.Value = Year.value this
+type internal Month with member this.Value = Month.value this
+type internal Day with member this.Value = Day.value this
+type internal CoordinationMonth with member this.Value = this |> CoordinationMonth.value
+type internal CoordinationDay with
     member this.Value = this |> CoordinationDay.value
     member this.RealDay = this.Value - CoordinationDay.DayOffset // TODO handle when RealDay = 0. Throw? Null?
-type BirthNumber with member this.Value = BirthNumber.value this
-type IndividualNumber with member this.Value = this |> IndividualNumber.value
-type Checksum with member this.Value = this |> Checksum.value
+type internal BirthNumber with member this.Value = BirthNumber.value this
+type internal IndividualNumber with member this.Value = this |> IndividualNumber.value
+type internal Checksum with member this.Value = this |> Checksum.value
 
-type IndividualIdentityNumberInternal with
-    member this.IsSwedishPersonalIdentityNumber =
+type internal IndividualIdentityNumberInternal with
+    member this.IsPersonalIdentityNumber =
         match this with
         | Personal _ -> true
         | _ -> false
-    member this.IsSwedishCoordinationNumber =
+    member this.IsCoordinationNumber =
         match this with
         | Coordination _ -> true
         | _ -> false

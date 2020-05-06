@@ -2,7 +2,7 @@
 /// Tested with official test Personal Identity Numbers from Skatteverket:
 /// https://skatteverket.entryscape.net/catalog/9/datasets/147
 /// </remarks>
-module ActiveLogin.Identity.Swedish.FSharp.Test.SwedishCoordinationNumber_equality
+module ActiveLogin.Identity.Swedish.FSharp.Test.CoordinationNumber_equality
 
 open ActiveLogin.Identity.Swedish
 open Swensen.Unquote
@@ -11,19 +11,19 @@ open FsCheck
 
 
 [<Tests>]
-let tests = testList "SwedishCoordinationNumber.equality" [
+let tests = testList "CoordinationNumber.equality" [
     testProp "identical numbers are equal when using operator" <|
         fun (Gen.CoordNum.TwoEqualCoordNums (num1, num2)) ->
             num1 = num2 =! true
             num2 = num1 =! true
-            SwedishCoordinationNumber.op_Equality(num1, num2) =! true
-            SwedishCoordinationNumber.op_Equality(num2, num1) =! true
+            CoordinationNumber.op_Equality(num1, num2) =! true
+            CoordinationNumber.op_Equality(num2, num1) =! true
     testProp "identical numbers are not unequal when using operator" <|
         fun (Gen.CoordNum.TwoEqualCoordNums (num1, num2)) ->
             num1 <> num2 =! false
             num2 <> num1 =! false
-            SwedishCoordinationNumber.op_Inequality(num1, num2) =! false
-            SwedishCoordinationNumber.op_Inequality(num2, num1) =! false
+            CoordinationNumber.op_Inequality(num1, num2) =! false
+            CoordinationNumber.op_Inequality(num2, num1) =! false
     testProp "identical numbers are equal when using .Equals()" <|
         fun (Gen.CoordNum.TwoEqualCoordNums (num1, num2)) ->
             num1.Equals(num2) =! true

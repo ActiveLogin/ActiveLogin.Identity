@@ -1,4 +1,4 @@
-module internal ActiveLogin.Identity.Swedish.FSharp.Parse
+module internal ActiveLogin.Identity.Swedish.Parse
 
 open System
 
@@ -84,7 +84,7 @@ let private parseInternal parseYear =
                 | '-' -> fullYearGuess - 100
                 | '+' when shortYear <= lastDigitsParseYear -> fullYearGuess - 100
                 | '+' -> fullYearGuess - 200
-                | _ -> FormatException(sprintf "String was not recognized as a valid SwedishPersonalIdentityNumber. delimiter") |> raise
+                | _ -> FormatException(sprintf "String was not recognized as a valid PersonalIdentityNumber. delimiter") |> raise
 
             let month = str.[2..3] |> int
             let day = str.[4..5] |> int

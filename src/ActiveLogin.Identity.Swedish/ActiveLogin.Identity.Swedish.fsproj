@@ -49,11 +49,11 @@
         <Compile Include="Types.fs" />
         <Compile Include="Parse.fs" />
         <Compile Include="Shared.fs" />
-        <Compile Include="SwedishPersonalIdentityNumber.fs" />
-        <Compile Include="SwedishCoordinationNumber.fs" />
+        <Compile Include="PersonalIdentityNumber.fs" />
+        <Compile Include="CoordinationNumber.fs" />
         <Compile Include="IndividualIdentityNumber.fs" />
-        <Compile Include="SwedishPersonalIdentityNumberHintExtensions.fs" />
-        <Compile Include="SwedishCoordinationNumberHintExtensions.fs" />
+        <Compile Include="PersonalIdentityNumberHintExtensions.fs" />
+        <Compile Include="CoordinationNumberHintExtensions.fs" />
         <Compile Include="IndividualIdentityNumberHintExtensions.fs" />
     </ItemGroup>
 

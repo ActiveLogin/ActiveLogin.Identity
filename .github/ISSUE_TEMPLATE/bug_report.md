@@ -11,7 +11,7 @@ assignees: ''
 A clear and concise description of what the bug is.
 
 **What area is it related to**
-PersonalIdentityNumber, SwedishCompanyRegistrationNumber etc.
+PersonalIdentityNumber, CompanyRegistrationNumber etc.
 
 **To Reproduce**
 Steps to reproduce the behavior:

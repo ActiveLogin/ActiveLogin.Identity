@@ -9,7 +9,7 @@ namespace ActiveLogin.Identity.Swedish.Test
     /// Tested with official test Personal Identity Numbers from Skatteverket:
     /// https://skatteverket.entryscape.net/catalog/9/datasets/147
     /// </remarks>
-    public class SwedishPersonalIdentityNumberHintExtensions_GetAgeHint
+    public class PersonalIdentityNumberHintExtensions_GetAgeHint
     {
         private readonly DateTime _date_2018_07_15 = new DateTime(2018, 07, 15);
         private readonly DateTime _date_2000_04_14 = new DateTime(2000, 04, 14);
@@ -19,7 +19,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData(1912, 02, 11, 998, 6, 106)]
         public void When_Older_Than_100_Years_Calculates_Age(int year, int month, int day, int birthNumber, int checksum, int expectedAge)
         {
-            var personalIdentityNumber = new SwedishPersonalIdentityNumber(year, month, day, birthNumber, checksum);
+            var personalIdentityNumber = new PersonalIdentityNumber(year, month, day, birthNumber, checksum);
             Assert.Equal(expectedAge, personalIdentityNumber.GetAgeHint(_date_2018_07_15));
         }
 
@@ -28,7 +28,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData(2018, 01, 01, 239, 2, 0)]
         public void When_Younger_Than_100_Years_Calculates_Age(int year, int month, int day, int birthNumber, int checksum, int expectedAge)
         {
-            var personalIdentityNumber = new SwedishPersonalIdentityNumber(year, month, day, birthNumber, checksum);
+            var personalIdentityNumber = new PersonalIdentityNumber(year, month, day, birthNumber, checksum);
             Assert.Equal(expectedAge, personalIdentityNumber.GetAgeHint(_date_2018_07_15));
         }
 
@@ -36,7 +36,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [InlineData(2018, 01, 01, 239, 2)]
         public void When_Not_Yet_Born_Throws_Exception(int year, int month, int day, int birthNumber, int checksum)
         {
-            var personalIdentityNumber = new SwedishPersonalIdentityNumber(year, month, day, birthNumber, checksum);
+            var personalIdentityNumber = new PersonalIdentityNumber(year, month, day, birthNumber, checksum);
             var ex = Assert.Throws<ArgumentException>(() => personalIdentityNumber.GetAgeHint(_date_2000_04_14));
 
             Assert.Contains("The person is not yet born.", ex.Message);
@@ -46,7 +46,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         [Fact]
         public void Without_Date_Uses_UtcNow()
         {
-            var personalIdentityNumber = new SwedishPersonalIdentityNumber(1899, 09, 13, 980, 1);
+            var personalIdentityNumber = new PersonalIdentityNumber(1899, 09, 13, 980, 1);
             Assert.Equal(personalIdentityNumber.GetAgeHint(DateTime.UtcNow), personalIdentityNumber.GetAgeHint());
         }
 
@@ -86,7 +86,7 @@ namespace ActiveLogin.Identity.Swedish.Test
         public void GetAgeHint_Handles_LeapYears_Correctly(string personalIdentityNumber, string actualDate, int expectedAge)
         {
             // Arrange
-            var swedishPersonalIdentityNumber = SwedishPersonalIdentityNumber.Parse(personalIdentityNumber);
+            var swedishPersonalIdentityNumber = PersonalIdentityNumber.Parse(personalIdentityNumber);
             var date = DateTime.ParseExact(actualDate, "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal);
 
             // Act

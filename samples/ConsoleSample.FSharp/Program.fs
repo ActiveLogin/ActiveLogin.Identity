@@ -9,11 +9,11 @@ let sampleInvalidNumbers = [ "ABC" ]
 
 module SwedishPersonalIdentityNumber =
     let tryParse input =
-        match SwedishPersonalIdentityNumber.TryParse input with
+        match PersonalIdentityNumber.TryParse input with
         | true, num -> Some num
         | false, _ -> None
 
-    let print (num: SwedishPersonalIdentityNumber) =
+    let print (num: PersonalIdentityNumber) =
         printfn "   .ToString(): %O" num
         printfn "   .To10DigitString(): %s" (num.To10DigitString())
         printfn "   .To12DigitString(): %s" (num.To12DigitString())

@@ -4,24 +4,24 @@ using System.ComponentModel.DataAnnotations;
 namespace ActiveLogin.Identity.Swedish.AspNetCore.Validation
 {
     /// <summary>
-    /// Validates a Swedish Personal Identity Number using <see cref="SwedishPersonalIdentityNumber"/>.
+    /// Validates a Swedish Personal Identity Number using <see cref="PersonalIdentityNumber"/>.
     /// </summary>
-    public class SwedishPersonalIdentityNumberAttribute : ValidationAttribute
+    public class PersonalIdentityNumberAttribute : ValidationAttribute
     {
-        /// <summary>Initializes a new instance of the <see cref="SwedishPersonalIdentityNumberAttribute"></see> class.</summary>
-        public SwedishPersonalIdentityNumberAttribute()
+        /// <summary>Initializes a new instance of the <see cref="PersonalIdentityNumberAttribute"></see> class.</summary>
+        public PersonalIdentityNumberAttribute()
             : base("{0} is not a valid Swedish Personal Identity Number. It should follow a valid pattern such as YYMMDD-XXXX, YYMMDD+XXXX or YYYYMMDDXXXX.")
         { }
 
-        /// <summary>Initializes a new instance of the <see cref="SwedishPersonalIdentityNumberAttribute"></see> class by using the function that enables access to validation resources.</summary>
+        /// <summary>Initializes a new instance of the <see cref="PersonalIdentityNumberAttribute"></see> class by using the function that enables access to validation resources.</summary>
         /// <param name="errorMessageAccessor">The function that enables access to validation resources.</param>
         /// <exception cref="T:System.ArgumentNullException"><paramref name="errorMessageAccessor">errorMessageAccessor</paramref> is null.</exception>
-        public SwedishPersonalIdentityNumberAttribute(Func<string> errorMessageAccessor) : base(errorMessageAccessor)
+        public PersonalIdentityNumberAttribute(Func<string> errorMessageAccessor) : base(errorMessageAccessor)
         { }
 
-        /// <summary>Initializes a new instance of the <see cref="SwedishPersonalIdentityNumberAttribute"></see> class by using the error message to associate with a validation control.</summary>
+        /// <summary>Initializes a new instance of the <see cref="PersonalIdentityNumberAttribute"></see> class by using the error message to associate with a validation control.</summary>
         /// <param name="errorMessage">The error message to associate with a validation control.</param>
-        public SwedishPersonalIdentityNumberAttribute(string errorMessage) : base(errorMessage)
+        public PersonalIdentityNumberAttribute(string errorMessage) : base(errorMessage)
         { }
 
         /// <summary>Validates the specified Swedish Personal Identity Number with respect to the current validation attribute.</summary>
@@ -31,7 +31,7 @@ namespace ActiveLogin.Identity.Swedish.AspNetCore.Validation
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             var valueString = (string) value;
-            if (!SwedishPersonalIdentityNumber.TryParse(valueString, out _))
+            if (!PersonalIdentityNumber.TryParse(valueString, out _))
             {
                 var errorMessage = FormatErrorMessage(validationContext.DisplayName);
                 return new ValidationResult(errorMessage);

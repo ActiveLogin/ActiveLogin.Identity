@@ -2,7 +2,7 @@
 /// Tested with official test Personal Identity Numbers from Skatteverket:
 /// https://skatteverket.entryscape.net/catalog/9/datasets/147
 /// </remarks>
-module ActiveLogin.Identity.Swedish.FSharp.Test.SwedishPersonalIdentityNumber_Hints
+module ActiveLogin.Identity.Swedish.FSharp.Test.PersonalIdentityNumber_Hints
 
 open Swensen.Unquote
 open Expecto
@@ -14,11 +14,11 @@ open ActiveLogin.Identity.Swedish.Extensions
 open ActiveLogin.Identity.Swedish.FSharp.Test.PinTestHelpers
 
 
-let getDateOfBirth (pin: SwedishPersonalIdentityNumber) =
+let getDateOfBirth (pin: PersonalIdentityNumber) =
     {| Date = DateTime(pin.Year, pin.Month, pin.Day)
        IsLeapDay = pin.Month = 2 && pin.Day = 29 |}
 
-let isNotFromTheFuture (pin: SwedishPersonalIdentityNumber) =
+let isNotFromTheFuture (pin: PersonalIdentityNumber) =
     DateTime(pin.Year, pin.Month, pin.Day) < DateTime.UtcNow
 
 [<Tests>]

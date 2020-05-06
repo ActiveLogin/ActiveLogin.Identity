@@ -42,7 +42,7 @@ namespace ActiveLogin.Identity.Swedish.AspNetCore.Test.Validation
                 SwedishPersonalIdentityNumber = swedishPersonalIdentityNumber;
             }
 
-            [SwedishPersonalIdentityNumber]
+            [PersonalIdentityNumber]
             public string SwedishPersonalIdentityNumber { get; }
         }
     }

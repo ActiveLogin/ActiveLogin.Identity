@@ -22,14 +22,14 @@ ActiveLogin.Identity provides parsing and validation of Swedish identities such 
 * [Getting started](#getting-started)
     + [1. Install the NuGet package](#1-install-the-nuget-package)
     + [2. Use the library in your C# project](#2-use-the-library-in-your-c-project)
-        - [SwedishPersonalIdentityNumber](#swedishpersonalidentitynumber)
-        - [SwedishCoordinationNumber](#swedishcoordinationnumber)
+        - [PersonalIdentityNumber](#personalidentitynumber)
+        - [CoordinationNumber](#coordinationnumber)
     + [3. Use the library in your F# project](#3-use-the-library-in-your-f-project)
     + [4. Browse tests and samples](#4-browse-tests-and-samples)
 * [FAQ](#faq)
     + [What definition are the implementations based on?](#what-definition-are-the-implementations-based-on)
     + [What formats do you support parsing?](#what-formats-do-you-support-parsing)
-    + [Why are you calling it "Swedish Personal Identity Number" and not Social Security Number?](#why-are-you-calling-it-swedish-personal-identity-number-and-not-social-security-number)
+    + [Why are you calling it "Personal Identity Number" and not Social Security Number?](#why-are-you-calling-it-swedish-personal-identity-number-and-not-social-security-number)
     + [What data are you using for tests and samples?](#what-data-are-you-using-for-tests-and-samples)
     + [When should I use `...InSpecificYear(...)`?](#when-should-i-use-inspecificyear)
 * [Active Login](#active-login)
@@ -61,15 +61,15 @@ dotnet add package ActiveLogin.Identity.Swedish
 
 ### 2. Use the library in your C# project
 
-### SwedishPersonalIdentityNumber
+### PersonalIdentityNumber
 
-`SwedishPersonalIdentityNumber` provides parsing methods such as `SwedishPersonalIdentityNumber.Parse()` and `SwedishPersonalIdentityNumber.TryParse()` that can be used like this:
+`PersonalIdentityNumber` provides parsing methods such as `PersonalIdentityNumber.Parse()` and `PersonalIdentityNumber.TryParse()` that can be used like this:
 
 ```c#
 var rawPersonalIdentityNumber = "990807-2391";
-if (SwedishPersonalIdentityNumber.TryParse(rawPersonalIdentityNumber, out var personalIdentityNumber))
+if (PersonalIdentityNumber.TryParse(rawPersonalIdentityNumber, out var personalIdentityNumber))
 {
-    Console.WriteLine("SwedishPersonalIdentityNumber");
+    Console.WriteLine("PersonalIdentityNumber");
     Console.WriteLine(" .ToString(): {0}", personalIdentityNumber.ToString());
     Console.WriteLine(" .To10DigitString(): {0}", personalIdentityNumber.To10DigitString());
     Console.WriteLine(" .To12DigitString(): {0}", personalIdentityNumber.To12DigitString());
@@ -84,14 +84,14 @@ if (SwedishPersonalIdentityNumber.TryParse(rawPersonalIdentityNumber, out var pe
 }
 else
 {
-    Console.Error.WriteLine("Unable to parse the input as a SwedishPersonalIdentityNumber.");
+    Console.Error.WriteLine("Unable to parse the input as a PersonalIdentityNumber.");
 }
 ```
 
 The code above would output (as of 2018-07-23):
 
 ```text
-SwedishPersonalIdentityNumber
+PersonalIdentityNumber
  .ToString(): 199908072391
  .To10DigitString(): 990807-2391
  .To12DigitString(): 199908072391
@@ -104,35 +104,35 @@ SwedishPersonalIdentityNumber
 #### Hints
 
 Some data, such as DateOfBirth, Age and Gender can't be guaranteed to reflect the truth due to the limited quantity of personal identity numbers per day.
-Therefore they are exposed as extension methods in the C# api and are suffixed with `Hint` to reflect this. They are also placed in a separate namespace `ActiveLogin.Identity.Swedish.Extensions`. In the F# api these functions are available in the `ActiveLogin.Identity.Swedish.FSharp.SwedishPersonalIdentityNumber.Hints` module.
+Therefore they are exposed as extension methods in the C# api and are suffixed with `Hint` to reflect this. They are also placed in a separate namespace `ActiveLogin.Identity.Swedish.Extensions`. In the F# api these functions are available in the `ActiveLogin.Identity.Swedish.PersonalIdentityNumber.Hints` module.
 
 #### ASP.NET Core MVC
 
-If used to validate input in an ASP.NET Core MVC project, the `SwedishPersonalIdentityNumberAttribute` can be used like this:
+If used to validate input in an ASP.NET Core MVC project, the `PersonalIdentityNumberAttribute` can be used like this:
 
 ```c#
 public class SampleDataModel
 {
-    [SwedishPersonalIdentityNumber]
-    public string SwedishPersonalIdentityNumber { get; set; }
+    [PersonalIdentityNumber]
+    public string PersonalIdentityNumber { get; set; }
 }
 ```
 
-The `SwedishPersonalIdentityNumber` attribute is available through a separate package:
+The `PersonalIdentityNumber` attribute is available through a separate package:
 
 ```console
 dotnet add package ActiveLogin.Identity.Swedish.AspNetCore
 ```
 
-### SwedishCoordinationNumber
+### CoordinationNumber
 
-`SwedishCoordinationNumber` provides parsing methods such as `SwedishCoordinationNumber.Parse()` and `SwedishCoordinationNumber.TryParse()` that can be used like this:
+`CoordinationNumber` provides parsing methods such as `CoordinationNumber.Parse()` and `CoordinationNumber.TryParse()` that can be used like this:
 
 ```c#
 var rawCoordinationNumber = "680164-2395";
-if (SwedishCoordinationNumber.TryParse(rawCoordinationNumber, out var coordinationNumber))
+if (CoordinationNumber.TryParse(rawCoordinationNumber, out var coordinationNumber))
 {
-    Console.WriteLine("SwedishCoordinationNumber");
+    Console.WriteLine("CoordinationNumber");
     Console.WriteLine(" .ToString(): {0}", coordinationNumber.ToString());
     Console.WriteLine(" .To10DigitString(): {0}", coordinationNumber.To10DigitString());
     Console.WriteLine(" .To12DigitString(): {0}", coordinationNumber.To12DigitString());
@@ -148,14 +148,14 @@ if (SwedishCoordinationNumber.TryParse(rawCoordinationNumber, out var coordinati
 }
 else
 {
-    Console.Error.WriteLine("Unable to parse the input as a SwedishCoordinationNumber.");
+    Console.Error.WriteLine("Unable to parse the input as a CoordinationNumber.");
 }
 ```
 
 The code above would output (as of 2018-07-23):
 
 ```text
-SwedishCoordinationNumber
+CoordinationNumber
  .ToString(): 199908072391
  .To10DigitString(): 990807-2391
  .To12DigitString(): 199908072391
@@ -169,32 +169,32 @@ SwedishCoordinationNumber
 #### Hints
 
 Some data, such as DateOfBirth, Age and Gender can't be guaranteed to reflect the truth due to the limited quantity of personal identity numbers per day.
-Therefore they are exposed as extension methods in the C# api and are suffixed with `Hint` to reflect this. They are also placed in a separate namespace `ActiveLogin.Identity.Swedish.Extensions`. In the F# api these functions are available in the `ActiveLogin.Identity.Swedish.FSharp.SwedishCoordinationNumber.Hints` module.
+Therefore they are exposed as extension methods in the C# api and are suffixed with `Hint` to reflect this. They are also placed in a separate namespace `ActiveLogin.Identity.Swedish.Extensions`. In the F# api these functions are available in the `ActiveLogin.Identity.Swedish.CoordinationNumber.Hints` module.
 
 #### ASP.NET Core MVC
 
-SwedishCoordinationNumberAttribute: To be added.
+CoordinationNumberAttribute: To be added.
 
 ### 3. Use the library in your F# project
 
 `open ActiveLogin.Swedish.Identity.FSharp`
 
-The `SwedishPersonalIdentityNumber`-module provides functions for parsing, creating and converting a `SwedishPersonalIdentityNumber` to its 10- or 12-digit string representation.
+The `PersonalIdentityNumber`-module provides functions for parsing, creating and converting a `PersonalIdentityNumber` to its 10- or 12-digit string representation.
 
 ```fsharp
 "990807-2391" 
-|> SwedishPersonalIdentityNumber.parse 
+|> PersonalIdentityNumber.parse 
 |> function 
 | Ok pin -> 
     printfn "%A" pin
-    pin |> SwedishPersonalIdentityNumber.to10DigitString |> printfn "to10DigitString: %s"
-    pin |> SwedishPersonalIdentityNumber.to12DigitString |> printfn "to12DigitString: %s"
-    pin |> SwedishPersonalIdentityNumber.Hints.getDateOfBirthHint |> (fun date -> date.ToShortDateString() |> printfn "getDateOfBirthHint: %s")
-    pin |> SwedishPersonalIdentityNumber.Hints.getAgeHint |> printfn "getAgeHint: %i"
-    pin |> SwedishPersonalIdentityNumber.Hints.getGenderHint |> printfn "getGenderHint: %A"
+    pin |> PersonalIdentityNumber.to10DigitString |> printfn "to10DigitString: %s"
+    pin |> PersonalIdentityNumber.to12DigitString |> printfn "to12DigitString: %s"
+    pin |> PersonalIdentityNumber.Hints.getDateOfBirthHint |> (fun date -> date.ToShortDateString() |> printfn "getDateOfBirthHint: %s")
+    pin |> PersonalIdentityNumber.Hints.getAgeHint |> printfn "getAgeHint: %i"
+    pin |> PersonalIdentityNumber.Hints.getGenderHint |> printfn "getGenderHint: %A"
     
-    // isTestNumber is an extension from the package ActiveLogin.Identity.Swedish.FSharp.TestData
-    pin |> SwedishPersonalIdentityNumber.isTestNumber |> printfn "isTestNumber: %b"
+    // isTestNumber is an extension from the package ActiveLogin.Identity.Swedish.TestData
+    pin |> PersonalIdentityNumber.isTestNumber |> printfn "isTestNumber: %b"
 | Error e -> printfn "Not a valid Swedish personal identity number. Error %A" e 
 ```
 
@@ -347,7 +347,7 @@ If you need to use test numbers yourself, for example if you need to write tests
 ```csharp
 using ActiveLogin.Identity.Swedish.TestData; 
 
-var aTestNumber = SwedishPersonalIdentityNumberTestData.GetRandom();
+var aTestNumber = PersonalIdentityNumberTestData.GetRandom();
 aTestNumber.IsTestNumber(); // => true
 ```
 
@@ -355,24 +355,24 @@ aTestNumber.IsTestNumber(); // => true
 ```csharp
 using ActiveLogin.Identity.Swedish.TestData; 
 
-var aTestNumber = SwedishCoordinationNumberTestData.GetRandom();
+var aTestNumber = CoordinationNumberTestData.GetRandom();
 aTestNumber.IsTestNumber(); // => true
 ```
 
 #### F# : Swedish Personal Identity Number
 ```fsharp
-open ActiveLogin.Identity.Swedish.TestData.FSharp
+open ActiveLogin.Identity.Swedish.TestData
 
-let aTestNumber = SwedishPersonalIdentityNumberTestData.getRandom()
-aTestNumber |> SwedishPersonalIdentityNumber.isTestNumber // => true
+let aTestNumber = PersonalIdentityNumberTestData.getRandom()
+aTestNumber |> PersonalIdentityNumber.isTestNumber // => true
 ```
 
 #### F# : Swedish Coordination Identity Number
 ```fsharp
-open ActiveLogin.Identity.Swedish.TestData.FSharp
+open ActiveLogin.Identity.Swedish.TestData
 
-let aTestNumber = SwedishCoordinationNumberTestData.getRandom()
-aTestNumber |> SwedishCoordinationNumber.isTestNumber // => true
+let aTestNumber = CoordinationNumberTestData.getRandom()
+aTestNumber |> CoordinationNumber.isTestNumber // => true
 ```
 
 ### When should I use `...InSpecificYear(...)`?
