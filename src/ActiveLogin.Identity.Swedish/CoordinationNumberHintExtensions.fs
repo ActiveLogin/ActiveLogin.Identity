@@ -17,7 +17,7 @@ type private AgeResult =
     | Age of int
 module private CoordinationNumberHints =
     let getDateOfBirthHint (num: CoordinationNumberInternal) : Nullable<DateTime> =
-        match num.CoordinationMonth.Value, num.CoordinationDay.Value with
+        match num.CoordinationMonth.Value, num.CoordinationDay.RealDay with
         | (0, _) | (_, 0) -> Nullable()
         | (month, day) ->
             DateTime(num.Year.Value, month, day, 0, 0, 0, DateTimeKind.Utc) |> Nullable
