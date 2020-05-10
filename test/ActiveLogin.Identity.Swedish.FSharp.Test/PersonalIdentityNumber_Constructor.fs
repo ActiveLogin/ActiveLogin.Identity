@@ -26,7 +26,7 @@ let tests =
             fun (Gen.Pin.ValidValues (_, m, d, b, c), Gen.InvalidYear invalidYear) ->
                 toAction PersonalIdentityNumber (invalidYear, m, d, b, c)
                 |> Expect.throwsWithType<ArgumentOutOfRangeException>
-                |> Expect.throwsWithMessage "Invalid year."
+                |> Expect.throwsWithMessage "Invalid year"
 
         testPropWithMaxTest 20000 "with valid year does not throw exception for year" <|
             fun (Gen.Pin.ValidValues (_, m, d, b, c), Gen.ValidYear validYear) ->
@@ -37,7 +37,7 @@ let tests =
             fun (Gen.Pin.ValidValues (y, _, d, b, c), Gen.InvalidMonth invalidMonth) ->
                 toAction PersonalIdentityNumber (y, invalidMonth, d, b, c)
                 |> Expect.throwsWithType<ArgumentOutOfRangeException>
-                |> Expect.throwsWithMessage "Invalid month."
+                |> Expect.throwsWithMessage "Invalid month"
 
         testProp "with valid month does not throw exception for month" <|
             fun (Gen.Pin.ValidValues (y, _, d, b, c), Gen.ValidMonth validMonth) ->
@@ -48,11 +48,11 @@ let tests =
             fun (Gen.Pin.WithInvalidDay (y, m, d, b, c)) ->
                 toAction PersonalIdentityNumber (y, m, d, b, c)
                 |> Expect.throwsWithType<ArgumentOutOfRangeException>
-                |> Expect.throwsWithMessage "Invalid day of month."
+                |> Expect.throwsWithMessage "Invalid day of month"
 
         testProp "with valid day does not throw exception for day" <| fun (Gen.Pin.WithValidDay (y, m, d, b, c)) ->
             toAction PersonalIdentityNumber (y, m, d, b, c)
-            |> Expect.doesNotThrowWithMessage "Invalid day"
+            |> Expect.doesNotThrowWithMessage "Invalid day of month"
 
         testProp "with invalid birth number throws" <|
             fun (Gen.Pin.ValidValues (y, m, d, _, c), Gen.InvalidBirthNumber invalidBirthNumber) ->
@@ -79,9 +79,5 @@ let tests =
                 |> List.iter (fun (y, m, d, b, cs) ->
                     toAction PersonalIdentityNumber (y, m, d, b, cs)
                     |> Expect.throwsWithType<ArgumentException>
-                    |> Expect.throwsWithMessage "Invalid checksum." )
-
-        testCase "fsharp should have no public constructor" <| fun () ->
-            let typ = typeof<PersonalIdentityNumber>
-            let numConstructors = typ.GetConstructors(BindingFlags.Public) |> Array.length
-            numConstructors =! 0 ]
+                    |> Expect.throwsWithMessage "Invalid checksum" )
+    ]

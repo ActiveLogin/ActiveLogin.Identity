@@ -110,3 +110,9 @@ let surroundEachChar (chars:char[]) (pin:string) =
 
 let isDigit (c:char) = "0123456789".Contains(c)
 
+let isInvalidNumberOfDigits (str: string) =
+    if System.String.IsNullOrWhiteSpace str then false
+    else
+        str
+        |> String.filter isDigit
+        |> (fun s -> s.Length <> 10 && s.Length <> 12)

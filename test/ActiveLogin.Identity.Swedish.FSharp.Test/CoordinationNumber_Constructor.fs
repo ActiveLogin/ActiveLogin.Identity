@@ -26,12 +26,12 @@ let tests =
             fun (Gen.CoordNum.ValidValues (_, m, d, b, c), Gen.InvalidYear invalidYear) ->
                 toAction CoordinationNumber (invalidYear, m, d, b, c)
                 |> Expect.throwsWithType<ArgumentOutOfRangeException>
-                |> Expect.throwsWithMessage "Invalid year."
+                |> Expect.throwsWithMessage "Invalid year"
 
         testPropWithMaxTest 20000 "with valid year does not throw exception for year" <|
             fun (Gen.CoordNum.ValidValues (_, m, d, b, c), Gen.ValidYear validYear) ->
                 toAction CoordinationNumber (validYear, m, d, b, c)
-                |> Expect.doesNotThrowWithMessage "year"
+                |> Expect.doesNotThrowWithMessage "Invalid year"
 
         testProp "with invalid month throws exception" <|
             fun (Gen.CoordNum.WithInvalidMonth withInvalidMonth) ->
@@ -42,13 +42,13 @@ let tests =
         testProp "valid month does not throw exception for month" <|
             fun (Gen.CoordNum.ValidValues (y, _, d, b, c), Gen.ValidMonth validMonth) ->
                 toAction CoordinationNumber (y, validMonth, d, b, c)
-                |> Expect.doesNotThrowWithMessage "month"
+                |> Expect.doesNotThrowWithMessage "Invalid month for coordination number"
 
         testProp "with invalid day throws" <|
             fun (Gen.CoordNum.WithInvalidDay withInvalidDay) ->
                 toAction CoordinationNumber withInvalidDay
                 |> Expect.throwsWithType<ArgumentOutOfRangeException>
-                |> Expect.throwsWithMessage "Invalid coordination day."
+                |> Expect.throwsWithMessage "Invalid coordination day"
 
         testProp "with valid day does not throw exception for day" <| fun (Gen.CoordNum.WithValidDay withValidDay) ->
             toAction CoordinationNumber withValidDay
@@ -58,12 +58,12 @@ let tests =
             fun (Gen.CoordNum.ValidValues (y, m, d, _, c), Gen.InvalidBirthNumber invalidBirthNumber) ->
                 toAction CoordinationNumber (y, m, d, invalidBirthNumber, c)
                 |> Expect.throwsWithType<ArgumentOutOfRangeException>
-                |> Expect.throwsWithMessage "Invalid individual number."
+                |> Expect.throwsWithMessage "Invalid individual number"
 
-        testPropWithMaxTest 3000 "with valid birth number does not throw exception for birth number" <|
+        testPropWithMaxTest 3000 "with valid individual number does not throw exception for birth number" <|
             fun (Gen.CoordNum.ValidValues (y, m, d, _, c), Gen.ValidBirthNumber validBirthNumber) ->
                 toAction CoordinationNumber (y, m, d, validBirthNumber, c )
-                |> Expect.doesNotThrowWithMessage "birth"
+                |> Expect.doesNotThrowWithMessage "Invalid individual number"
 
         testProp "with invalid checksum throws" <|
             fun (Gen.CoordNum.ValidValues (y, m, d, b, c)) ->
@@ -79,9 +79,5 @@ let tests =
                 |> List.iter (fun (y, m, d, b, cs) ->
                     toAction CoordinationNumber (y, m, d, b, cs)
                     |> Expect.throwsWithType<ArgumentException>
-                    |> Expect.throwsWithMessage "Invalid checksum." )
-
-        testCase "fsharp should have no public constructor" <| fun () ->
-            let typ = typeof<CoordinationNumber>
-            let numConstructors = typ.GetConstructors(BindingFlags.Public) |> Array.length
-            numConstructors =! 0 ]
+                    |> Expect.throwsWithMessage "Invalid checksum" )
+    ]

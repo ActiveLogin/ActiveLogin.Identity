@@ -15,12 +15,16 @@
     <Compile Include="TestDataTests.fs" />
     <Compile Include="PersonalIdentityNumber_Constructor.fs" />
     <Compile Include="CoordinationNumber_Constructor.fs" />
+    <Compile Include="IndividualIdentityNumber_Constructor.fs" />
     <Compile Include="PersonalIdentityNumber_Equality.fs" />
     <Compile Include="CoordinationNumber_Equality.fs" />
+    <Compile Include="IndividualIdentityNumber_Equality.fs" />
     <Compile Include="PersonalIdentityNumber_GetHashCode.fs" />
     <Compile Include="CoordinationNumber_GetHashCode.fs" />
+    <Compile Include="IndividualIdentityNumber_GetHashCode.fs" />
     <Compile Include="PersonalIdentityNumber_Parse.fs" />
     <Compile Include="CoordinationNumber_Parse.fs" />
+    <Compile Include="IndividualIdentityNumber_Parse.fs" />
     <Compile Include="PersonalIdentityNumber_Hints.fs" />
     <Compile Include="CoordinationNumber_Hints.fs" />
     <Compile Include="Program.fs" />

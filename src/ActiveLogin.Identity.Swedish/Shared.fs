@@ -26,14 +26,14 @@ let (|Even|Odd|) value =
     else Odd
 
 
-module private Option =
-    let fromNullable (n: Nullable<_>) =
-        if n.HasValue then
-            Some n.Value
-        else
-            None
-
 module internal Hints =
+    module private Option =
+        let fromNullable (n: Nullable<_>) =
+            if n.HasValue then
+                Some n.Value
+            else
+                None
+
     type internal AgeResult =
         | MissingMonthOrDay
         | NotYetBornError
