@@ -6,16 +6,17 @@ open System.Threading
 
 module Random =
     let rng =
-        // this thread-safe implementation is required to handle running lots of invocations of getRandom in parallel
-        let seedGenerator = Random()
-        let localGenerator = new ThreadLocal<Random>(fun _ ->
-            lock seedGenerator (fun _ ->
-                let seed = seedGenerator.Next()
-                Random(seed)))
+        lazy
+            // this thread-safe implementation is required to handle running lots of invocations of getRandom in parallel
+            let seedGenerator = Random()
+            let localGenerator = new ThreadLocal<Random>(fun _ ->
+                lock seedGenerator (fun _ ->
+                    let seed = seedGenerator.Next()
+                    Random(seed)))
 
-        fun (min, max) -> localGenerator.Value.Next(min, max)
+            fun (min, max) -> localGenerator.Value.Next(min, max)
 
-    let random _ = rng(Int32.MinValue, Int32.MaxValue)
+    let random _ = rng.Value (Int32.MinValue, Int32.MaxValue)
 
 module PersonalIdentityNumberTestDataInternal =
     open ActiveLogin.Identity.Swedish.TestData.AllPins
@@ -31,7 +32,7 @@ module PersonalIdentityNumberTestDataInternal =
     let allPinsShuffled() = seq { for pin in shuffledPins() do yield PersonalIdentityNumber pin }
 
     let getRandom() =
-        let index = Random.rng(0, Array.length allPins - 1)
+        let index = Random.rng.Value(0, Array.length allPins - 1)
         allPins.[index]
         |> PersonalIdentityNumber
 
@@ -89,7 +90,7 @@ module CoordinationNumberTestDataInternal =
     let allCoordNumsByDateDesc() = seq { for coordNum in allCoordNums do yield CoordinationNumber coordNum }
     let allCoordNumsShuffled() = seq { for coordNum in shuffledCoordNums() do yield CoordinationNumber coordNum }
     let getRandom() =
-        let index = Random.rng(0, Array.length allCoordNums - 1)
+        let index = Random.rng.Value(0, Array.length allCoordNums - 1)
         allCoordNums.[index]
         |> CoordinationNumber
     let getRandomWithCount count = allCoordNumsShuffled() |> Seq.take count
