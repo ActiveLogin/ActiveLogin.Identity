@@ -164,7 +164,7 @@ type PersonalIdentityNumber internal(pin : PersonalIdentityNumberInternal) =
         let pin = tryParseInSpecificYear parseYear s
         match pin with
         | Some pin ->
-            parseResult <- (pin |> PersonalIdentityNumber)
+            parseResult <- PersonalIdentityNumber pin
             true
         | None -> false
 
@@ -176,7 +176,7 @@ type PersonalIdentityNumber internal(pin : PersonalIdentityNumberInternal) =
     static member TryParse((s : string), [<Out>] parseResult : PersonalIdentityNumber byref) =
         match tryParse s with
         | Some pin ->
-            parseResult <- (pin |> PersonalIdentityNumber)
+            parseResult <- PersonalIdentityNumber pin
             true
         | None -> false
 

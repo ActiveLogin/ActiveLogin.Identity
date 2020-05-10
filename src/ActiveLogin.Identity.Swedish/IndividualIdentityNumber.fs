@@ -82,7 +82,6 @@ type IndividualIdentityNumber private(num: IndividualIdentityNumberInternal) =
     /// <exception cref="ArgumentException">Thrown when checksum is invalid.</exception>
     private new(year, month, day, birthNumber, checksum) =
         let idNum = (year, month, day, birthNumber, checksum) |> create
-
         IndividualIdentityNumber(idNum)
 
     member this.PersonalIdentityNumber =
