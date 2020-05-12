@@ -86,7 +86,7 @@ type PersonalIdentityNumber internal(pin : PersonalIdentityNumberInternal) =
     /// <param name="day">The day part.</param>
     /// <param name="birthNumber">The birth number part.</param>
     /// <param name="checksum">The checksum part.</param>
-    /// <returns>An instance of <see cref="SwedishPersonalIdentityNumber"/> if all the paramaters are valid by themselfes and in combination.</returns>
+    /// <returns>An instance of <see cref="SwedishPersonalIdentityNumber"/> if all the parameters are valid by themselves and in combination.</returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when any of the range arguments is invalid.</exception>
     /// <exception cref="ArgumentException">Thrown when checksum is invalid.</exception>
     new(year, month, day, birthNumber, checksum) =
@@ -164,7 +164,7 @@ type PersonalIdentityNumber internal(pin : PersonalIdentityNumberInternal) =
         let pin = tryParseInSpecificYear parseYear s
         match pin with
         | Some pin ->
-            parseResult <- (pin |> PersonalIdentityNumber)
+            parseResult <- PersonalIdentityNumber pin
             true
         | None -> false
 
@@ -176,7 +176,7 @@ type PersonalIdentityNumber internal(pin : PersonalIdentityNumberInternal) =
     static member TryParse((s : string), [<Out>] parseResult : PersonalIdentityNumber byref) =
         match tryParse s with
         | Some pin ->
-            parseResult <- (pin |> PersonalIdentityNumber)
+            parseResult <- PersonalIdentityNumber pin
             true
         | None -> false
 

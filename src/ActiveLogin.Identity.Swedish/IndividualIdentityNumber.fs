@@ -15,7 +15,7 @@ module internal IndividualIdentityNumber =
                 with
                     coordnumException ->
                         let msg = sprintf "Not a valid pin or coordination number. PinError: %s, CoordinationError: %s" pinException.Message coordnumException.Message
-                        FormatException(sprintf "String was not recognized as a valid IndividualIdentityNumber. %s" msg) |> raise
+                        ArgumentException(sprintf "String was not recognized as a valid IndividualIdentityNumber. %s" msg) |> raise
 
 
     let internal parseInSpecificYearInternal parseYear str =
@@ -80,9 +80,8 @@ type IndividualIdentityNumber private(num: IndividualIdentityNumberInternal) =
     /// <returns>An instance of <see cref="IdentityNumber"/> if all the parameters are valid by themselves and in combination.</returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when any of the range arguments is invalid.</exception>
     /// <exception cref="ArgumentException">Thrown when checksum is invalid.</exception>
-    private new(year, month, day, birthNumber, checksum) =
+    new(year, month, day, birthNumber, checksum) =
         let idNum = (year, month, day, birthNumber, checksum) |> create
-
         IndividualIdentityNumber(idNum)
 
     member this.PersonalIdentityNumber =
@@ -227,3 +226,8 @@ type IndividualIdentityNumber private(num: IndividualIdentityNumberInternal) =
         | (null, _) | (_, null) -> false
         | _ -> left.IdentityNumber = right.IdentityNumber
 
+    static member op_Inequality (left: IndividualIdentityNumber, right: IndividualIdentityNumber) =
+        match box left, box right with
+        | (null, null) -> false
+        | (null, _) | (_, null) -> true
+        | _ -> left.IdentityNumber <> right.IdentityNumber

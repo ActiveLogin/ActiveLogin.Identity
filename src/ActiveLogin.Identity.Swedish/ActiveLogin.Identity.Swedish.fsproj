@@ -52,12 +52,12 @@
         <Compile Include="PersonalIdentityNumber.fs" />
         <Compile Include="CoordinationNumber.fs" />
         <Compile Include="IndividualIdentityNumber.fs" />
-        <Compile Include="PersonalIdentityNumberHintExtensions.fs" />
-        <Compile Include="CoordinationNumberHintExtensions.fs" />
-        <Compile Include="IndividualIdentityNumberHintExtensions.fs" />
+        <Compile Include="PersonalIdentityNumberHints.fs" />
     </ItemGroup>
 
     <ItemGroup>
+        <Compile Include="CoordinationNumberHints.fs" />
+        <Compile Include="IndividualIdentityNumberHints.fs" />
         <None Include="..\..\docs\images\active-login-logo-fingerprint-blue-v2-256x256.png" Pack="True" PackagePath="icon.png" />
         <None Include="..\..\LICENSE.md" Pack="True" PackagePath="LICENSE.md" />
         <None Include="..\..\README.md" Pack="True" PackagePath="README.md" />
