@@ -45,26 +45,25 @@ module internal PersonalIdentityNumber =
             pin.BirthNumber.Value
             pin.Checksum.Value
 
-    let internal parseInSpecificYearInternal parseYear str =
+    let internal parseInSpecificYearInternal strictMode parseYear str =
         let pYear = parseYear |> Year.create
-        Parse.parseInSpecificYear create pYear str
+        Parse.parseInSpecificYear create strictMode pYear str
 
-    let parseInSpecificYear parseYear str =
-        parseInSpecificYearInternal parseYear str
+    let parseInSpecificYear strictMode parseYear str =
+        parseInSpecificYearInternal strictMode parseYear str
 
-    let tryParseInSpecificYear parseYear str =
+    let tryParseInSpecificYear strictMode parseYear str =
         try
-            parseInSpecificYearInternal parseYear str
+            parseInSpecificYearInternal strictMode parseYear str
             |> Some
         with
             exn -> None
 
-    let parse str = Parse.parse create str
+    let parse strictMode str = Parse.parse create strictMode str
 
-
-    let tryParse str =
+    let tryParse strictMode str =
        try
-           parse str
+           parse strictMode str
            |> Some
        with
            exn -> None
@@ -135,7 +134,7 @@ type PersonalIdentityNumber internal(pin : PersonalIdentityNumberInternal) =
     /// <exception cref="ArgumentNullException">Thrown when string input is null.</exception>
     /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid PersonalIdentityNumber.</exception>
     static member ParseInSpecificYear((s : string), parseYear : int) =
-        parseInSpecificYear parseYear s
+        parseInSpecificYear StrictMode.Off parseYear s
         |> PersonalIdentityNumber
 
     /// <summary>
@@ -145,8 +144,32 @@ type PersonalIdentityNumber internal(pin : PersonalIdentityNumberInternal) =
     /// <exception cref="ArgumentNullException">Thrown when string input is null.</exception>
     /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid PersonalIdentityNumber.</exception>
     static member Parse(s) =
-        parse s
+        parse StrictMode.Off s
         |> PersonalIdentityNumber
+
+    static member ParseStrict(s, strictMode: StrictMode) : PersonalIdentityNumber =
+        parse strictMode s
+        |> PersonalIdentityNumber
+
+    static member ParseStrictInSpecificYear(s, parseYear : int, strictMode: StrictMode) : PersonalIdentityNumber =
+        parseInSpecificYear strictMode parseYear s
+        |> PersonalIdentityNumber
+
+    static member TryParseStrictInSpecificYear((s : string), (parseYear : int), strictMode: StrictMode,
+                                         [<Out>] parseResult : PersonalIdentityNumber byref) =
+        let pin = tryParseInSpecificYear strictMode parseYear s
+        match pin with
+        | Some pin ->
+            parseResult <- PersonalIdentityNumber pin
+            true
+        | None -> false
+
+    static member TryParseStrict((s : string), strictMode: StrictMode, [<Out>] parseResult : PersonalIdentityNumber byref) =
+        match tryParse strictMode s with
+        | Some pin ->
+            parseResult <- PersonalIdentityNumber pin
+            true
+        | None -> false
 
     /// <summary>
     /// Converts the string representation of the personal identity number to its <see cref="PersonalIdentityNumber"/> equivalent  and returns a value that indicates whether the conversion succeeded.
@@ -161,7 +184,7 @@ type PersonalIdentityNumber internal(pin : PersonalIdentityNumberInternal) =
     /// <param name="parseResult">If valid, an instance of <see cref="PersonalIdentityNumber"/></param>
     static member TryParseInSpecificYear((s : string), (parseYear : int),
                                          [<Out>] parseResult : PersonalIdentityNumber byref) =
-        let pin = tryParseInSpecificYear parseYear s
+        let pin = tryParseInSpecificYear StrictMode.Off parseYear s
         match pin with
         | Some pin ->
             parseResult <- PersonalIdentityNumber pin
@@ -174,7 +197,7 @@ type PersonalIdentityNumber internal(pin : PersonalIdentityNumberInternal) =
     /// <param name="s">A string representation of the Swedish personal identity number to parse.</param>
     /// <param name="parseResult">If valid, an instance of <see cref="PersonalIdentityNumber"/></param>
     static member TryParse((s : string), [<Out>] parseResult : PersonalIdentityNumber byref) =
-        match tryParse s with
+        match tryParse StrictMode.Off s with
         | Some pin ->
             parseResult <- PersonalIdentityNumber pin
             true
@@ -212,10 +235,10 @@ type PersonalIdentityNumber internal(pin : PersonalIdentityNumberInternal) =
     override __.ToString() = __.To12DigitString()
 
     /// <summary>Returns a value indicating whether this instance is equal to a specified object.</summary>
-    /// <param name="value">The object to compare to this instance.</param>
-    /// <returns>true if <paramref name="value">value</paramref> is an instance of <see cref="PersonalIdentityNumber"></see> and equals the value of this instance; otherwise, false.</returns>
-    override __.Equals(b) =
-        match b with
+    /// <param name="other">The object to compare to this instance.</param>
+    /// <returns>true if <paramref name="other">value</paramref> is an instance of <see cref="PersonalIdentityNumber"></see> and equals the value of this instance; otherwise, false.</returns>
+    override __.Equals(other) =
+        match other with
         | :? PersonalIdentityNumber as p -> pin = p.IdentityNumber
         | _ -> false
 

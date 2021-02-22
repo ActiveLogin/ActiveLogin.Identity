@@ -20,6 +20,7 @@
     <Compile Include="PersonalIdentityNumber_GetHashCode.fs" />
     <Compile Include="CoordinationNumber_GetHashCode.fs" />
     <Compile Include="PersonalIdentityNumber_Parse.fs" />
+    <Compile Include="PersonalIdentityNumber_ParseStrict.fs" />
     <Compile Include="CoordinationNumber_Parse.fs" />
     <Compile Include="PersonalIdentityNumber_Hints.fs" />
     <Compile Include="CoordinationNumber_Hints.fs" />

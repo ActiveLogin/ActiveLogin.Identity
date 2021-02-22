@@ -15,6 +15,13 @@ type internal CoordinationMonth = private CoordinationMonth of int
 type internal CoordinationDay = private CoordinationDay of int
 type internal IndividualNumber = private IndividualNumber of int
 
+[<Flags>]
+type StrictMode =
+    | Off = 0
+    | TenDigits = 0b0001
+    | TwelveDigits = 0b0010
+    | TenOrTwelveDigits = 0b0011
+
 type internal PersonalIdentityNumberInternal =
     { Year : Year
       Month : Month

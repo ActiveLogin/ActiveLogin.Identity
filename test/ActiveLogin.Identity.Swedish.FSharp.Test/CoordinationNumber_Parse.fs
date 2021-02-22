@@ -83,7 +83,7 @@ let tests =
                     lazy
                         ( toAction CoordinationNumber.Parse digits
                           |> Expect.throwsWithType<FormatException>
-                          |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber." )
+                          |> Expect.throwsWithMessage "String was not recognized as a ten or twelve digit IdentityNumber." )
             testProp "num with invalid year returns parsing error" <| fun (Gen.CoordNum.NumWithInvalidYear str) ->
                 toAction CoordinationNumber.Parse str
                 |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid year" ]

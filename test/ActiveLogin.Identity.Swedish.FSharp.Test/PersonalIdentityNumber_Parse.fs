@@ -57,7 +57,7 @@ let tests =
                 let offset = rng.Next (0, 200)
                 let year = pin.Year + offset
                 (pin.To10DigitStringInSpecificYear year, year)
-                |> PersonalIdentityNumber.ParseInSpecificYear = pin
+                |> PersonalIdentityNumber.ParseInSpecificYear =! pin
             testPropWithMaxTest 400 "roundtrip for 10 digit string without hyphen delimeter 'in specific year'"
                 <| fun (Gen.Pin.ValidPin pin) ->
                     let offset = rng.Next (0, 200)
@@ -83,7 +83,7 @@ let tests =
                     lazy
                         ( toAction PersonalIdentityNumber.Parse digits
                           |> Expect.throwsWithType<FormatException>
-                          |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber." )
+                          |> Expect.throwsWithMessage "String was not recognized as a ten or twelve digit IdentityNumber." )
             testProp "pin with invalid year returns parsing error" <| fun (Gen.Pin.PinWithInvalidYear str) ->
                 toAction PersonalIdentityNumber.Parse str
                 |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid year" ]

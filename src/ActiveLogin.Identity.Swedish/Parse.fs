@@ -6,7 +6,13 @@ type private PinType<'T> =
     | TwelveDigits of 'T
     | TenDigits of 'T
 
-let private parseInternal parseYear =
+module private PinType =
+    let map f pt =
+        match pt with
+        | TenDigits v -> TenDigits (f v)
+        | TwelveDigits v -> TwelveDigits (f v)
+
+module private Helpers =
     let toChars str = [ for c in str -> c ]
     let toString = Array.ofList >> String
     let requireNotEmpty str =
@@ -19,18 +25,46 @@ let private parseInternal parseYear =
             FormatException("String was not recognized as a valid IdentityNumber. Cannot be empty string or whitespace.")
             |> raise
 
-    let requireDigitCount (str : string) =
+    let requireDigitCount strictMode (str : string) =
         let chars = str |> toChars
-        let numDigits =
-            chars
-            |> List.filter Char.IsDigit
-            |> List.length
-        match numDigits with
-        | 10 -> (chars |> TenDigits)
-        | 12 -> (chars |> TwelveDigits)
-        | _ -> FormatException("String was not recognized as a valid IdentityNumber.") |> raise
 
-    let clean numberType =
+        match strictMode with
+        | StrictMode.Off ->
+            match chars |> List.filter Char.IsDigit |> List.length with
+            | 10 ->
+                chars |> TenDigits
+            | 12 ->
+                chars |> TwelveDigits
+            | _ ->
+                FormatException("String was not recognized as a ten or twelve digit IdentityNumber.") |> raise
+        | StrictMode.TenOrTwelveDigits ->
+            match List.length chars with
+            | 10 ->
+                chars |> TenDigits
+            | 11 when List.contains '-' chars || List.contains '+' chars ->
+                chars |> TenDigits
+            | 12 ->
+                chars |> TwelveDigits
+            | _ ->
+                FormatException("String was not recognized as a ten or twelve digit IdentityNumber.") |> raise
+        | StrictMode.TenDigits ->
+            match List.length chars with
+            | 10 ->
+                chars |> TenDigits
+            | 11 when List.contains '-' chars || List.contains '+' chars ->
+                chars |> TenDigits
+            | _ ->
+                FormatException("String was not recognized as a ten digit IdentityNumber.") |> raise
+        | StrictMode.TwelveDigits ->
+            if chars |> List.length = 12 then
+               chars |> TwelveDigits
+            else
+                FormatException("String was not recognized as a twelve digit IdentityNumber.") |> raise
+        | x ->
+            invalidArg "StrictMode" (sprintf "%A is not a valid StrictMode" x)
+
+
+    let clean strictMode numberType =
         let (|IsDigit|IsPlus|NotDigitOrPlus|) char =
             match char |> Char.IsDigit with
             | true -> IsDigit
@@ -39,24 +73,55 @@ let private parseInternal parseYear =
 
         let folder char state =
             match state |> List.length, char with
-            | 4, IsPlus -> char :: state
-            | 4, IsDigit -> char :: ('-' :: state)
+            | 4, IsPlus
             | _, IsDigit -> char :: state
             | _ -> state
 
         match numberType with
         | TwelveDigits chars ->
-            chars
-            |> List.filter Char.IsDigit
-            |> toString
-            |> TwelveDigits
+            match strictMode with
+            | StrictMode.Off ->
+                chars
+                |> List.filter Char.IsDigit
+                |> toString
+                |> TwelveDigits
+            | StrictMode.TwelveDigits | StrictMode.TenOrTwelveDigits ->
+                chars
+                |> toString
+                |> TwelveDigits
+            | StrictMode.TenDigits ->
+                failwith "programmer error, mismatching digit count"
+            | _ ->
+                invalidArg "StrictMode" "Invalid strict mode"
         | TenDigits chars ->
-            (chars, [])
-            ||> List.foldBack folder
-            |> toString
-            |> TenDigits
+            match strictMode with
+            | StrictMode.Off ->
+                (chars, [])
+                ||> List.foldBack folder
+                |> toString
+                |> TenDigits
+            | StrictMode.TenDigits | StrictMode.TenOrTwelveDigits ->
+                chars
+                |> toString
+                |> TenDigits
+            | StrictMode.TwelveDigits ->
+                failwith "programmer error, mismatching digit count"
+            | _ ->
+                invalidArg "StrictMode" "Invalid strict mode"
 
-    let parseNumberValues (numberType : PinType<string>) =
+    let addImplicitHyphen (pin: PinType<string>) =
+        match pin with
+        | TenDigits str ->
+            let delimiter = str.[6]
+            if Char.IsDigit delimiter then
+                str.[0..5] + "-" + str.[6..9]
+                |> TenDigits
+            else
+                str
+                |> TenDigits
+        | TwelveDigits str -> TwelveDigits str
+
+    let parseNumberValues parseYear (numberType : PinType<string>) =
         match numberType with
         | TwelveDigits str ->
             // YYYYMMDDbbbc
@@ -84,7 +149,7 @@ let private parseInternal parseYear =
                 | '-' -> fullYearGuess - 100
                 | '+' when shortYear <= lastDigitsParseYear -> fullYearGuess - 100
                 | '+' -> fullYearGuess - 200
-                | _ -> FormatException(sprintf "String was not recognized as a valid PersonalIdentityNumber. delimiter") |> raise
+                | _ -> FormatException(sprintf "String was not recognized as a valid PersonalIdentityNumber. Pin %s, has an invalid delimiter (%c)" str delimiter) |> raise
 
             let month = str.[2..3] |> int
             let day = str.[4..5] |> int
@@ -92,14 +157,15 @@ let private parseInternal parseYear =
             let checksum = str.[10..10] |> int
             (fullYear, month, day, birthNumber, checksum)
 
-    requireNotEmpty
-    >> requireDigitCount
-    >> clean
-    >> parseNumberValues
-
-let parseInSpecificYear createFunc parseYear str =
+let tee f x = f x; x
+let parseInSpecificYear createFunc strictMode parseYear str =
     try
-        parseInternal parseYear str
+        str
+        |> Helpers.requireNotEmpty
+        |> Helpers.requireDigitCount strictMode
+        |> Helpers.clean strictMode
+        |> Helpers.addImplicitHyphen
+        |> Helpers.parseNumberValues parseYear
         |> createFunc
     with
         | :? ArgumentOutOfRangeException as ex ->
@@ -108,6 +174,6 @@ let parseInSpecificYear createFunc parseYear str =
         | :? ArgumentException as ex ->
             FormatException(sprintf "String was not recognized as a valid IdentityNumber. %s" ex.Message, ex) |> raise
 
-let parse createFunc str =
+let parse createFunc strictMode str =
     let year = DateTime.UtcNow.Year |> Year.create
-    parseInSpecificYear createFunc year str
+    parseInSpecificYear createFunc strictMode year str

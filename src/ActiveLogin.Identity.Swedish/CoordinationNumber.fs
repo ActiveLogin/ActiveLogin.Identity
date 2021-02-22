@@ -49,7 +49,7 @@ module internal CoordinationNumber =
 
     let internal parseInSpecificYearInternal parseYear str =
         let pYear = Year.create parseYear
-        Parse.parseInSpecificYear create pYear str
+        Parse.parseInSpecificYear create StrictMode.Off pYear str
 
     let parseInSpecificYear parseYear str =
         parseInSpecificYearInternal parseYear str
@@ -61,7 +61,7 @@ module internal CoordinationNumber =
         with
             exn -> None
 
-    let parse str = Parse.parse create str
+    let parse str = Parse.parse create StrictMode.Off str
 
     let tryParse str =
         try
@@ -210,8 +210,8 @@ type CoordinationNumber internal(num : CoordinationNumberInternal) =
     override __.ToString() = __.To12DigitString()
 
     /// <summary>Returns a value indicating whether this instance is equal to a specified object.</summary>
-    /// <param name="value">The object to compare to this instance.</param>
-    /// <returns>true if <paramref name="value">value</paramref> is an instance of <see cref="CoordinationNumber"></see> and equals the value of this instance; otherwise, false.</returns>
+    /// <param name="b">The object to compare to this instance.</param>
+    /// <returns>true if <paramref name="b">value</paramref> is an instance of <see cref="CoordinationNumber"></see> and equals the value of this instance; otherwise, false.</returns>
     override __.Equals(b) =
         match b with
         | :? CoordinationNumber as n -> num = n.IdentityNumber
