@@ -6,12 +6,12 @@ open Expecto
 open ActiveLogin.Identity.Swedish
 open FsCheck
 
-let parseStrictTenDigits str = PersonalIdentityNumber.ParseStrict(str, StrictMode.TenDigits)
-let parseStrictTenDigitsInSpecificYear (str, year) = PersonalIdentityNumber.ParseStrictInSpecificYear(str, year, StrictMode.TenDigits)
-let parseStrictTwelveDigits str = PersonalIdentityNumber.ParseStrict(str, StrictMode.TwelveDigits)
-let parseStrictTwelveDigitsInSpecificYear (str, year)= PersonalIdentityNumber.ParseStrictInSpecificYear(str, year, StrictMode.TwelveDigits)
-let parseStrictTenOrTwelveDigits str = PersonalIdentityNumber.ParseStrict(str, StrictMode.TenOrTwelveDigits)
-let parseStrictTenOrTwelveDigitsInSpecificYear (str, year) = PersonalIdentityNumber.ParseStrictInSpecificYear(str, year, StrictMode.TenOrTwelveDigits)
+let parseStrictTenDigits str = PersonalIdentityNumber.Parse(str, StrictMode.TenDigits)
+let parseStrictTenDigitsInSpecificYear (str, year) = PersonalIdentityNumber.ParseInSpecificYear(str, year, StrictMode.TenDigits)
+let parseStrictTwelveDigits str = PersonalIdentityNumber.Parse(str, StrictMode.TwelveDigits)
+let parseStrictTwelveDigitsInSpecificYear (str, year)= PersonalIdentityNumber.ParseInSpecificYear(str, year, StrictMode.TwelveDigits)
+let parseStrictTenOrTwelveDigits str = PersonalIdentityNumber.Parse(str, StrictMode.TenOrTwelveDigits)
+let parseStrictTenOrTwelveDigitsInSpecificYear (str, year) = PersonalIdentityNumber.ParseInSpecificYear(str, year, StrictMode.TenOrTwelveDigits)
 
 [<Tests>]
 let tests =
@@ -213,11 +213,11 @@ let tests =
                 toAction PersonalIdentityNumber.Parse str
                 |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid checksum" ]
             testProp "parseInSpecificYear with empty string throws" <| fun (Gen.EmptyString str, Gen.ValidYear year) ->
-                toAction PersonalIdentityNumber.ParseInSpecificYear (str, year)
+                toAction parseStrictTwelveDigitsInSpecificYear (str, year)
                 |> Expect.throwsWithType<FormatException>
                 |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber. Cannot be empty string or whitespace."
             testProp "parseInSpecificYear with null string throws" <| fun (Gen.ValidYear year) ->
-                toAction PersonalIdentityNumber.ParseInSpecificYear (null, year)
+                toAction parseStrictTwelveDigitsInSpecificYear (null, year)
                 |> Expect.throwsWithType<ArgumentNullException>
                 |> ignore
         ]

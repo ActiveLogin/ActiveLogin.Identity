@@ -49,7 +49,7 @@ module internal CoordinationNumber =
 
     let internal parseInSpecificYearInternal parseYear str =
         let pYear = Year.create parseYear
-        Parse.parseInSpecificYear create StrictMode.Off pYear str
+        Parse.parseInSpecificYear create StrictModeInternal.Off pYear str
 
     let parseInSpecificYear parseYear str =
         parseInSpecificYearInternal parseYear str
@@ -61,7 +61,7 @@ module internal CoordinationNumber =
         with
             exn -> None
 
-    let parse str = Parse.parse create StrictMode.Off str
+    let parse str = Parse.parse create StrictModeInternal.Off str
 
     let tryParse str =
         try

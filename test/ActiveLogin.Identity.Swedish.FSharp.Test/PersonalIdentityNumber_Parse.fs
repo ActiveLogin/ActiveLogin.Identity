@@ -100,17 +100,17 @@ let tests =
                 toAction PersonalIdentityNumber.Parse str
                 |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid checksum" ]
             testProp "parseInSpecificYear with empty string throws" <| fun (Gen.EmptyString str, Gen.ValidYear year) ->
-                toAction PersonalIdentityNumber.ParseInSpecificYear (str, year)
+                toAction (fun (s, y) -> PersonalIdentityNumber.ParseInSpecificYear(s,y)) (str, year)
                 |> Expect.throwsWithType<FormatException>
                 |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber. Cannot be empty string or whitespace."
             testProp "parseInSpecificYear with null string throws" <| fun (Gen.ValidYear year) ->
-                toAction PersonalIdentityNumber.ParseInSpecificYear (null, year)
+                toAction (fun (s,y) -> PersonalIdentityNumber.ParseInSpecificYear(s,y)) (null, year)
                 |> Expect.throwsWithType<ArgumentNullException>
                 |> ignore
             testPropWithMaxTest 400 "cannot convert a pin to 10 digit string in a specific year when the person would be 200 years or older"
                 <| fun (Gen.Pin.ValidPin pin) ->
                     let offset =
-                        let maxYear = System.DateTime.MaxValue.Year - pin.Year
+                        let maxYear = DateTime.MaxValue.Year - pin.Year
                         rng.Next(200, maxYear)
                     let year = pin.Year + offset
                     toAction pin.To10DigitStringInSpecificYear year

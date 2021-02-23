@@ -15,12 +15,26 @@ type internal CoordinationMonth = private CoordinationMonth of int
 type internal CoordinationDay = private CoordinationDay of int
 type internal IndividualNumber = private IndividualNumber of int
 
-[<Flags>]
 type StrictMode =
     | Off = 0
-    | TenDigits = 0b0001
-    | TwelveDigits = 0b0010
-    | TenOrTwelveDigits = 0b0011
+    | TenDigits = 1
+    | TwelveDigits = 2
+    | TenOrTwelveDigits = 3
+type internal StrictModeInternal =
+    | Off
+    | TenDigits
+    | TwelveDigits
+    | TenOrTwelveDigits
+    with
+        static member Create(mode: StrictMode) =
+            match mode with
+            | StrictMode.Off -> StrictModeInternal.Off
+            | StrictMode.TenDigits -> StrictModeInternal.TenDigits
+            | StrictMode.TwelveDigits -> StrictModeInternal.TwelveDigits
+            | StrictMode.TenOrTwelveDigits -> StrictModeInternal.TenOrTwelveDigits
+            | _ -> invalidArg "strictMode" "Not a valid StrictMode"
+
+
 
 type internal PersonalIdentityNumberInternal =
     { Year : Year

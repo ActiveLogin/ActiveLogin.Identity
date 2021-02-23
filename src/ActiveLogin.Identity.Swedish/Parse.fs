@@ -29,7 +29,7 @@ module private Helpers =
         let chars = str |> toChars
 
         match strictMode with
-        | StrictMode.Off ->
+        | StrictModeInternal.Off ->
             match chars |> List.filter Char.IsDigit |> List.length with
             | 10 ->
                 chars |> TenDigits
@@ -37,7 +37,7 @@ module private Helpers =
                 chars |> TwelveDigits
             | _ ->
                 FormatException("String was not recognized as a ten or twelve digit IdentityNumber.") |> raise
-        | StrictMode.TenOrTwelveDigits ->
+        | StrictModeInternal.TenOrTwelveDigits ->
             match List.length chars with
             | 10 ->
                 chars |> TenDigits
@@ -47,7 +47,7 @@ module private Helpers =
                 chars |> TwelveDigits
             | _ ->
                 FormatException("String was not recognized as a ten or twelve digit IdentityNumber.") |> raise
-        | StrictMode.TenDigits ->
+        | StrictModeInternal.TenDigits ->
             match List.length chars with
             | 10 ->
                 chars |> TenDigits
@@ -55,14 +55,11 @@ module private Helpers =
                 chars |> TenDigits
             | _ ->
                 FormatException("String was not recognized as a ten digit IdentityNumber.") |> raise
-        | StrictMode.TwelveDigits ->
+        | StrictModeInternal.TwelveDigits ->
             if chars |> List.length = 12 then
                chars |> TwelveDigits
             else
                 FormatException("String was not recognized as a twelve digit IdentityNumber.") |> raise
-        | x ->
-            invalidArg "StrictMode" (sprintf "%A is not a valid StrictMode" x)
-
 
     let clean strictMode numberType =
         let (|IsDigit|IsPlus|NotDigitOrPlus|) char =
@@ -80,34 +77,30 @@ module private Helpers =
         match numberType with
         | TwelveDigits chars ->
             match strictMode with
-            | StrictMode.Off ->
+            | StrictModeInternal.Off ->
                 chars
                 |> List.filter Char.IsDigit
                 |> toString
                 |> TwelveDigits
-            | StrictMode.TwelveDigits | StrictMode.TenOrTwelveDigits ->
+            | StrictModeInternal.TwelveDigits | StrictModeInternal.TenOrTwelveDigits ->
                 chars
                 |> toString
                 |> TwelveDigits
-            | StrictMode.TenDigits ->
+            | StrictModeInternal.TenDigits ->
                 failwith "programmer error, mismatching digit count"
-            | _ ->
-                invalidArg "StrictMode" "Invalid strict mode"
         | TenDigits chars ->
             match strictMode with
-            | StrictMode.Off ->
+            | StrictModeInternal.Off ->
                 (chars, [])
                 ||> List.foldBack folder
                 |> toString
                 |> TenDigits
-            | StrictMode.TenDigits | StrictMode.TenOrTwelveDigits ->
+            | StrictModeInternal.TenDigits | StrictModeInternal.TenOrTwelveDigits ->
                 chars
                 |> toString
                 |> TenDigits
-            | StrictMode.TwelveDigits ->
+            | StrictModeInternal.TwelveDigits ->
                 failwith "programmer error, mismatching digit count"
-            | _ ->
-                invalidArg "StrictMode" "Invalid strict mode"
 
     let addImplicitHyphen (pin: PinType<string>) =
         match pin with

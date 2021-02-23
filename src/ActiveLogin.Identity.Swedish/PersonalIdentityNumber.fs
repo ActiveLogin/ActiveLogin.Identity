@@ -133,8 +133,26 @@ type PersonalIdentityNumber internal(pin : PersonalIdentityNumberInternal) =
     /// </param>
     /// <exception cref="ArgumentNullException">Thrown when string input is null.</exception>
     /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid PersonalIdentityNumber.</exception>
-    static member ParseInSpecificYear((s : string), parseYear : int) =
-        parseInSpecificYear StrictMode.Off parseYear s
+    static member ParseInSpecificYear(s : string, parseYear : int) =
+        parseInSpecificYear StrictModeInternal.Off parseYear s
+        |> PersonalIdentityNumber
+
+    /// <summary>
+    /// Converts the string representation of the Swedish personal identity number to its <see cref="PersonalIdentityNumber"/> equivalent.
+    /// </summary>
+    /// <param name="s">A string representation of the Swedish personal identity number to parse.</param>
+    /// <param name="parseYear">
+    /// <param name="strictMode">cref="StrictMode" enum indicating how strict to parse the identity number</param>
+    /// The specific year to use when checking if the person has turned / will turn 100 years old.
+    /// That information changes the delimiter (- or +).
+    ///
+    /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
+    /// </param>
+    /// <exception cref="ArgumentNullException">Thrown when string input is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when StrictMode is invalid.</exception>
+    /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid PersonalIdentityNumber.</exception>
+    static member ParseInSpecificYear(s, parseYear : int, strictMode: StrictMode) : PersonalIdentityNumber =
+        parseInSpecificYear (StrictModeInternal.Create(strictMode)) parseYear s
         |> PersonalIdentityNumber
 
     /// <summary>
@@ -144,28 +162,52 @@ type PersonalIdentityNumber internal(pin : PersonalIdentityNumberInternal) =
     /// <exception cref="ArgumentNullException">Thrown when string input is null.</exception>
     /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid PersonalIdentityNumber.</exception>
     static member Parse(s) =
-        parse StrictMode.Off s
+        parse StrictModeInternal.Off s
         |> PersonalIdentityNumber
 
-    static member ParseStrict(s, strictMode: StrictMode) : PersonalIdentityNumber =
-        parse strictMode s
+    /// <summary>
+    /// Converts the string representation of the personal identity number to its <see cref="PersonalIdentityNumber"/> equivalent.
+    /// </summary>
+    /// <param name="s">A string representation of the Swedish personal identity number to parse.</param>
+    /// <param name="strictMode">cref="StrictMode" enum indicating how strict to parse the identity number</param>
+    /// <exception cref="ArgumentNullException">Thrown when string input is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when StrictMode is invalid.</exception>
+    /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid PersonalIdentityNumber.</exception>
+    static member Parse(s, strictMode: StrictMode) : PersonalIdentityNumber =
+        parse (StrictModeInternal.Create(strictMode)) s
         |> PersonalIdentityNumber
 
-    static member ParseStrictInSpecificYear(s, parseYear : int, strictMode: StrictMode) : PersonalIdentityNumber =
-        parseInSpecificYear strictMode parseYear s
-        |> PersonalIdentityNumber
-
-    static member TryParseStrictInSpecificYear((s : string), (parseYear : int), strictMode: StrictMode,
+    /// <summary>
+    /// Converts the string representation of the personal identity number to its <see cref="PersonalIdentityNumber"/> equivalent  and returns a value that indicates whether the conversion succeeded.
+    /// </summary>
+    /// <param name="s">A string representation of the Swedish personal identity number to parse.</param>
+    /// <param name="parseYear">
+    /// <param name="strictMode">cref="StrictMode" enum indicating how strict to parse the identity number</param>
+    /// The specific year to use when checking if the person has turned / will turn 100 years old.
+    /// That information changes the delimiter (- or +).
+    ///
+    /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
+    /// </param>
+    /// <param name="parseResult">If valid, an instance of <see cref="PersonalIdentityNumber"/></param>
+    /// <exception cref="ArgumentException">Thrown when StrictMode is invalid.</exception>
+    static member TryParseInSpecificYear((s : string), (parseYear : int), strictMode: StrictMode,
                                          [<Out>] parseResult : PersonalIdentityNumber byref) =
-        let pin = tryParseInSpecificYear strictMode parseYear s
+        let pin = tryParseInSpecificYear (StrictModeInternal.Create(strictMode)) parseYear s
         match pin with
         | Some pin ->
             parseResult <- PersonalIdentityNumber pin
             true
         | None -> false
 
-    static member TryParseStrict((s : string), strictMode: StrictMode, [<Out>] parseResult : PersonalIdentityNumber byref) =
-        match tryParse strictMode s with
+    /// <summary>
+    /// Converts the string representation of the personal identity number to its <see cref="PersonalIdentityNumber"/> equivalent  and returns a value that indicates whether the conversion succeeded.
+    /// </summary>
+    /// <param name="s">A string representation of the Swedish personal identity number to parse.</param>
+    /// <param name="strictMode">cref="StrictMode" enum indicating how strict to parse the identity number</param>
+    /// <param name="parseResult">If valid, an instance of <see cref="PersonalIdentityNumber"/></param>
+    /// <exception cref="ArgumentException">Thrown when StrictMode is invalid.</exception>
+    static member TryParse((s : string), strictMode: StrictMode, [<Out>] parseResult : PersonalIdentityNumber byref) =
+        match tryParse (StrictModeInternal.Create(strictMode)) s with
         | Some pin ->
             parseResult <- PersonalIdentityNumber pin
             true
@@ -184,7 +226,7 @@ type PersonalIdentityNumber internal(pin : PersonalIdentityNumberInternal) =
     /// <param name="parseResult">If valid, an instance of <see cref="PersonalIdentityNumber"/></param>
     static member TryParseInSpecificYear((s : string), (parseYear : int),
                                          [<Out>] parseResult : PersonalIdentityNumber byref) =
-        let pin = tryParseInSpecificYear StrictMode.Off parseYear s
+        let pin = tryParseInSpecificYear StrictModeInternal.Off parseYear s
         match pin with
         | Some pin ->
             parseResult <- PersonalIdentityNumber pin
@@ -197,7 +239,7 @@ type PersonalIdentityNumber internal(pin : PersonalIdentityNumberInternal) =
     /// <param name="s">A string representation of the Swedish personal identity number to parse.</param>
     /// <param name="parseResult">If valid, an instance of <see cref="PersonalIdentityNumber"/></param>
     static member TryParse((s : string), [<Out>] parseResult : PersonalIdentityNumber byref) =
-        match tryParse StrictMode.Off s with
+        match tryParse StrictModeInternal.Off s with
         | Some pin ->
             parseResult <- PersonalIdentityNumber pin
             true
