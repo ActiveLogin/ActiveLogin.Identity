@@ -36,7 +36,7 @@ module private Helpers =
             | 12 ->
                 chars |> TwelveDigits
             | _ ->
-                FormatException("String was not recognized as a ten or twelve digit IdentityNumber.") |> raise
+                FormatException("String was not recognized as a valid IdentityNumber.") |> raise
         | StrictModeInternal.TenOrTwelveDigits ->
             match List.length chars with
             | 10 ->
@@ -46,7 +46,7 @@ module private Helpers =
             | 12 ->
                 chars |> TwelveDigits
             | _ ->
-                FormatException("String was not recognized as a ten or twelve digit IdentityNumber.") |> raise
+                FormatException("String was not recognized as a valid IdentityNumber.") |> raise
         | StrictModeInternal.TenDigits ->
             match List.length chars with
             | 10 ->

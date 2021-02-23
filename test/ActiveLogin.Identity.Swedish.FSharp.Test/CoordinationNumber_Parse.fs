@@ -78,12 +78,12 @@ let tests =
                 |> Expect.throwsWithType<FormatException>
                 |> Expect.throwsWithMessage
                     "String was not recognized as a valid IdentityNumber. Cannot be empty string or whitespace."
-            testProp "invalid number of digits returns parsing error" <| fun (Gen.Digits digits) ->
+            testProp "invalid number of digits throws" <| fun (Gen.Digits digits) ->
                 isInvalidNumberOfDigits digits ==>
                     lazy
                         ( toAction CoordinationNumber.Parse digits
                           |> Expect.throwsWithType<FormatException>
-                          |> Expect.throwsWithMessage "String was not recognized as a ten or twelve digit IdentityNumber." )
+                          |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber." )
             testProp "num with invalid year returns parsing error" <| fun (Gen.CoordNum.NumWithInvalidYear str) ->
                 toAction CoordinationNumber.Parse str
                 |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid year" ]
