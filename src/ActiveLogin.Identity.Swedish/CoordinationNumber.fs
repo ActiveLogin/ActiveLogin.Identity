@@ -135,6 +135,20 @@ type CoordinationNumber internal(num : CoordinationNumberInternal) =
         parseInSpecificYear StrictModeInternal.Off parseYear s
         |> CoordinationNumber
 
+    /// <summary>
+    /// Converts the string representation of the Swedish coordination number to its <see cref="CoordinationNumber"/> equivalent.
+    /// </summary>
+    /// <param name="s">A string representation of the Swedish coordination number to parse.</param>
+    /// <param name="parseYear">
+    /// <param name="strictMode">cref="StrictMode" enum indicating how strict to parse the identity number</param>
+    /// The specific year to use when checking if the person has turned / will turn 100 years old.
+    /// That information changes the delimiter (- or +).
+    ///
+    /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
+    /// </param>
+    /// <exception cref="ArgumentNullException">Thrown when string input is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when StrictMode is invalid.</exception>
+    /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid CoordinationNumber.</exception>
     static member ParseInSpecificYear(s, parseYear : int, strictMode: StrictMode) : CoordinationNumber =
         parseInSpecificYear (StrictModeInternal.Create(strictMode)) parseYear s
         |> CoordinationNumber
@@ -149,6 +163,14 @@ type CoordinationNumber internal(num : CoordinationNumberInternal) =
         parse StrictModeInternal.Off s
         |> CoordinationNumber
 
+    /// <summary>
+    /// Converts the string representation of the Swedish coordination number to its <see cref="CoordinationNumber"/> equivalent.
+    /// </summary>
+    /// <param name="s">A string representation of the Swedish coordination number to parse.</param>
+    /// <param name="strictMode">cref="StrictMode" enum indicating how strict to parse the identity number</param>
+    /// <exception cref="ArgumentNullException">Thrown when string input is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when StrictMode is invalid.</exception>
+    /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid CoordinationNumber.</exception>
     static member Parse(s, strictMode: StrictMode) : CoordinationNumber =
         parse (StrictModeInternal.Create(strictMode)) s
         |> CoordinationNumber
@@ -173,6 +195,20 @@ type CoordinationNumber internal(num : CoordinationNumberInternal) =
             true
         | None -> false
 
+    /// <summary>
+    /// Converts the string representation of the coordination number to its <see cref="CoordinationNumber"/>
+    /// equivalent and returns a value that indicates whether the conversion succeeded.
+    /// </summary>
+    /// <param name="s">A string representation of the Swedish coordination number to parse.</param>
+    /// <param name="parseYear">
+    /// <param name="strictMode">cref="StrictMode" enum indicating how strict to parse the identity number</param>
+    /// The specific year to use when checking if the person has turned / will turn 100 years old.
+    /// That information changes the delimiter (- or +).
+    ///
+    /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
+    /// </param>
+    /// <param name="parseResult">If valid, an instance of <see cref="CoordinationNumber"/></param>
+    /// <exception cref="ArgumentException">Thrown when StrictMode is invalid.</exception>
     static member TryParseInSpecificYear((s : string), (parseYear : int), strictMode: StrictMode,
                                          [<Out>] parseResult : CoordinationNumber byref) =
         let pin = tryParseInSpecificYear (StrictModeInternal.Create(strictMode)) parseYear s
@@ -182,6 +218,14 @@ type CoordinationNumber internal(num : CoordinationNumberInternal) =
             true
         | None -> false
 
+    /// <summary>
+    /// Converts the string representation of the coordination number to its <see cref="CoordinationNumber"/>
+    /// equivalent and returns a value that indicates whether the conversion succeeded.
+    /// </summary>
+    /// <param name="s">A string representation of the Swedish coordination number to parse.</param>
+    /// <param name="strictMode">cref="StrictMode" enum indicating how strict to parse the identity number</param>
+    /// <param name="parseResult">If valid, an instance of <see cref="CoordinationNumber"/></param>
+    /// <exception cref="ArgumentException">Thrown when StrictMode is invalid.</exception>
     static member TryParse((s : string), strictMode: StrictMode, [<Out>] parseResult : CoordinationNumber byref) =
         match tryParse (StrictModeInternal.Create(strictMode)) s with
         | Some pin ->
