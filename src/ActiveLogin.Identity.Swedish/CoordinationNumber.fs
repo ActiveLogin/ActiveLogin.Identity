@@ -47,25 +47,25 @@ module internal CoordinationNumber =
             pin.IndividualNumber.Value
             pin.Checksum.Value
 
-    let internal parseInSpecificYearInternal parseYear str =
+    let internal parseInSpecificYearInternal strictMode parseYear str =
         let pYear = Year.create parseYear
-        Parse.parseInSpecificYear create StrictModeInternal.Off pYear str
+        Parse.parseInSpecificYear create strictMode pYear str
 
-    let parseInSpecificYear parseYear str =
-        parseInSpecificYearInternal parseYear str
+    let parseInSpecificYear strictMode parseYear str =
+        parseInSpecificYearInternal strictMode parseYear str
 
-    let tryParseInSpecificYear parseYear str =
+    let tryParseInSpecificYear strictMode parseYear str =
         try
-            parseInSpecificYearInternal parseYear str
+            parseInSpecificYearInternal strictMode parseYear str
             |> Some
         with
             exn -> None
 
-    let parse str = Parse.parse create StrictModeInternal.Off str
+    let parse strictMode str = Parse.parse create strictMode str
 
-    let tryParse str =
+    let tryParse strictMode str =
         try
-            parse str |> Some
+            parse strictMode str |> Some
         with
             exn -> None
 
@@ -132,7 +132,11 @@ type CoordinationNumber internal(num : CoordinationNumberInternal) =
     /// <exception cref="ArgumentNullException">Thrown when string input is null.</exception>
     /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid CoordinationNumber.</exception>
     static member ParseInSpecificYear((s : string), parseYear : int) =
-        parseInSpecificYear parseYear s
+        parseInSpecificYear StrictModeInternal.Off parseYear s
+        |> CoordinationNumber
+
+    static member ParseInSpecificYear(s, parseYear : int, strictMode: StrictMode) : CoordinationNumber =
+        parseInSpecificYear (StrictModeInternal.Create(strictMode)) parseYear s
         |> CoordinationNumber
 
     /// <summary>
@@ -142,7 +146,11 @@ type CoordinationNumber internal(num : CoordinationNumberInternal) =
     /// <exception cref="ArgumentNullException">Thrown when string input is null.</exception>
     /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid CoordinationNumber.</exception>
     static member Parse(s) =
-        parse s
+        parse StrictModeInternal.Off s
+        |> CoordinationNumber
+
+    static member Parse(s, strictMode: StrictMode) : CoordinationNumber =
+        parse (StrictModeInternal.Create(strictMode)) s
         |> CoordinationNumber
 
     /// <summary>
@@ -159,9 +167,25 @@ type CoordinationNumber internal(num : CoordinationNumberInternal) =
     /// <param name="parseResult">If valid, an instance of <see cref="CoordinationNumber"/></param>
     static member TryParseInSpecificYear((s : string), (parseYear : int),
                                          [<Out>] parseResult : CoordinationNumber byref) =
-        match tryParseInSpecificYear parseYear s with
+        match tryParseInSpecificYear StrictModeInternal.Off parseYear s with
         | Some num ->
             parseResult <- (num |> CoordinationNumber)
+            true
+        | None -> false
+
+    static member TryParseInSpecificYear((s : string), (parseYear : int), strictMode: StrictMode,
+                                         [<Out>] parseResult : CoordinationNumber byref) =
+        let pin = tryParseInSpecificYear (StrictModeInternal.Create(strictMode)) parseYear s
+        match pin with
+        | Some pin ->
+            parseResult <- CoordinationNumber pin
+            true
+        | None -> false
+
+    static member TryParse((s : string), strictMode: StrictMode, [<Out>] parseResult : CoordinationNumber byref) =
+        match tryParse (StrictModeInternal.Create(strictMode)) s with
+        | Some pin ->
+            parseResult <- CoordinationNumber pin
             true
         | None -> false
 
@@ -172,7 +196,7 @@ type CoordinationNumber internal(num : CoordinationNumberInternal) =
     /// <param name="s">A string representation of the Swedish coordination number to parse.</param>
     /// <param name="parseResult">If valid, an instance of <see cref="CoordinationNumber"/></param>
     static member TryParse((s : string), [<Out>] parseResult : CoordinationNumber byref) =
-        match tryParse s with
+        match tryParse StrictModeInternal.Off s with
         | Some num ->
             parseResult <- (num |> CoordinationNumber)
             true

@@ -1,38 +1,41 @@
-module ActiveLogin.Identity.Swedish.FSharp.Test.PersonalIdentityNumber_ParseStrict
+module ActiveLogin.Identity.Swedish.FSharp.Test.CoordinationNumber_ParseStrict
 
 open System
 open Swensen.Unquote
 open Expecto
 open ActiveLogin.Identity.Swedish
 open FsCheck
+open PinTestHelpers
 
-let parseStrictTenDigits str = PersonalIdentityNumber.Parse(str, StrictMode.TenDigits)
-let parseStrictTenDigitsInSpecificYear (str, year) = PersonalIdentityNumber.ParseInSpecificYear(str, year, StrictMode.TenDigits)
-let parseStrictTwelveDigits str = PersonalIdentityNumber.Parse(str, StrictMode.TwelveDigits)
-let parseStrictTwelveDigitsInSpecificYear (str, year)= PersonalIdentityNumber.ParseInSpecificYear(str, year, StrictMode.TwelveDigits)
-let parseStrictTenOrTwelveDigits str = PersonalIdentityNumber.Parse(str, StrictMode.TenOrTwelveDigits)
-let parseStrictTenOrTwelveDigitsInSpecificYear (str, year) = PersonalIdentityNumber.ParseInSpecificYear(str, year, StrictMode.TenOrTwelveDigits)
+
+let parseStrictTenDigits str = CoordinationNumber.Parse(str, StrictMode.TenDigits)
+let parseStrictTenDigitsInSpecificYear (str, year) = CoordinationNumber.ParseInSpecificYear(str, year, StrictMode.TenDigits)
+let parseStrictTwelveDigits str = CoordinationNumber.Parse(str, StrictMode.TwelveDigits)
+let parseStrictTwelveDigitsInSpecificYear (str, year)= CoordinationNumber.ParseInSpecificYear(str, year, StrictMode.TwelveDigits)
+let parseStrictTenOrTwelveDigits str = CoordinationNumber.Parse(str, StrictMode.TenOrTwelveDigits)
+let parseStrictTenOrTwelveDigitsInSpecificYear (str, year) = CoordinationNumber.ParseInSpecificYear(str, year, StrictMode.TenOrTwelveDigits)
+
 
 [<Tests>]
 let tests =
-    testList "SwedishPersonalIdentityNumber.ParseStrict" [
+    testList "CoordinationNumber.ParseStrict" [
 
-        testList "valid personal identity numbers - StrictMode.TenDigits" [
+        testList "valid coordination numbers - StrictMode.TenDigits" [
 
-            testProp "roundtrip for 10 digit string with delimiter" <| fun (Gen.Pin.ValidPin pin) ->
+            testProp "roundtrip for 10 digit string with delimiter" <| fun (Gen.CoordNum.ValidNum pin) ->
                 pin.To10DigitString()
                 |> parseStrictTenDigits =! pin
-            testProp "roundtrip for 10 digit string without hyphen-delimiter" <| fun (Gen.Pin.ValidPin pin) ->
+            testProp "roundtrip for 10 digit string without hyphen-delimiter" <| fun (Gen.CoordNum.ValidNum pin) ->
                 pin.To10DigitString()
                 |> removeHyphen
                 |> parseStrictTenDigits =! pin
-            testPropWithMaxTest 400 "roundtrip for 10 digit string 'in specific year'" <| fun (Gen.Pin.ValidPin pin) ->
+            testPropWithMaxTest 400 "roundtrip for 10 digit string 'in specific year'" <| fun (Gen.CoordNum.ValidNum pin) ->
                 let offset = rng.Next (0, 200)
                 let year = pin.Year + offset
                 (pin.To10DigitStringInSpecificYear year, year)
                 |> parseStrictTenDigitsInSpecificYear =! pin
             testPropWithMaxTest 400 "roundtrip for 10 digit string without hyphen delimiter 'in specific year'"
-                <| fun (Gen.Pin.ValidPin pin) ->
+                <| fun (Gen.CoordNum.ValidNum pin) ->
                     let offset = rng.Next (0, 200)
                     let year = pin.Year + offset
                     let str =
@@ -41,15 +44,15 @@ let tests =
                     parseStrictTenDigitsInSpecificYear(str, year) =! pin
             ]
 
-        testList "invalid personal identity number - StrictMode.TenDigits" [
+        testList "invalid coordination number - StrictMode.TenDigits" [
 
-            testProp "12 digit string" <| fun (Gen.Pin.ValidPin pin) ->
+            testProp "12 digit string" <| fun (Gen.CoordNum.ValidNum pin) ->
                 toAction parseStrictTenDigits (pin.To12DigitString())
                 |> Expect.throwsWithType<FormatException>
                 |> Expect.throwsWithMessage "String was not recognized as a ten digit IdentityNumber."
 
             testProp "string mixed with 'non-digits' except plus"
-                <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
+                <| fun (Gen.CoordNum.ValidNum pin, Gen.Char100 charArray) ->
                     let charsWithoutPlus =
                         let isDigitOrPlus (c:char) = "0123456789+".Contains c
                         charArray
@@ -61,7 +64,7 @@ let tests =
                     |> Expect.throwsWithType<FormatException>
                     |> Expect.throwsWithMessage "String was not recognized as a ten digit IdentityNumber."
             testProp "string without hyphen delimiter, mixed with 'non-digits' except plus"
-                <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
+                <| fun (Gen.CoordNum.ValidNum pin, Gen.Char100 charArray) ->
                     let charsWithoutPlus =
                         let isDigitOrPlus (c:char) = "0123456789+".Contains c
                         charArray
@@ -89,16 +92,16 @@ let tests =
                         ( toAction parseStrictTenDigits digits
                           |> Expect.throwsWithType<FormatException>
                           |> Expect.throwsWithMessage "String was not recognized as a ten digit IdentityNumber." )
-            testProp "pin with invalid month returns parsing error" <| fun (Gen.Pin.PinWithInvalidMonth str) ->
+            testProp "pin with invalid month returns parsing error" <| fun (Gen.CoordNum.NumWithInvalidMonth str) ->
                 toAction parseStrictTenDigits str.[2..]
                 |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; " Invalid month"]
-            testProp "pin with invalid day returns parsing error" <| fun (Gen.Pin.PinWithInvalidDay str) ->
+            testProp "pin with invalid day returns parsing error" <| fun (Gen.CoordNum.NumWithInvalidDay str) ->
                 toAction parseStrictTenDigits str.[2..]
-                |> Expect.throwsWithMessages ["String was not recognized as a valid IdentityNumber."; "Invalid day"]
-            testProp "pin with invalid individual number returns parsing error" <| fun (Gen.Pin.PinWithInvalidIndividualNumber str) ->
+                |> Expect.throwsWithMessages ["String was not recognized as a valid IdentityNumber."; "Invalid coordination day"]
+            testProp "pin with invalid individual number returns parsing error" <| fun (Gen.CoordNum.NumWithInvalidIndividualNumber str) ->
                 toAction parseStrictTenDigits str.[2..]
-                |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid birth number" ]
-            testProp "pin with invalid checksum returns parsing error" <| fun (Gen.Pin.PinWithInvalidChecksum str) ->
+                |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid individual number" ]
+            testProp "pin with invalid checksum returns parsing error" <| fun (Gen.CoordNum.NumWithInvalidChecksum str) ->
                 toAction parseStrictTenDigits str.[2..]
                 |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid checksum" ]
             testProp "parseInSpecificYear with empty string throws" <| fun (Gen.EmptyString str, Gen.ValidYear year) ->
@@ -111,11 +114,11 @@ let tests =
                 |> ignore
         ]
 
-        testList "valid personal identity numbers - StrictMode.TwelveDigits" [
-            testProp "roundtrip for 12 digit string" <| fun (Gen.Pin.ValidPin pin) ->
+        testList "valid coordination numbers - StrictMode.TwelveDigits" [
+            testProp "roundtrip for 12 digit string" <| fun (Gen.CoordNum.ValidNum pin) ->
                 pin.To12DigitString()
                 |> parseStrictTwelveDigits =! pin
-            testPropWithMaxTest 400 "roundtrip for 12 digit string 'in specific year'" <| fun (Gen.Pin.ValidPin pin) ->
+            testPropWithMaxTest 400 "roundtrip for 12 digit string 'in specific year'" <| fun (Gen.CoordNum.ValidNum pin) ->
                 let offset = rng.Next (0, 200)
                 let year = pin.Year + offset
                 (pin.To12DigitString(), year)
@@ -123,9 +126,9 @@ let tests =
             ]
 
 
-        testList "invalid personal identity number - StrictMode.TwelveDigits" [
+        testList "invalid coordination number - StrictMode.TwelveDigits" [
 
-            testProp "10 digit string without hyphen-delimiter" <| fun (Gen.Pin.ValidPin pin) ->
+            testProp "10 digit string without hyphen-delimiter" <| fun (Gen.CoordNum.ValidNum pin) ->
                 pin.To10DigitString()
                 |> removeHyphen
                 |> toAction parseStrictTwelveDigits
@@ -133,7 +136,7 @@ let tests =
                 |> Expect.throwsWithMessage "String was not recognized as a twelve digit IdentityNumber."
 
             testProp "10 digit string mixed with 'non-digits' except plus"
-                <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
+                <| fun (Gen.CoordNum.ValidNum pin, Gen.Char100 charArray) ->
                     let charsWithoutPlus =
                         let isDigitOrPlus (c:char) = "0123456789+".Contains c
                         charArray
@@ -144,13 +147,13 @@ let tests =
                     |> Expect.throwsWithType<FormatException>
                     |> Expect.throwsWithMessage "String was not recognized as a twelve digit IdentityNumber."
 
-            testProp "10 digit string with delimiter" <| fun (Gen.Pin.ValidPin pin) ->
+            testProp "10 digit string with delimiter" <| fun (Gen.CoordNum.ValidNum pin) ->
                 pin.To10DigitString()
                 |> toAction parseStrictTwelveDigits
                 |> Expect.throwsWithType<FormatException>
                 |> Expect.throwsWithMessage "String was not recognized as a twelve digit IdentityNumber."
 
-            testPropWithMaxTest 400 "10 digit string 'in specific year'" <| fun (Gen.Pin.ValidPin pin) ->
+            testPropWithMaxTest 400 "10 digit string 'in specific year'" <| fun (Gen.CoordNum.ValidNum pin) ->
                 let offset = rng.Next (0, 200)
                 let year = pin.Year + offset
                 (pin.To10DigitStringInSpecificYear year, year)
@@ -159,7 +162,7 @@ let tests =
                 |> Expect.throwsWithMessage "String was not recognized as a twelve digit IdentityNumber."
 
             testProp "12 digit string mixed with 'non-digits'"
-                <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
+                <| fun (Gen.CoordNum.ValidNum pin, Gen.Char100 charArray) ->
                     let charsWithoutDigits =
                         charArray
                         |> Array.filter (isDigit >> not)
@@ -170,7 +173,7 @@ let tests =
                     |> Expect.throwsWithMessage "String was not recognized as a twelve digit IdentityNumber."
 
             testPropWithMaxTest 400 "10 digit string without hyphen delimiter 'in specific year'"
-                <| fun (Gen.Pin.ValidPin pin) ->
+                <| fun (Gen.CoordNum.ValidNum pin) ->
                     let offset = rng.Next (0, 200)
                     let year = pin.Year + offset
                     let str =
@@ -196,19 +199,19 @@ let tests =
                         ( toAction parseStrictTwelveDigits digits
                           |> Expect.throwsWithType<FormatException>
                           |> Expect.throwsWithMessage "String was not recognized as a twelve digit IdentityNumber." )
-            testProp "pin with invalid year returns parsing error" <| fun (Gen.Pin.PinWithInvalidYear str) ->
+            testProp "pin with invalid year returns parsing error" <| fun (Gen.CoordNum.NumWithInvalidYear str) ->
                 toAction parseStrictTwelveDigits str
                 |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid year" ]
-            testProp "pin with invalid month returns parsing error" <| fun (Gen.Pin.PinWithInvalidMonth str) ->
+            testProp "pin with invalid month returns parsing error" <| fun (Gen.CoordNum.NumWithInvalidMonth str) ->
                 toAction parseStrictTwelveDigits str
                 |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; " Invalid month"]
-            testProp "pin with invalid day returns parsing error" <| fun (Gen.Pin.PinWithInvalidDay str) ->
+            testProp "pin with invalid day returns parsing error" <| fun (Gen.CoordNum.NumWithInvalidDay str) ->
                 toAction parseStrictTwelveDigits str
-                |> Expect.throwsWithMessages ["String was not recognized as a valid IdentityNumber."; "Invalid day"]
-            testProp "pin with invalid individual number returns parsing error" <| fun (Gen.Pin.PinWithInvalidIndividualNumber str) ->
+                |> Expect.throwsWithMessages ["String was not recognized as a valid IdentityNumber."; "Invalid coordination day"]
+            testProp "pin with invalid individual number returns parsing error" <| fun (Gen.CoordNum.NumWithInvalidIndividualNumber str) ->
                 toAction parseStrictTwelveDigits str
-                |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid birth number" ]
-            testProp "pin with invalid checksum returns parsing error" <| fun (Gen.Pin.PinWithInvalidChecksum str) ->
+                |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid individual number" ]
+            testProp "pin with invalid checksum returns parsing error" <| fun (Gen.CoordNum.NumWithInvalidChecksum str) ->
                 toAction parseStrictTwelveDigits str
                 |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid checksum" ]
             testProp "parseInSpecificYear with empty string throws" <| fun (Gen.EmptyString str, Gen.ValidYear year) ->
@@ -221,22 +224,22 @@ let tests =
                 |> ignore
         ]
 
-        testList "valid personal identity numbers - StrictMode.TenOrTwelveDigits" [
+        testList "valid coordination numbers - StrictMode.TenOrTwelveDigits" [
 
-            testProp "roundtrip for 10 digit string with delimiter" <| fun (Gen.Pin.ValidPin pin) ->
+            testProp "roundtrip for 10 digit string with delimiter" <| fun (Gen.CoordNum.ValidNum pin) ->
                 pin.To10DigitString()
                 |> parseStrictTenOrTwelveDigits =! pin
-            testProp "roundtrip for 10 digit string without hyphen-delimiter" <| fun (Gen.Pin.ValidPin pin) ->
+            testProp "roundtrip for 10 digit string without hyphen-delimiter" <| fun (Gen.CoordNum.ValidNum pin) ->
                 pin.To10DigitString()
                 |> removeHyphen
                 |> parseStrictTenOrTwelveDigits =! pin
-            testPropWithMaxTest 400 "roundtrip for 10 digit string 'in specific year'" <| fun (Gen.Pin.ValidPin pin) ->
+            testPropWithMaxTest 400 "roundtrip for 10 digit string 'in specific year'" <| fun (Gen.CoordNum.ValidNum pin) ->
                 let offset = rng.Next (0, 200)
                 let year = pin.Year + offset
                 (pin.To10DigitStringInSpecificYear year, year)
                 |> parseStrictTenOrTwelveDigitsInSpecificYear =! pin
             testPropWithMaxTest 400 "roundtrip for 10 digit string without hyphen delimiter 'in specific year'"
-                <| fun (Gen.Pin.ValidPin pin) ->
+                <| fun (Gen.CoordNum.ValidNum pin) ->
                     let offset = rng.Next (0, 200)
                     let year = pin.Year + offset
                     let str =
@@ -244,20 +247,20 @@ let tests =
                         |> removeHyphen
                     parseStrictTenOrTwelveDigitsInSpecificYear(str, year) =! pin
 
-            testProp "roundtrip for 12 digit string" <| fun (Gen.Pin.ValidPin pin) ->
+            testProp "roundtrip for 12 digit string" <| fun (Gen.CoordNum.ValidNum pin) ->
                 pin.To12DigitString()
                 |> parseStrictTenOrTwelveDigits =! pin
-            testPropWithMaxTest 400 "roundtrip for 12 digit string 'in specific year'" <| fun (Gen.Pin.ValidPin pin) ->
+            testPropWithMaxTest 400 "roundtrip for 12 digit string 'in specific year'" <| fun (Gen.CoordNum.ValidNum pin) ->
                 let offset = rng.Next (0, 200)
                 let year = pin.Year + offset
                 (pin.To12DigitString(), year)
                 |> parseStrictTenOrTwelveDigitsInSpecificYear =! pin
             ]
 
-        testList "invalid personal identity number - StrictMode.TenOrTwelveDigits" [
+        testList "invalid coordination number - StrictMode.TenOrTwelveDigits" [
 
             testProp "string mixed with 'non-digits' except plus"
-                <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
+                <| fun (Gen.CoordNum.ValidNum pin, Gen.Char100 charArray) ->
                     let charsWithoutPlus =
                         let isDigitOrPlus (c:char) = "0123456789+".Contains c
                         charArray
@@ -269,7 +272,7 @@ let tests =
                     |> Expect.throwsWithType<FormatException>
                     |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber."
             testProp "string without hyphen delimiter, mixed with 'non-digits' except plus"
-                <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
+                <| fun (Gen.CoordNum.ValidNum pin, Gen.Char100 charArray) ->
                     let charsWithoutPlus =
                         let isDigitOrPlus (c:char) = "0123456789+".Contains c
                         charArray
@@ -297,19 +300,19 @@ let tests =
                         ( toAction parseStrictTenOrTwelveDigits digits
                           |> Expect.throwsWithType<FormatException>
                           |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber." )
-            testProp "pin with invalid year returns parsing error" <| fun (Gen.Pin.PinWithInvalidYear str) ->
+            testProp "pin with invalid year returns parsing error" <| fun (Gen.CoordNum.NumWithInvalidYear str) ->
                 toAction parseStrictTenOrTwelveDigits str
                 |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid year" ]
-            testProp "pin with invalid month returns parsing error" <| fun (Gen.Pin.PinWithInvalidMonth str) ->
+            testProp "pin with invalid month returns parsing error" <| fun (Gen.CoordNum.NumWithInvalidMonth str) ->
                 toAction parseStrictTenOrTwelveDigits str
                 |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; " Invalid month"]
-            testProp "pin with invalid day returns parsing error" <| fun (Gen.Pin.PinWithInvalidDay str) ->
+            testProp "pin with invalid day returns parsing error" <| fun (Gen.CoordNum.NumWithInvalidDay str) ->
                 toAction parseStrictTenOrTwelveDigits str
-                |> Expect.throwsWithMessages ["String was not recognized as a valid IdentityNumber."; "Invalid day"]
-            testProp "pin with invalid individual number returns parsing error" <| fun (Gen.Pin.PinWithInvalidIndividualNumber str) ->
+                |> Expect.throwsWithMessages ["String was not recognized as a valid IdentityNumber."; "Invalid coordination day"]
+            testProp "pin with invalid individual number returns parsing error" <| fun (Gen.CoordNum.NumWithInvalidIndividualNumber str) ->
                 toAction parseStrictTenOrTwelveDigits str
-                |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid birth number" ]
-            testProp "pin with invalid checksum returns parsing error" <| fun (Gen.Pin.PinWithInvalidChecksum str) ->
+                |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid individual number" ]
+            testProp "pin with invalid checksum returns parsing error" <| fun (Gen.CoordNum.NumWithInvalidChecksum str) ->
                 toAction parseStrictTenOrTwelveDigits str
                 |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid checksum" ]
             testProp "parseInSpecificYear with empty string throws" <| fun (Gen.EmptyString str, Gen.ValidYear year) ->
@@ -322,7 +325,7 @@ let tests =
                 |> ignore
 
             testProp "10 digit string mixed with 'non-digits' except plus"
-                <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
+                <| fun (Gen.CoordNum.ValidNum pin, Gen.Char100 charArray) ->
                     let charsWithoutPlus =
                         let isDigitOrPlus (c:char) = "0123456789+".Contains c
                         charArray
@@ -334,7 +337,7 @@ let tests =
                     |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber."
 
             testProp "12 digit string mixed with 'non-digits'"
-                <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
+                <| fun (Gen.CoordNum.ValidNum pin, Gen.Char100 charArray) ->
                     let charsWithoutDigits =
                         charArray
                         |> Array.filter (isDigit >> not)

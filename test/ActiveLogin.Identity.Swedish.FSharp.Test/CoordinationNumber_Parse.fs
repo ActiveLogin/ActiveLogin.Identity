@@ -100,11 +100,11 @@ let tests =
                 toAction CoordinationNumber.Parse str
                 |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid checksum" ]
             testProp "parseInSpecificYear with empty string returns parsing error" <| fun (Gen.EmptyString str, Gen.ValidYear year) ->
-                toAction CoordinationNumber.ParseInSpecificYear (str, year)
+                toAction (fun (s,y) -> CoordinationNumber.ParseInSpecificYear(s,y)) (str, year)
                 |> Expect.throwsWithType<FormatException>
                 |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber. Cannot be empty string or whitespace."
             testProp "parseInSpecificYear with null string throws" <| fun (Gen.ValidYear year) ->
-                toAction CoordinationNumber.ParseInSpecificYear (null, year)
+                toAction (fun (s,y) -> CoordinationNumber.ParseInSpecificYear(s,y)) (null, year)
                 |> Expect.throwsWithType<ArgumentNullException>
                 |> ignore
             testPropWithMaxTest 400 "cannot convert a num to 10 digit string in a specific year when the person would be 200 years or older"
