@@ -134,7 +134,7 @@ type PersonalIdentityNumber internal(pin : PersonalIdentityNumberInternal) =
     /// <exception cref="ArgumentNullException">Thrown when string input is null.</exception>
     /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid PersonalIdentityNumber.</exception>
     static member ParseInSpecificYear(s : string, parseYear : int) =
-        parseInSpecificYear StrictModeInternal.Off parseYear s
+        parseInSpecificYear StrictModeInternal.TenOrTwelveDigits parseYear s
         |> PersonalIdentityNumber
 
     /// <summary>
@@ -162,7 +162,7 @@ type PersonalIdentityNumber internal(pin : PersonalIdentityNumberInternal) =
     /// <exception cref="ArgumentNullException">Thrown when string input is null.</exception>
     /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid PersonalIdentityNumber.</exception>
     static member Parse(s) =
-        parse StrictModeInternal.Off s
+        parse StrictModeInternal.TenOrTwelveDigits s
         |> PersonalIdentityNumber
 
     /// <summary>
@@ -226,7 +226,7 @@ type PersonalIdentityNumber internal(pin : PersonalIdentityNumberInternal) =
     /// <param name="parseResult">If valid, an instance of <see cref="PersonalIdentityNumber"/></param>
     static member TryParseInSpecificYear((s : string), (parseYear : int),
                                          [<Out>] parseResult : PersonalIdentityNumber byref) =
-        let pin = tryParseInSpecificYear StrictModeInternal.Off parseYear s
+        let pin = tryParseInSpecificYear StrictModeInternal.TenOrTwelveDigits parseYear s
         match pin with
         | Some pin ->
             parseResult <- PersonalIdentityNumber pin
@@ -239,7 +239,7 @@ type PersonalIdentityNumber internal(pin : PersonalIdentityNumberInternal) =
     /// <param name="s">A string representation of the Swedish personal identity number to parse.</param>
     /// <param name="parseResult">If valid, an instance of <see cref="PersonalIdentityNumber"/></param>
     static member TryParse((s : string), [<Out>] parseResult : PersonalIdentityNumber byref) =
-        match tryParse StrictModeInternal.Off s with
+        match tryParse StrictModeInternal.TenOrTwelveDigits s with
         | Some pin ->
             parseResult <- PersonalIdentityNumber pin
             true

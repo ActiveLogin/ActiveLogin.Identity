@@ -101,6 +101,22 @@ PersonalIdentityNumber
  .IsTestNumber(): True
 ```
 
+#### StrictMode
+
+The library can be configured to use different levels 'strictness' when parsing identity numbers. The different levels are:
+- Off
+- Ten Digits
+- Twelve Digits
+- Ten or Twelve Digits
+
+By default 'Ten or Twelve Digits' is used but it can be overridden when calling `Parse` and `TryParse`, e.g.:
+```c#
+// this would fail since the input is not a 12 digit number.
+PersonalIdentityNumber.Parse("990807-2391", StrictMode.TwelveDigits); 
+```
+
+For more information regarding `StrictMode`, see the [FAQ](#what-formats-do-you-support-parsing).
+
 #### Hints
 
 Some data, such as DateOfBirth, Age and Gender can't be guaranteed to reflect the truth due to the limited quantity of personal identity numbers per day.

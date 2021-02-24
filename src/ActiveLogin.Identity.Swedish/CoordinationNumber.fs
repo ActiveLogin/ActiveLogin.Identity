@@ -132,7 +132,7 @@ type CoordinationNumber internal(num : CoordinationNumberInternal) =
     /// <exception cref="ArgumentNullException">Thrown when string input is null.</exception>
     /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid CoordinationNumber.</exception>
     static member ParseInSpecificYear((s : string), parseYear : int) =
-        parseInSpecificYear StrictModeInternal.Off parseYear s
+        parseInSpecificYear StrictModeInternal.TenOrTwelveDigits parseYear s
         |> CoordinationNumber
 
     /// <summary>
@@ -160,7 +160,7 @@ type CoordinationNumber internal(num : CoordinationNumberInternal) =
     /// <exception cref="ArgumentNullException">Thrown when string input is null.</exception>
     /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid CoordinationNumber.</exception>
     static member Parse(s) =
-        parse StrictModeInternal.Off s
+        parse StrictModeInternal.TenOrTwelveDigits s
         |> CoordinationNumber
 
     /// <summary>
@@ -189,7 +189,7 @@ type CoordinationNumber internal(num : CoordinationNumberInternal) =
     /// <param name="parseResult">If valid, an instance of <see cref="CoordinationNumber"/></param>
     static member TryParseInSpecificYear((s : string), (parseYear : int),
                                          [<Out>] parseResult : CoordinationNumber byref) =
-        match tryParseInSpecificYear StrictModeInternal.Off parseYear s with
+        match tryParseInSpecificYear StrictModeInternal.TenOrTwelveDigits parseYear s with
         | Some num ->
             parseResult <- (num |> CoordinationNumber)
             true
@@ -240,7 +240,7 @@ type CoordinationNumber internal(num : CoordinationNumberInternal) =
     /// <param name="s">A string representation of the Swedish coordination number to parse.</param>
     /// <param name="parseResult">If valid, an instance of <see cref="CoordinationNumber"/></param>
     static member TryParse((s : string), [<Out>] parseResult : CoordinationNumber byref) =
-        match tryParse StrictModeInternal.Off s with
+        match tryParse StrictModeInternal.TenOrTwelveDigits s with
         | Some num ->
             parseResult <- (num |> CoordinationNumber)
             true
