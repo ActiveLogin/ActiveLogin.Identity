@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using ActiveLogin.Identity.Swedish;
 using ActiveLogin.Identity.Swedish.Extensions;
 using ActiveLogin.Identity.Swedish.TestData;
@@ -29,6 +31,9 @@ namespace ConsoleSample
 
             WriteSection("Parse Swedish personal identity numbers");
             Sample_ParseSwedishPersonalIdentityNumbers();
+
+            WriteSection("Parse Swedish personal identity numbers in strict mode");
+            Sample_ParseSwedishPersonalIdentityNumbers_Strict(PersonalIdentityNumberTestData.AllPinsShuffled().Take(3));
 
             WriteSection("Show Swedish personal identity number test data");
             Sample_ShowSwedishPersonalIdentityNumberTestData();
@@ -66,6 +71,33 @@ namespace ConsoleSample
                 if (PersonalIdentityNumber.TryParse(input, out var identityNumber))
                 {
                     WriteSwedishPersonalIdentityNumberInfo(identityNumber);
+                }
+                else
+                {
+                    Console.Error.WriteLine("Unable to parse the input as a SwedishPersonalIdentityNumber.");
+                    WriteSpace();
+                }
+            }
+        }
+
+        private static void Sample_ParseSwedishPersonalIdentityNumbers_Strict(IEnumerable<PersonalIdentityNumber> pins)
+        {
+            foreach (var input in pins)
+            {
+                WriteHeader($"Input: {input.To10DigitString()}, strict mode TenDigits");
+                if (PersonalIdentityNumber.TryParse(input.To10DigitString(), StrictMode.TenDigits, out var identityNumber10))
+                {
+                    WriteSwedishPersonalIdentityNumberInfo(identityNumber10);
+                }
+                else
+                {
+                    Console.Error.WriteLine("Unable to parse the input as a SwedishPersonalIdentityNumber.");
+                    WriteSpace();
+                }
+                WriteHeader($"Input: {input.To12DigitString()}, strict mode TenDigits");
+                if (PersonalIdentityNumber.TryParse(input.To12DigitString(), StrictMode.TenDigits, out var identityNumber12))
+                {
+                    WriteSwedishPersonalIdentityNumberInfo(identityNumber12);
                 }
                 else
                 {
