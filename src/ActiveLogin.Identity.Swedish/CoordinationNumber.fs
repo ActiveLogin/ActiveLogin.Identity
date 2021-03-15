@@ -47,25 +47,25 @@ module internal CoordinationNumber =
             pin.IndividualNumber.Value
             pin.Checksum.Value
 
-    let internal parseInSpecificYearInternal parseYear str =
+    let internal parseInSpecificYearInternal strictMode parseYear str =
         let pYear = Year.create parseYear
-        Parse.parseInSpecificYear create pYear str
+        Parse.parseInSpecificYear create strictMode pYear str
 
-    let parseInSpecificYear parseYear str =
-        parseInSpecificYearInternal parseYear str
+    let parseInSpecificYear strictMode parseYear str =
+        parseInSpecificYearInternal strictMode parseYear str
 
-    let tryParseInSpecificYear parseYear str =
+    let tryParseInSpecificYear strictMode parseYear str =
         try
-            parseInSpecificYearInternal parseYear str
+            parseInSpecificYearInternal strictMode parseYear str
             |> Some
         with
             exn -> None
 
-    let parse str = Parse.parse create str
+    let parse strictMode str = Parse.parse create strictMode str
 
-    let tryParse str =
+    let tryParse strictMode str =
         try
-            parse str |> Some
+            parse strictMode str |> Some
         with
             exn -> None
 
@@ -132,7 +132,25 @@ type CoordinationNumber internal(num : CoordinationNumberInternal) =
     /// <exception cref="ArgumentNullException">Thrown when string input is null.</exception>
     /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid CoordinationNumber.</exception>
     static member ParseInSpecificYear((s : string), parseYear : int) =
-        parseInSpecificYear parseYear s
+        parseInSpecificYear StrictModeInternal.TenOrTwelveDigits parseYear s
+        |> CoordinationNumber
+
+    /// <summary>
+    /// Converts the string representation of the Swedish coordination number to its <see cref="CoordinationNumber"/> equivalent.
+    /// </summary>
+    /// <param name="s">A string representation of the Swedish coordination number to parse.</param>
+    /// <param name="parseYear">
+    /// <param name="strictMode">cref="StrictMode" enum indicating how strict to parse the identity number</param>
+    /// The specific year to use when checking if the person has turned / will turn 100 years old.
+    /// That information changes the delimiter (- or +).
+    ///
+    /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
+    /// </param>
+    /// <exception cref="ArgumentNullException">Thrown when string input is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when StrictMode is invalid.</exception>
+    /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid CoordinationNumber.</exception>
+    static member ParseInSpecificYear(s, parseYear : int, strictMode: StrictMode) : CoordinationNumber =
+        parseInSpecificYear (StrictModeInternal.Create(strictMode)) parseYear s
         |> CoordinationNumber
 
     /// <summary>
@@ -142,7 +160,19 @@ type CoordinationNumber internal(num : CoordinationNumberInternal) =
     /// <exception cref="ArgumentNullException">Thrown when string input is null.</exception>
     /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid CoordinationNumber.</exception>
     static member Parse(s) =
-        parse s
+        parse StrictModeInternal.TenOrTwelveDigits s
+        |> CoordinationNumber
+
+    /// <summary>
+    /// Converts the string representation of the Swedish coordination number to its <see cref="CoordinationNumber"/> equivalent.
+    /// </summary>
+    /// <param name="s">A string representation of the Swedish coordination number to parse.</param>
+    /// <param name="strictMode">cref="StrictMode" enum indicating how strict to parse the identity number</param>
+    /// <exception cref="ArgumentNullException">Thrown when string input is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when StrictMode is invalid.</exception>
+    /// <exception cref="FormatException">Thrown when string input cannot be recognized as a valid CoordinationNumber.</exception>
+    static member Parse(s, strictMode: StrictMode) : CoordinationNumber =
+        parse (StrictModeInternal.Create(strictMode)) s
         |> CoordinationNumber
 
     /// <summary>
@@ -159,7 +189,7 @@ type CoordinationNumber internal(num : CoordinationNumberInternal) =
     /// <param name="parseResult">If valid, an instance of <see cref="CoordinationNumber"/></param>
     static member TryParseInSpecificYear((s : string), (parseYear : int),
                                          [<Out>] parseResult : CoordinationNumber byref) =
-        match tryParseInSpecificYear parseYear s with
+        match tryParseInSpecificYear StrictModeInternal.TenOrTwelveDigits parseYear s with
         | Some num ->
             parseResult <- (num |> CoordinationNumber)
             true
@@ -170,9 +200,47 @@ type CoordinationNumber internal(num : CoordinationNumberInternal) =
     /// equivalent and returns a value that indicates whether the conversion succeeded.
     /// </summary>
     /// <param name="s">A string representation of the Swedish coordination number to parse.</param>
+    /// <param name="parseYear">
+    /// <param name="strictMode">cref="StrictMode" enum indicating how strict to parse the identity number</param>
+    /// The specific year to use when checking if the person has turned / will turn 100 years old.
+    /// That information changes the delimiter (- or +).
+    ///
+    /// For more info, see: https://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/folkbokforingslag-1991481_sfs-1991-481#P18
+    /// </param>
+    /// <param name="parseResult">If valid, an instance of <see cref="CoordinationNumber"/></param>
+    /// <exception cref="ArgumentException">Thrown when StrictMode is invalid.</exception>
+    static member TryParseInSpecificYear((s : string), (parseYear : int), strictMode: StrictMode,
+                                         [<Out>] parseResult : CoordinationNumber byref) =
+        let pin = tryParseInSpecificYear (StrictModeInternal.Create(strictMode)) parseYear s
+        match pin with
+        | Some pin ->
+            parseResult <- CoordinationNumber pin
+            true
+        | None -> false
+
+    /// <summary>
+    /// Converts the string representation of the coordination number to its <see cref="CoordinationNumber"/>
+    /// equivalent and returns a value that indicates whether the conversion succeeded.
+    /// </summary>
+    /// <param name="s">A string representation of the Swedish coordination number to parse.</param>
+    /// <param name="strictMode">cref="StrictMode" enum indicating how strict to parse the identity number</param>
+    /// <param name="parseResult">If valid, an instance of <see cref="CoordinationNumber"/></param>
+    /// <exception cref="ArgumentException">Thrown when StrictMode is invalid.</exception>
+    static member TryParse((s : string), strictMode: StrictMode, [<Out>] parseResult : CoordinationNumber byref) =
+        match tryParse (StrictModeInternal.Create(strictMode)) s with
+        | Some pin ->
+            parseResult <- CoordinationNumber pin
+            true
+        | None -> false
+
+    /// <summary>
+    /// Converts the string representation of the coordination number to its <see cref="CoordinationNumber"/>
+    /// equivalent and returns a value that indicates whether the conversion succeeded.
+    /// </summary>
+    /// <param name="s">A string representation of the Swedish coordination number to parse.</param>
     /// <param name="parseResult">If valid, an instance of <see cref="CoordinationNumber"/></param>
     static member TryParse((s : string), [<Out>] parseResult : CoordinationNumber byref) =
-        match tryParse s with
+        match tryParse StrictModeInternal.TenOrTwelveDigits s with
         | Some num ->
             parseResult <- (num |> CoordinationNumber)
             true
@@ -210,8 +278,8 @@ type CoordinationNumber internal(num : CoordinationNumberInternal) =
     override __.ToString() = __.To12DigitString()
 
     /// <summary>Returns a value indicating whether this instance is equal to a specified object.</summary>
-    /// <param name="value">The object to compare to this instance.</param>
-    /// <returns>true if <paramref name="value">value</paramref> is an instance of <see cref="CoordinationNumber"></see> and equals the value of this instance; otherwise, false.</returns>
+    /// <param name="b">The object to compare to this instance.</param>
+    /// <returns>true if <paramref name="b">value</paramref> is an instance of <see cref="CoordinationNumber"></see> and equals the value of this instance; otherwise, false.</returns>
     override __.Equals(b) =
         match b with
         | :? CoordinationNumber as n -> num = n.IdentityNumber
