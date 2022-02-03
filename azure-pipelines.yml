@@ -3,7 +3,7 @@
 name: $(Date:yyyyMMdd)$(Rev:r)
 
 trigger:
-- master
+- main
 
 stages:
 - stage: BuildNuget
