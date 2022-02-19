@@ -48,7 +48,7 @@ module CoordNum =
     type WithInvalidCoordinationMonth = WithInvalidMonth of IdentityNumberValues
     type WithInvalidDay = WithInvalidDay of IdentityNumberValues
     type WithValidDay = WithValidDay of IdentityNumberValues
-    type LeapDayCoordNum = LeapDayCoordNum of CoordinationNumber
+//    type LeapDayCoordNum = LeapDayCoordNum of CoordinationNumber // There aren't any leap day coordination numbers in the test data from Skatteverket, so we cannot generate this
 
 
 module Gen =
@@ -373,6 +373,7 @@ module private Internal =
             }
 
         let withInvalidCoordinationMonthGen() = withInvalidCoordinationMonth |> Arb.fromGen
+
 
 type ValueGenerators() =
     static member EmptyString() = emptyStringGen()

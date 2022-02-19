@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
@@ -11,7 +11,7 @@
         <PackageId>ActiveLogin.Identity.Swedish</PackageId>
 
         <VersionPrefix>3.0.0</VersionPrefix>
-        <!--<VersionSuffix>alpha-1</VersionSuffix>-->
+        <!-- <VersionSuffix>beta-1</VersionSuffix> -->
         <AssemblyVersion>3.0.0.0</AssemblyVersion>
         <FileVersion Condition="'$(BUILD_BUILDNUMBER)' == ''">$(VersionPrefix).0</FileVersion>
         <FileVersion Condition="'$(BUILD_BUILDNUMBER)' != ''">$(VersionPrefix).$(BUILD_BUILDNUMBER)</FileVersion>
@@ -52,12 +52,12 @@
         <Compile Include="PersonalIdentityNumber.fs" />
         <Compile Include="CoordinationNumber.fs" />
         <Compile Include="IndividualIdentityNumber.fs" />
-        <Compile Include="PersonalIdentityNumberHintExtensions.fs" />
-        <Compile Include="CoordinationNumberHintExtensions.fs" />
-        <Compile Include="IndividualIdentityNumberHintExtensions.fs" />
+        <Compile Include="PersonalIdentityNumberHints.fs" />
     </ItemGroup>
 
     <ItemGroup>
+        <Compile Include="CoordinationNumberHints.fs" />
+        <Compile Include="IndividualIdentityNumberHints.fs" />
         <None Include="..\..\docs\images\active-login-logo-fingerprint-blue-v2-256x256.png" Pack="True" PackagePath="icon.png" />
         <None Include="..\..\LICENSE.md" Pack="True" PackagePath="LICENSE.md" />
         <None Include="..\..\README.md" Pack="True" PackagePath="README.md" />

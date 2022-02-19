@@ -104,6 +104,22 @@ PersonalIdentityNumber
  .IsTestNumber(): True
 ```
 
+#### StrictMode
+
+The library can be configured to use different levels 'strictness' when parsing identity numbers. The different levels are:
+- Off
+- Ten Digits
+- Twelve Digits
+- Ten or Twelve Digits
+
+By default 'Ten or Twelve Digits' is used but it can be overridden when calling `Parse` and `TryParse`, e.g.:
+```c#
+// this would fail since the input is not a 12 digit number.
+PersonalIdentityNumber.Parse("990807-2391", StrictMode.TwelveDigits); 
+```
+
+For more information regarding `StrictMode`, see the [FAQ](#what-formats-do-you-support-parsing).
+
 #### Hints
 
 Some data, such as DateOfBirth, Age and Gender can't be guaranteed to reflect the truth due to the limited quantity of personal identity numbers per day.
@@ -284,17 +300,18 @@ We do not agree that it follows from **Day has a range of 60-91** (00-31 when su
 
 #### Swedish Personal Identity Number
 
-It will try cleaning away any invalid chars, while still preserving digits and + when that applies.
+The library supports 'strict' and 'loose' parsing modes. In strict mode the client specifies the exact format they expect to be parsing, i.e. **StrictMode.TenDigits**, **StrictMode.TwelveDigits**, **StrictMode.TenOrTwelveDigits**. If the input string contains any additional characters or whitespace except digits and the optional delimiter (for 10-digit numbers) the parsing will fail. With the 'loose' parsing mode **Off**, any invalid characters will be removed from the input string, while still preserving digits and + when that applies.
 
-The "standard" ways of input would be in any of these formats:
-
-* YYMMDD-BBBC
-* YYMMDD+BBBC
-* YYMMDDBBBC
-* YYYYMMDDBBBC
-
-But it also supports other variations such as:
-
+- **StrictMode.TenDigits**
+    * YYMMDD-BBBC
+    * YYMMDD+BBBC
+    * YYMMDDBBBC
+- **StrictMode.TwelveDigits**
+    * YYYYMMDDBBBC
+- **StrictMode.TenOrTwelveDigits**
+    * Any of the above
+    
+**StrictMode.Off** would also support other variations such as
 * YYMMDD BBBC
 * YYYYMMDD-BBBC
 * YYYYMMDD BBBC
@@ -314,14 +331,24 @@ And basically anything else that can be cleaned and parsed :)
 #### Swedish Coordination Number
 
 As the definition of coordination number is very close to personal identity number, the section above applies to coordination number as well.
-It will try cleaning away any invalid chars, while still preserving digits and + when that applies.
+StrictMode works in the same way as for personal identity numbers:
 
-The "standard" ways of input would be in any of these formats:
+- **StrictMode.TenDigits**
+    * YYMMDD-IIIC
+    * YYMMDD+IIIC
+    * YYMMDDIIIC
+- **StrictMode.TwelveDigits**
+    * YYYYMMDDIIIC
+- **StrictMode.TenOrTwelveDigits**
+    * Any of the above
 
-* YYMMDD-IIIC
-* YYMMDD+IIIC
-* YYMMDDIIIC
-* YYYYMMDDIIIC
+**StrictMode.Off** would also support other variations such as
+
+* YYMMDD IIIC
+* YYYYMMDD-IIIC
+* YYYYMMDD IIIC
+* YYYY MM DD IIIC
+* YY-MM-DD-IIIC
 
 But, as described in [Exceptions to the definition](#exceptions-to-the-definition), a coordination number can have 00 for month and 60 (00) for day.
 Also, for a coordination number we have an individual number instead of birth number.
@@ -408,15 +435,15 @@ Please see our [contribution guidelines](CONTRIBUTING.md) before getting started
 
 Thank you to all who have and are contributing to this project!
 
-![Contributors](https://contrib.rocks/image?repo=ActiveLogin/ActiveLogin.Authentication)
+![Contributors](https://contrib.rocks/image?repo=ActiveLogin/ActiveLogin.Identity)
 
 
 ### Stay updated and join the discussion
 
 The three primary ways to interact and stay updated with Active Login are:
 
-- [Watch our GitHub repo](https://github.com/ActiveLogin/ActiveLogin.Authentication/watchers)
-- [Interact on GitHub Discussions](https://github.com/ActiveLogin/ActiveLogin.Authentication/discussions)
+- [Watch our GitHub repo](https://github.com/ActiveLogin/ActiveLogin.Identity/watchers)
+- [Interact on GitHub Discussions](https://github.com/ActiveLogin/ActiveLogin.Identity/discussions)
 - [Follow us on Twitter](https://twitter.com/ActiveLoginSE)
 
 
