@@ -43,18 +43,18 @@ jobs:
 
       - name: 'Dotnet pack: ci'
         run: |
-          dotnet pack ./src/ActiveLogin.Identity.Swedish/ActiveLogin.Identity.Swedish.csproj --output ${{ env.ciOutputFolder }} --configuration ${{ env.dotnetBuildConfiguration }} --verbosity ${{ env.dotnetVerbosity }} /p:Configuration=${{ env.dotnetBuildConfiguration }} /p:RepositoryBranch=${{ env.sourceRepositoryBranch }} /p:RepositoryCommit=${{ env.sourceRepositoryCommit }} /p:VersionSuffix=ci-$env:GITHUB_RUN_ID
+          dotnet pack ./src/ActiveLogin.Identity.Swedish/ActiveLogin.Identity.Swedish.fsproj --output ${{ env.ciOutputFolder }} --configuration ${{ env.dotnetBuildConfiguration }} --verbosity ${{ env.dotnetVerbosity }} /p:Configuration=${{ env.dotnetBuildConfiguration }} /p:RepositoryBranch=${{ env.sourceRepositoryBranch }} /p:RepositoryCommit=${{ env.sourceRepositoryCommit }} /p:VersionSuffix=ci-$env:GITHUB_RUN_ID
           dotnet pack ./src/ActiveLogin.Identity.Swedish.AspNetCore/ActiveLogin.Identity.Swedish.AspNetCore.csproj --output ${{ env.ciOutputFolder }} --configuration ${{ env.dotnetBuildConfiguration }} --verbosity ${{ env.dotnetVerbosity }} /p:Configuration=${{ env.dotnetBuildConfiguration }} /p:RepositoryBranch=${{ env.sourceRepositoryBranch }} /p:RepositoryCommit=${{ env.sourceRepositoryCommit }} /p:VersionSuffix=ci-$env:GITHUB_RUN_ID
-          dotnet pack ./src/ActiveLogin.Identity.Swedish.TestData/ActiveLogin.Identity.Swedish.TestData.csproj --output ${{ env.ciOutputFolder }} --configuration ${{ env.dotnetBuildConfiguration }} --verbosity ${{ env.dotnetVerbosity }} /p:Configuration=${{ env.dotnetBuildConfiguration }} /p:RepositoryBranch=${{ env.sourceRepositoryBranch }} /p:RepositoryCommit=${{ env.sourceRepositoryCommit }} /p:VersionSuffix=ci-$env:GITHUB_RUN_ID
+          dotnet pack ./src/ActiveLogin.Identity.Swedish.TestData/ActiveLogin.Identity.Swedish.TestData.fsproj --output ${{ env.ciOutputFolder }} --configuration ${{ env.dotnetBuildConfiguration }} --verbosity ${{ env.dotnetVerbosity }} /p:Configuration=${{ env.dotnetBuildConfiguration }} /p:RepositoryBranch=${{ env.sourceRepositoryBranch }} /p:RepositoryCommit=${{ env.sourceRepositoryCommit }} /p:VersionSuffix=ci-$env:GITHUB_RUN_ID
         shell: pwsh
         env:
           ciOutputFolder: ${{ runner.temp }}/ci
      
       - name: 'Dotnet pack: release'
         run: |
-          dotnet pack ./src/ActiveLogin.Identity.Swedish/ActiveLogin.Identity.Swedish.csproj --output ${{ env.releaseOutputFolder }} --configuration ${{ env.dotnetBuildConfiguration }} --verbosity ${{ env.dotnetVerbosity }} /p:Configuration=${{ env.dotnetBuildConfiguration }} /p:RepositoryBranch=${{ env.sourceRepositoryBranch }} /p:RepositoryCommit=${{ env.sourceRepositoryCommit }}
+          dotnet pack ./src/ActiveLogin.Identity.Swedish/ActiveLogin.Identity.Swedish.fsproj --output ${{ env.releaseOutputFolder }} --configuration ${{ env.dotnetBuildConfiguration }} --verbosity ${{ env.dotnetVerbosity }} /p:Configuration=${{ env.dotnetBuildConfiguration }} /p:RepositoryBranch=${{ env.sourceRepositoryBranch }} /p:RepositoryCommit=${{ env.sourceRepositoryCommit }}
           dotnet pack ./src/ActiveLogin.Identity.Swedish.AspNetCore/ActiveLogin.Identity.Swedish.AspNetCore.csproj --output ${{ env.releaseOutputFolder }} --configuration ${{ env.dotnetBuildConfiguration }} --verbosity ${{ env.dotnetVerbosity }} /p:Configuration=${{ env.dotnetBuildConfiguration }} /p:RepositoryBranch=${{ env.sourceRepositoryBranch }} /p:RepositoryCommit=${{ env.sourceRepositoryCommit }}
-          dotnet pack ./src/ActiveLogin.Identity.Swedish.TestData/ActiveLogin.Identity.Swedish.TestData.csproj --output ${{ env.releaseOutputFolder }} --configuration ${{ env.dotnetBuildConfiguration }} --verbosity ${{ env.dotnetVerbosity }} /p:Configuration=${{ env.dotnetBuildConfiguration }} /p:RepositoryBranch=${{ env.sourceRepositoryBranch }} /p:RepositoryCommit=${{ env.sourceRepositoryCommit }}
+          dotnet pack ./src/ActiveLogin.Identity.Swedish.TestData/ActiveLogin.Identity.Swedish.TestData.fsproj --output ${{ env.releaseOutputFolder }} --configuration ${{ env.dotnetBuildConfiguration }} --verbosity ${{ env.dotnetVerbosity }} /p:Configuration=${{ env.dotnetBuildConfiguration }} /p:RepositoryBranch=${{ env.sourceRepositoryBranch }} /p:RepositoryCommit=${{ env.sourceRepositoryCommit }}
         shell: pwsh
         env:
           releaseOutputFolder: ${{ runner.temp }}/release
