@@ -60,7 +60,7 @@ jobs:
           releaseOutputFolder: ${{ runner.temp }}/release
 
       - name: Dotnet test
-        run: dotnet test --configuration ${{ env.dotnetBuildConfiguration }} --collect "Code coverage"" -- Expecto.fail-on-focused-tests=true
+        run: dotnet test --configuration ${{ env.dotnetBuildConfiguration }} --collect "Code coverage" -- Expecto.fail-on-focused-tests=true
         shell: pwsh
 
       - name: Upload packages
