@@ -2,7 +2,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-orange.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://dev.azure.com/activesolution/ActiveLogin/_apis/build/status/ActiveLogin.Identity?branchName=master)](https://activesolution.visualstudio.com/ActiveLogin/_build/latest?definitionId=190&branchName=master)
-[![Discussion](https://img.shields.io/github/discussions/ActiveLogin/ActiveLogin.Identity)](https://github.com/ActiveLogin/ActiveLogin.Identity/discussions)
+[![Build Status](https://github.com/ActiveLogin/ActiveLogin.Identity/actions/workflows/build.yml/badge.svg)](https://github.com/ActiveLogin/ActiveLogin.Identity/actions/workflows/build.yml)
+[![Discussion](https://img.shields.io/github/discussions/ActiveLogin/ActiveLogin.Authentication)](https://github.com/ActiveLogin/ActiveLogin.Authentication/discussions)
 [![Twitter Follow](https://img.shields.io/badge/Twitter-@ActiveLoginSE-blue.svg?logo=twitter)](https://twitter.com/ActiveLoginSE)
 
 ActiveLogin.Identity provides parsing and validation of Swedish identities such as Personal Identity Number (svenskt personnummer) and Coordination Number (samordningsnummer). Built on NET Standard and packaged as NuGet-packages they are easy to install and use on multiple platforms.
@@ -33,9 +34,11 @@ ActiveLogin.Identity provides parsing and validation of Swedish identities such 
     + [What data are you using for tests and samples?](#what-data-are-you-using-for-tests-and-samples)
     + [When should I use `...InSpecificYear(...)`?](#when-should-i-use-inspecificyear)
 * [Active Login](#active-login)
+    + [Security](#security)
     + [Contribute](#contribute)
     + [Stay updated and join the discussion](#stay-updated-and-join-the-discussion)
-    + [License & acknowledgements](#license--acknowledgements)
+    + [License](#license)
+    + [Acknowledgements](#acknowledgements)
     + [Sponsors](#sponsors)
     + [Support & Training](#support--training)
 
@@ -408,37 +411,54 @@ Some forms of a Swedish Personal Identity Number and Swedish Coordination Number
 The "-" will be replaced with a "+" on January 1st the year a person turns 100 years old. Therefore these methods (`.To10DigitStringInSpecificYear(...)`, `.ParseInSpecificYear(...)`, `.TryParseInSpecificYear(...)`) exists to define at what year the the data should be represented or parsed.
 Useful for parsing old data or printing data for the future.
 
+
 ---
+
 
 ## Active Login
 
-_Integrating your systems with market leading authentication services._
-
-Active Login is an Open Source project built on .NET Standard that makes it easy to integrate with leading Swedish authentication services like [BankID](https://www.bankid.com/).
-
-It also provide examples of how to use it with the popular OpenID Connect & OAuth 2.0 Framework [IdentityServer](https://identityserver.io/) and provides a template for hosting the solution in Microsoft Azure.
+Active Login is an Open Source project built on .NET that makes it easy to integrate with leading Swedish authentication services like [BankID](https://www.bankid.com/).
 In addition, Active Login also contain convenient modules that help you work with and handle validation of Swedish Personal Identity Number (svenskt personnummer).
+
+
+### Security
+
+In our [Security Policy](SECURITY.md) you can read about how to report a vulnerability, how to subscribe to security alerts and what packages we currently support.
+
 
 ### Contribute
 
 We are very open to community contributions to Active Login.
 Please see our [contribution guidelines](CONTRIBUTING.md) before getting started.
 
+#### Contributors
+
+Thank you to all who have and are contributing to this project!
+
+![Contributors](https://contrib.rocks/image?repo=ActiveLogin/ActiveLogin.Identity)
+
+
 ### Stay updated and join the discussion
 
 The three primary ways to interact and stay updated with Active Login are:
 
 - [Watch our GitHub repo](https://github.com/ActiveLogin/ActiveLogin.Identity/watchers)
-- [GitHub Discussions](https://github.com/ActiveLogin/ActiveLogin.Identity/discussions)
-- [Twitter](https://twitter.com/ActiveLoginSE)
+- [Interact on GitHub Discussions](https://github.com/ActiveLogin/ActiveLogin.Identity/discussions)
+- [Follow us on Twitter](https://twitter.com/ActiveLoginSE)
 
-### License & acknowledgements
 
-Active Login is licensed under the very permissive [MIT license](https://opensource.org/licenses/MIT) for you to be able to use it in commercial or non-commercial applications without many restrictions.
+### License
+
+[Active Login is licensed](LICENSE.md) under the very permissive [MIT license](https://opensource.org/licenses/MIT) for you to be able to use it in commercial or non-commercial applications without many restrictions.
+
+*All trademarks are the property of their respective owners.*
+
+
+### Acknowledgements
 
 Active Login is built on or uses the following great open source products:
 
-* [.NET Core](https://github.com/dotnet/core)
+* [.NET](https://github.com/dotnet/core)
 * [FSharp](https://github.com/fsharp/fsharp)
 * [XUnit](https://github.com/xunit/xunit)
 * [Expecto](https://github.com/haf/expecto)
@@ -446,17 +466,23 @@ Active Login is built on or uses the following great open source products:
 * [Unquote](https://github.com/SwensenSoftware/unquote)
 * [BenchmarkDotNet](https://github.com/dotnet/BenchmarkDotNet)
 
+
 ### Sponsors
 
-Active Solution is the main sponsor of Active Login. Active Solution is located in Stockholm (Sweden) and provides IT consulting with focus on web, cloud and AI.
+Active Solution is the main sponsor of Active Login. Active Solution is located in Sweden and provides IT consulting with focus on web, Azure and AI.
 
-![Active Solution](https://activese-assets-prod.azureedge.net/graphics/activesolution-logo.svg)
+
+![Active Solution](https://alresourcesprod.blob.core.windows.net/docsassets/activesolution-logo.svg)
+
 
 _We deliver tomorrow's cloud solutions, today. Our costumers choose us because we are engaged, flexible and efficient. We attract the brightest talent and are one of Microsoft's most valued partners._
 
+And yes, [we are hiring](https://www.activesolution.se/jobb/) :woman_technologist: :)
+
 [https://www.activesolution.se/](https://www.activesolution.se/)
+
 
 ### Support & Training
 
 If you need help with implementing Active Login, there are commercial support & training options available.
-See [ActiveLogin.net](https://activelogin.net#support) for more details.
+See [ActiveLogin.net](https://activelogin.net#support) for more details on how to get in touch with us :telephone_receiver:.
