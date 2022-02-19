@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29324.140
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9A0CF459-87CC-448D-B49D-EFC3D6482AA6}"
 EndProject
@@ -21,6 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution files", "Solution 
 		global.json = global.json
 		LICENSE.md = LICENSE.md
 		README.md = README.md
+		SECURITY.md = SECURITY.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{812BD112-1B02-4012-9B4D-61E5EAE23044}"
@@ -31,7 +32,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{A83D638A-F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{64C47C88-4403-41A6-B8A3-AC12C1DA8206}"
 	ProjectSection(SolutionItems) = preProject
-		docs\images\active-login-logo-fingerprint-blue-256x256.png = docs\images\active-login-logo-fingerprint-blue-256x256.png
 		docs\images\active-login-logo-fingerprint-blue-v2-256x256.png = docs\images\active-login-logo-fingerprint-blue-v2-256x256.png
 		docs\images\coordination_number_definition.png = docs\images\coordination_number_definition.png
 	EndProjectSection
@@ -58,6 +58,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ISSUE_TEMPLATE", "ISSUE_TEM
 	ProjectSection(SolutionItems) = preProject
 		.github\ISSUE_TEMPLATE\bug_report.md = .github\ISSUE_TEMPLATE\bug_report.md
 		.github\ISSUE_TEMPLATE\feature_request.md = .github\ISSUE_TEMPLATE\feature_request.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{97140956-49E6-4BA6-A860-0E99DA020F34}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build.yml = .github\workflows\build.yml
+		.github\workflows\codeql-analysis.yml = .github\workflows\codeql-analysis.yml
 	EndProjectSection
 EndProject
 Global
@@ -119,6 +125,7 @@ Global
 		{74037699-2583-4482-B5E9-5065750C2041} = {12A0FDF2-523E-42C7-81FE-4FDCA5E66A69}
 		{3004FBFE-0F1D-4C26-A6B4-1C4E81827950} = {A62CB923-FBEA-4F05-A776-47F8F7569DA8}
 		{58E5121D-5631-432E-8FD7-7DE848657ACD} = {3004FBFE-0F1D-4C26-A6B4-1C4E81827950}
+		{97140956-49E6-4BA6-A860-0E99DA020F34} = {3004FBFE-0F1D-4C26-A6B4-1C4E81827950}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2076F58C-968B-489D-94CA-B3729F5DE10D}
