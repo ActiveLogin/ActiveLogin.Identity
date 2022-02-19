@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-orange.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://dev.azure.com/activesolution/ActiveLogin/_apis/build/status/ActiveLogin.Identity?branchName=master)](https://activesolution.visualstudio.com/ActiveLogin/_build/latest?definitionId=190&branchName=master)
 [![Build Status](https://github.com/ActiveLogin/ActiveLogin.Identity/actions/workflows/build.yml/badge.svg)](https://github.com/ActiveLogin/ActiveLogin.Identity/actions/workflows/build.yml)
-[![Discussion](https://img.shields.io/github/discussions/ActiveLogin/ActiveLogin.Authentication)](https://github.com/ActiveLogin/ActiveLogin.Authentication/discussions)
+[![Discussion](https://img.shields.io/github/discussions/ActiveLogin/ActiveLogin.Identity)](https://github.com/ActiveLogin/ActiveLogin.Identity/discussions)
 [![Twitter Follow](https://img.shields.io/badge/Twitter-@ActiveLoginSE-blue.svg?logo=twitter)](https://twitter.com/ActiveLoginSE)
 
 ActiveLogin.Identity provides parsing and validation of Swedish identities such as Personal Identity Number (svenskt personnummer) and Coordination Number (samordningsnummer). Built on NET Standard and packaged as NuGet-packages they are easy to install and use on multiple platforms.

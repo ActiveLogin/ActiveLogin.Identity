@@ -28,4 +28,4 @@ We might (and probably will) reject PR:s that does not follow the requirements a
 
 You can join our discussions on GitHub Discussions to discuss ideas and get early feedback:
 
-[![Discussion](https://img.shields.io/github/discussions/ActiveLogin/ActiveLogin.Authentication)](https://github.com/ActiveLogin/ActiveLogin.Authentication/discussions)
+[![Discussion](https://img.shields.io/github/discussions/ActiveLogin/ActiveLogin.Identity)](https://github.com/ActiveLogin/ActiveLogin.Identity/discussions)
