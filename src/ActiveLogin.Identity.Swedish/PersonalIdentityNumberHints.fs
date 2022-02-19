@@ -3,21 +3,17 @@ open System
 open System.Runtime.CompilerServices
 open ActiveLogin.Identity.Swedish
 open ActiveLogin.Identity.Swedish.Shared
+open ActiveLogin.Identity.Swedish.Shared.Hints
 
-module internal PersonalIdentityNumberHints =
+[<AutoOpen>]
+module internal Pin =
     let getDateOfBirthHint (pin: PersonalIdentityNumberInternal) =
         DateTime(pin.Year.Value, pin.Month.Value, pin.Day.Value, 0, 0, 0, DateTimeKind.Utc)
 
     let getAgeHintOnDate date pin =
-        let dateOfBirth = getDateOfBirthHint pin
-        if date >= dateOfBirth then
-            let months = 12 * (date.Year - dateOfBirth.Year) + (date.Month - dateOfBirth.Month)
-            match date.Day < dateOfBirth.Day with
-            | true ->
-                let years = (months - 1) / 12
-                years |> Some
-            | false -> months / 12 |> Some
-        else None
+        getDateOfBirthHint pin
+        |> getAge date
+        |> AgeResult.toInt
 
     let getAgeHint = getAgeHintOnDate DateTime.UtcNow
 
@@ -25,7 +21,6 @@ module internal PersonalIdentityNumberHints =
         match pin.BirthNumber.Value with
         | Even -> Gender.Female
         | Odd -> Gender.Male
-
 
 [<Extension>]
 type PersonalIdentityNumberHintExtensions() =
@@ -35,7 +30,7 @@ type PersonalIdentityNumberHintExtensions() =
     /// </summary>
     [<Extension>]
     static member GetDateOfBirthHint(pin : PersonalIdentityNumber) =
-        PersonalIdentityNumberHints.getDateOfBirthHint pin.IdentityNumber
+        getDateOfBirthHint pin.IdentityNumber
 
     /// <summary>
     /// Gender (juridiskt kön) in Sweden according to the last digit of the birth number in the personal identity number.
@@ -44,7 +39,7 @@ type PersonalIdentityNumberHintExtensions() =
     /// </summary>
     [<Extension>]
     static member GetGenderHint(pin : PersonalIdentityNumber) =
-        PersonalIdentityNumberHints.getGenderHint pin.IdentityNumber
+        getGenderHint pin.IdentityNumber
 
     /// <summary>
     /// Get the age of the person according to the date in the personal identity number.
@@ -54,19 +49,12 @@ type PersonalIdentityNumberHintExtensions() =
     /// <param name="date">The date when to calculate the age.</param>
     /// <returns></returns>
     [<Extension>]
-    static member GetAgeHint(pin : PersonalIdentityNumber, date : DateTime) =
-        PersonalIdentityNumberHints.getAgeHintOnDate date pin.IdentityNumber
-        |> function
-        | None -> invalidArg "pin" "The person is not yet born."
-        | Some i -> i
+    static member GetAgeHint(pin : PersonalIdentityNumber, date : DateTime) = getAgeHintOnDate date pin.IdentityNumber
 
     /// <summary>
     /// Get the age of the person according to the date in the personal identity number.
     /// Not always the actual date of birth due to the limited quantity of personal identity numbers per day.
     /// </summary>
     [<Extension>]
-    static member GetAgeHint(pin : PersonalIdentityNumber) =
-        PersonalIdentityNumberHints.getAgeHint pin.IdentityNumber
-        |> function
-        | None -> invalidArg "pin" "The person is not yet born."
-        | Some i -> i
+    static member GetAgeHint(pin : PersonalIdentityNumber) = getAgeHint pin.IdentityNumber
+
