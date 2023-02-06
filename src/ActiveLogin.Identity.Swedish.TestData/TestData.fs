@@ -135,7 +135,7 @@ type CoordinationNumberTestData() =
         getRandomWithCount(count)
         |> List.ofSeq
         |> Seq.map toCoordNum
-    /// A seqence of all test numbers ordered by date descending
+    /// A sequence of all test numbers ordered by date descending
     static member AllCoordinationNumbersByDateDesc() = allCoordNumsByDateDesc() |> Seq.map toCoordNum
     /// A sequence of all test numbers in random order
     static member AllCoordinationNumbersShuffled() = allCoordNumsShuffled() |> Seq.map toCoordNum
@@ -143,7 +143,7 @@ type CoordinationNumberTestData() =
     /// <summary>
     /// Checks if a CoordinationNumber is a test number
     /// </summary>
-    /// <param name="pin">A CoordinationNumber</param>
+    /// <param name="num">A CoordinationNumber</param>
     static member IsTestNumber (num:CoordinationNumber) =
         num
         |> toTuple
