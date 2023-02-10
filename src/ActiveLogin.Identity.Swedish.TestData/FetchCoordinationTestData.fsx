@@ -1,14 +1,6 @@
-// To run this script, make sure fake is installed, or install it:
-// "dotnet tool install fake-cli -g" or see here for more options: https://fake.build/fake-gettingstarted.html
-// to run the script:
-// "fake run FetchCoordinationTestData.fsx"
-// It will fetch the dependencies list below using paket and run the script.
-// If you are updating/adding any dependencies in the list below, remove the ".fake"-folder and the
-// FetchCoordinationTestData.fsx.lock-file and run the script again to download the new dependencies.
-#r "paket:
-nuget FSharp.Core 4.5.4
-nuget FSharp.Data //"
-#load "./.fake/FetchTestData.fsx/intellisense.fsx"
+// Run the script with dotnet fsi: 'dotnet fsi FetchCoordinationTestData.fsx'
+
+#r "nuget: FSharp.Data"
 #load "./FetchCommon.fs"
 
 open FSharp.Data
@@ -17,7 +9,7 @@ open System.Text
 open System.IO
 open FetchCommon
 
-type TestData = CsvProvider<"CoordinationTestDataTemplate.csv">
+type TestData = CsvProvider<const(__SOURCE_DIRECTORY__ + "/CoordinationTestDataTemplate.csv")>
 
 let [<Literal>] DayOffset = 60
 let getCoordNums url =
@@ -38,7 +30,11 @@ let isValidCoordNum (str: string) =
     isValid
 
 let nums =
-    [ "https://skatteverket.entryscape.net/store/9/resource/154" ]
+    [ "https://skatteverket.entryscape.net/store/9/resource/154"
+      "https://skatteverket.entryscape.net/store/9/resource/1027"
+      "https://skatteverket.entryscape.net/store/9/resource/1272"
+      "https://skatteverket.entryscape.net/store/9/resource/1581"
+      "https://skatteverket.entryscape.net/store/9/resource/1887" ]
     |> List.map getCoordNums
     |> Async.Parallel
     |> Async.RunSynchronously

@@ -10,6 +10,6 @@ let private tupleAsString (year, month, day, birthNumber, checksum) =
 let toStringTuple = parseAsTuple >> tupleAsString
 
 
-let appendLine (sb:System.Text.StringBuilder) line = sb.AppendLine line |> ignore
+let appendLine (sb:System.Text.StringBuilder) (line: string) = sb.AppendLine line |> ignore
 
 
