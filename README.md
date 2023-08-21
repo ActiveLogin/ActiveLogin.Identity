@@ -192,7 +192,21 @@ Therefore they are exposed as extension methods in the C# api and are suffixed w
 
 #### ASP.NET Core MVC
 
-CoordinationNumberAttribute: To be added.
+If used to validate input in an ASP.NET Core MVC project, the `CoordinationNumberAttribute` can be used like this:
+
+```c#
+public class SampleDataModel
+{
+    [CoordinationNumberAttribute]
+    public string CoordinationNumber { get; set; }
+}
+```
+
+The `CoordinationNumberAttribute` attribute is available through a separate package:
+
+```console
+dotnet add package ActiveLogin.Identity.Swedish.AspNetCore
+```
 
 ### 3. Use the library in your F# project
 
