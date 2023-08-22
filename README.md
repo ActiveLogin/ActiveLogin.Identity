@@ -197,7 +197,7 @@ If used to validate input in an ASP.NET Core MVC project, the `CoordinationNumbe
 ```c#
 public class SampleDataModel
 {
-    [CoordinationNumberAttribute]
+    [CoordinationNumber]
     public string CoordinationNumber { get; set; }
 }
 ```
