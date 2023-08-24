@@ -10,7 +10,7 @@ namespace ActiveLogin.Identity.Swedish.AspNetCore.Validation
     {
         /// <summary>Initializes a new instance of the <see cref="CoordinationNumberAttribute"></see> class.</summary>
         public CoordinationNumberAttribute()
-            : base("{0} is not a valid Swedish Coordination Number. It should follow a valid pattern such as YYMMNN-XXXX, YYMMNN+XXXX or YYYYMMNNXXXX.")
+            : base("{0} is not a valid Swedish Coordination Number. It should follow a valid pattern such as YYMMDD-IIIC, YYMMDD+IIIC or YYYYMMDDIIIC.")
         { }
 
         /// <summary>Initializes a new instance of the <see cref="CoordinationNumberAttribute"></see> class by using the function that enables access to validation resources.</summary>
