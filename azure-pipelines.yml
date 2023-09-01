@@ -113,21 +113,34 @@ stages:
       artifact: '$(sourceArtifactName)'
 
     - task: DownloadSecureFile@1
-      displayName: 'Download secure file: activesolution-codesigning-cert.pfx'
+      displayName: 'Download secure file: DigicertCodeSignCertificate.p12'
       name: codesigningCert
       inputs:
-        secureFile: 'activesolution-codesigning-cert.pfx'
+        secureFile: 'DigicertCodeSignCertificate.p12'
 
     - task: NuGetToolInstaller@1
       displayName: 'Install: NuGet'
       inputs:
         versionSpec: 5.x
 
+    - task: SSMClientToolsSetup@1
+      displayName: 'Install DigiCert​​®​​ Software Trust Manager'
+    - task: SSMSigningToolsSetup@1
+
+    - task: CmdLine@2
+      inputs:
+        script: 'smctl certificate download --keypair-alias=FLTest-1 --name=KeyCert.pem --out=$(Agent.TempDirectory)'
+      env:
+        SM_HOST: $(DigiCert.ProdHost)
+        SM_API_KEY: $(DigiCert.ApiKey)
+        SM_CLIENT_CERT_PASSWORD: $(DigiCert.ClientCertPassword)
+        SM_CLIENT_CERT_FILE: $(codesigningCert.secureFilePath)
+
     - task: NuGetCommand@2
       displayName: 'nuget sign'
       inputs:
         command: custom
-        arguments: 'sign "$(Pipeline.Workspace)/$(pathToNugetPackages)" -CertificatePath "$(codesigningCert.secureFilePath)" -CertificatePassword "$(codesigningCertPassword)" -Timestamper "$(codesigningTimestamperUrl)"'
+        arguments: 'sign "$(Pipeline.Workspace)/$(pathToNugetPackages)" -CertificatePath "$(codesigningCert.secureFilePath)" -CertificatePassword "$(DigiCert.ClientCertPassword)" -Timestamper "$(codesigningTimestamperUrl)"'
 
     - publish: '$(Pipeline.Workspace)/$(sourceArtifactName)'
       artifact: '$(targetArtifactName)'
