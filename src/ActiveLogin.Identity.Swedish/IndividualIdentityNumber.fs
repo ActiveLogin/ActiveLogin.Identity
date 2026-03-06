@@ -26,18 +26,13 @@ module internal IndividualIdentityNumber =
         parseInSpecificYearInternal parseYear str
 
     let tryParseInSpecificYear parseYear str =
-        try
-            parseInSpecificYearInternal parseYear str |> Some
-        with
-            exn -> None
+        let pYear = parseYear |> Year.create
+        Parse.tryParseInSpecificYear create StrictModeInternal.Off pYear str
 
     let parse str = Parse.parse create StrictModeInternal.Off str
 
     let tryParse str =
-        try
-            parse str |> Some
-        with
-            exn -> None
+        Parse.tryParse create StrictModeInternal.Off str
 
     let to10DigitStringInSpecificYear serializationYear (num: IndividualIdentityNumberInternal) =
         match num with

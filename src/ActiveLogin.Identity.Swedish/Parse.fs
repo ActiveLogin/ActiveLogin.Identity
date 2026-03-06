@@ -151,21 +151,38 @@ module private Helpers =
             (fullYear, month, day, birthNumber, checksum)
 
 let tee f x = f x; x
+
+let private runPipeline createFunc strictMode parseYear str =
+    str
+    |> Helpers.requireNotEmpty
+    |> Helpers.requireDigitCount strictMode
+    |> Helpers.clean strictMode
+    |> Helpers.addImplicitHyphen
+    |> Helpers.parseNumberValues parseYear
+    |> createFunc
+
+let tryParseInSpecificYear createFunc strictMode parseYear str =
+    try
+        runPipeline createFunc strictMode parseYear str |> Some
+    with
+        | :? ArgumentNullException -> None
+        | :? ArgumentOutOfRangeException -> None
+        | :? ArgumentException -> None
+        | :? FormatException -> None
+
 let parseInSpecificYear createFunc strictMode parseYear str =
     try
-        str
-        |> Helpers.requireNotEmpty
-        |> Helpers.requireDigitCount strictMode
-        |> Helpers.clean strictMode
-        |> Helpers.addImplicitHyphen
-        |> Helpers.parseNumberValues parseYear
-        |> createFunc
+        runPipeline createFunc strictMode parseYear str
     with
         | :? ArgumentOutOfRangeException as ex ->
             FormatException(sprintf "String was not recognized as a valid IdentityNumber. %s" ex.Message, ex) |> raise
         | :? ArgumentNullException -> reraise()
         | :? ArgumentException as ex ->
             FormatException(sprintf "String was not recognized as a valid IdentityNumber. %s" ex.Message, ex) |> raise
+
+let tryParse createFunc strictMode str =
+    let year = DateTime.UtcNow.Year |> Year.create
+    tryParseInSpecificYear createFunc strictMode year str
 
 let parse createFunc strictMode str =
     let year = DateTime.UtcNow.Year |> Year.create
