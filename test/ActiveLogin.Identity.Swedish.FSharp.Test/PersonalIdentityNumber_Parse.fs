@@ -76,16 +76,16 @@ let tests =
                 |> ignore
             }
             testProp "empty string returns throws" <| fun (Gen.EmptyString str) ->
-                toAction parse str
-                |> Expect.throwsWithType<FormatException>
-                |> Expect.throwsWithMessage
-                    "String was not recognized as a valid IdentityNumber. Cannot be empty string or whitespace."
+                let action = fun () -> parse str |> ignore
+                Expect.throwsWithType<FormatException> action
+                Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber. Cannot be empty string or whitespace." action
+            
             testProp "invalid number of digits throws" <| fun (Gen.Digits digits) ->
                 isInvalidNumberOfDigits digits ==>
                     lazy
-                        ( toAction parse digits
-                          |> Expect.throwsWithType<FormatException>
-                          |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber." )
+                        let action = fun () -> parse digits |> ignore
+                        Expect.throwsWithType<FormatException> action
+                        Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber." action
             testProp "pin with invalid year returns parsing error" <| fun (Gen.Pin.PinWithInvalidYear str) ->
                 toAction parse str
                 |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid year" ]
@@ -102,9 +102,9 @@ let tests =
                 toAction parse str
                 |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid checksum" ]
             testProp "parseInSpecificYear with empty string throws" <| fun (Gen.EmptyString str, Gen.ValidYear year) ->
-                toAction parseInSpecificYear (str, year)
-                |> Expect.throwsWithType<FormatException>
-                |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber. Cannot be empty string or whitespace."
+                let action = fun () -> parseInSpecificYear (str, year) |> ignore
+                Expect.throwsWithType<FormatException> action
+                Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber. Cannot be empty string or whitespace." action
             testProp "parseInSpecificYear with null string throws" <| fun (Gen.ValidYear year) ->
                 toAction parseInSpecificYear (null, year)
                 |> Expect.throwsWithType<ArgumentNullException>

@@ -17,9 +17,8 @@ let (|Even|Odd|) num =
     | _ -> Odd
 
 module Expect =
-    let throwsWithType<'texn> f =
+    let throwsWithType<'texn when 'texn :> exn> (f: unit -> _) =
         Expect.throwsT<'texn> f "Should throw with expected type"
-        f
 
     let throwsWithMessages (msgs: string list) f =
         Expect.throwsC

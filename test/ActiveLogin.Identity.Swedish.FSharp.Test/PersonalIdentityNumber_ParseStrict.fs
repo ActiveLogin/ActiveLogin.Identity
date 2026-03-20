@@ -44,51 +44,57 @@ let tests =
         testList "invalid personal identity number - StrictMode.TenDigits" [
 
             testProp "12 digit string" <| fun (Gen.Pin.ValidPin pin) ->
-                toAction parseStrictTenDigits (pin.To12DigitString())
-                |> Expect.throwsWithType<FormatException>
-                |> Expect.throwsWithMessage "String was not recognized as a ten digit IdentityNumber."
+                let action = fun () -> parseStrictTenDigits (pin.To12DigitString()) |> ignore
+                Expect.throwsWithType<FormatException> action
+                Expect.throwsWithMessage "String was not recognized as a ten digit IdentityNumber." action
 
             testProp "string mixed with 'non-digits' except plus"
-                <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
-                    let charsWithoutPlus =
-                        let isDigitOrPlus (c:char) = "0123456789+".Contains c
-                        charArray
-                        |> Array.filter (isDigitOrPlus >> not)
-                    let str =
-                        pin.To10DigitString()
-                        |> (surroundEachChar charsWithoutPlus)
-                    toAction parseStrictTenDigits str
-                    |> Expect.throwsWithType<FormatException>
-                    |> Expect.throwsWithMessage "String was not recognized as a ten digit IdentityNumber."
+            <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
+                let charsWithoutPlus =
+                    let isDigitOrPlus (c:char) = "0123456789+".Contains c
+                    charArray |> Array.filter (isDigitOrPlus >> not)
+            
+                let str =
+                    pin.To10DigitString()
+                    |> surroundEachChar charsWithoutPlus
+            
+                let action = fun () -> parseStrictTenDigits str |> ignore
+            
+                Expect.throwsWithType<FormatException> action
+                Expect.throwsWithMessage "String was not recognized as a ten digit IdentityNumber." action
+
             testProp "string without hyphen delimiter, mixed with 'non-digits' except plus"
-                <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
-                    let charsWithoutPlus =
-                        let isDigitOrPlus (c:char) = "0123456789+".Contains c
-                        charArray
-                        |> Array.filter (isDigitOrPlus >> not)
-                    let str =
-                        pin.To10DigitString()
-                        |> removeHyphen
-                        |> (surroundEachChar charsWithoutPlus)
-                    toAction parseStrictTenDigits str
-                    |> Expect.throwsWithType<FormatException>
-                    |> Expect.throwsWithMessage "String was not recognized as a ten digit IdentityNumber."
+            <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
+                let charsWithoutPlus =
+                    let isDigitOrPlus (c:char) = "0123456789+".Contains c
+                    charArray |> Array.filter (isDigitOrPlus >> not)
+            
+                let str =
+                    pin.To10DigitString()
+                    |> removeHyphen
+                    |> surroundEachChar charsWithoutPlus
+            
+                let action = fun () -> parseStrictTenDigits str |> ignore
+            
+                Expect.throwsWithType<FormatException> action
+                Expect.throwsWithMessage "String was not recognized as a ten digit IdentityNumber." action
+
             test "null string throws" {
                 toAction parseStrictTenDigits null
                 |> Expect.throwsWithType<ArgumentNullException>
                 |> ignore
             }
             testProp "empty string throws" <| fun (Gen.EmptyString str) ->
-                toAction parseStrictTenDigits str
-                |> Expect.throwsWithType<FormatException>
-                |> Expect.throwsWithMessage
-                    "String was not recognized as a valid IdentityNumber. Cannot be empty string or whitespace."
+                let action = fun () -> parseStrictTenDigits str |> ignore
+                Expect.throwsWithType<FormatException> action
+                Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber. Cannot be empty string or whitespace." action
+            
             testProp "invalid number of digits throws" <| fun (Gen.Digits digits) ->
                 isInvalidNumberOfDigits digits ==>
                     lazy
-                        ( toAction parseStrictTenDigits digits
-                          |> Expect.throwsWithType<FormatException>
-                          |> Expect.throwsWithMessage "String was not recognized as a ten digit IdentityNumber." )
+                        let action = fun () -> parseStrictTenDigits digits |> ignore
+                        Expect.throwsWithType<FormatException> action
+                        Expect.throwsWithMessage "String was not recognized as a ten digit IdentityNumber." action
             testProp "pin with invalid month returns parsing error" <| fun (Gen.Pin.PinWithInvalidMonth str) ->
                 toAction parseStrictTenDigits str.[2..]
                 |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; " Invalid month"]
@@ -102,9 +108,9 @@ let tests =
                 toAction parseStrictTenDigits str.[2..]
                 |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid checksum" ]
             testProp "parseInSpecificYear with empty string throws" <| fun (Gen.EmptyString str, Gen.ValidYear year) ->
-                toAction parseStrictTenDigitsInSpecificYear (str, year)
-                |> Expect.throwsWithType<FormatException>
-                |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber. Cannot be empty string or whitespace."
+                let action = fun () -> parseStrictTenDigitsInSpecificYear (str, year) |> ignore
+                Expect.throwsWithType<FormatException> action
+                Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber. Cannot be empty string or whitespace." action
             testProp "parseInSpecificYear with null string throws" <| fun (Gen.ValidYear year) ->
                 toAction parseStrictTenDigitsInSpecificYear (null, year)
                 |> Expect.throwsWithType<ArgumentNullException>
@@ -126,59 +132,58 @@ let tests =
         testList "invalid personal identity number - StrictMode.TwelveDigits" [
 
             testProp "10 digit string without hyphen-delimiter" <| fun (Gen.Pin.ValidPin pin) ->
-                pin.To10DigitString()
-                |> removeHyphen
-                |> toAction parseStrictTwelveDigits
-                |> Expect.throwsWithType<FormatException>
-                |> Expect.throwsWithMessage "String was not recognized as a twelve digit IdentityNumber."
+                let str = pin.To10DigitString() |> removeHyphen
+                let action = fun () -> parseStrictTwelveDigits str |> ignore
+            
+                Expect.throwsWithType<FormatException> action
+                Expect.throwsWithMessage "String was not recognized as a twelve digit IdentityNumber." action
 
-            testProp "10 digit string mixed with 'non-digits' except plus"
-                <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
-                    let charsWithoutPlus =
-                        let isDigitOrPlus (c:char) = "0123456789+".Contains c
-                        charArray
-                        |> Array.filter (isDigitOrPlus >> not)
+            testProp "10 digit string mixed with 'non-digits' except plus" <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
+                let charsWithoutPlus =
+                    let isDigitOrPlus (c:char) = "0123456789+".Contains c
+                    charArray |> Array.filter (isDigitOrPlus >> not)
+            
+                let str =
                     pin.To10DigitString()
-                    |> (surroundEachChar charsWithoutPlus)
-                    |> toAction parseStrictTwelveDigits
-                    |> Expect.throwsWithType<FormatException>
-                    |> Expect.throwsWithMessage "String was not recognized as a twelve digit IdentityNumber."
+                    |> surroundEachChar charsWithoutPlus
+            
+                let action = fun () -> parseStrictTwelveDigits str |> ignore
+            
+                Expect.throwsWithType<FormatException> action
+                Expect.throwsWithMessage "String was not recognized as a twelve digit IdentityNumber." action
 
             testProp "10 digit string with delimiter" <| fun (Gen.Pin.ValidPin pin) ->
-                pin.To10DigitString()
-                |> toAction parseStrictTwelveDigits
-                |> Expect.throwsWithType<FormatException>
-                |> Expect.throwsWithMessage "String was not recognized as a twelve digit IdentityNumber."
-
+                let str = pin.To10DigitString()
+                let action = fun () -> parseStrictTwelveDigits str |> ignore
+            
+                Expect.throwsWithType<FormatException> action
+                Expect.throwsWithMessage "String was not recognized as a twelve digit IdentityNumber." action
+            
             testPropWithMaxTest 400 "10 digit string 'in specific year'" <| fun (Gen.Pin.ValidPin pin) ->
                 let offset = rng.Next (0, 200)
                 let year = pin.Year + offset
-                (pin.To10DigitStringInSpecificYear year, year)
-                |> toAction parseStrictTwelveDigitsInSpecificYear
-                |> Expect.throwsWithType<FormatException>
-                |> Expect.throwsWithMessage "String was not recognized as a twelve digit IdentityNumber."
-
-            testProp "12 digit string mixed with 'non-digits'"
-                <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
-                    let charsWithoutDigits =
-                        charArray
-                        |> Array.filter (isDigit >> not)
-                    pin.To12DigitString()
-                    |> surroundEachChar charsWithoutDigits
-                    |> toAction parseStrictTwelveDigits
-                    |> Expect.throwsWithType<FormatException>
-                    |> Expect.throwsWithMessage "String was not recognized as a twelve digit IdentityNumber."
-
-            testPropWithMaxTest 400 "10 digit string without hyphen delimiter 'in specific year'"
-                <| fun (Gen.Pin.ValidPin pin) ->
-                    let offset = rng.Next (0, 200)
-                    let year = pin.Year + offset
-                    let str =
-                        pin.To10DigitStringInSpecificYear year
-                        |> removeHyphen
-                    toAction parseStrictTwelveDigitsInSpecificYear (str, year)
-                    |> Expect.throwsWithType<FormatException>
-                    |> Expect.throwsWithMessage "String was not recognized as a twelve digit IdentityNumber."
+                let str = pin.To10DigitStringInSpecificYear year
+                let action = fun () -> parseStrictTwelveDigitsInSpecificYear (str, year) |> ignore
+            
+                Expect.throwsWithType<FormatException> action
+                Expect.throwsWithMessage "String was not recognized as a twelve digit IdentityNumber." action
+            
+            testProp "12 digit string mixed with 'non-digits'" <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
+                let charsWithoutDigits = charArray |> Array.filter (isDigit >> not)
+                let str = pin.To12DigitString() |> surroundEachChar charsWithoutDigits
+                let action = fun () -> parseStrictTwelveDigits str |> ignore
+            
+                Expect.throwsWithType<FormatException> action
+                Expect.throwsWithMessage "String was not recognized as a twelve digit IdentityNumber." action
+            
+            testPropWithMaxTest 400 "10 digit string without hyphen delimiter 'in specific year'" <| fun (Gen.Pin.ValidPin pin) ->
+                let offset = rng.Next (0, 200)
+                let year = pin.Year + offset
+                let str = pin.To10DigitStringInSpecificYear year |> removeHyphen
+                let action = fun () -> parseStrictTwelveDigitsInSpecificYear (str, year) |> ignore
+            
+                Expect.throwsWithType<FormatException> action
+                Expect.throwsWithMessage "String was not recognized as a twelve digit IdentityNumber." action
 
             test "null string throws" {
                 toAction parseStrictTwelveDigits null
@@ -186,16 +191,16 @@ let tests =
                 |> ignore
             }
             testProp "empty string throws" <| fun (Gen.EmptyString str) ->
-                toAction parseStrictTwelveDigits str
-                |> Expect.throwsWithType<FormatException>
-                |> Expect.throwsWithMessage
-                    "String was not recognized as a valid IdentityNumber. Cannot be empty string or whitespace."
+                let action = fun () -> parseStrictTwelveDigits str |> ignore
+                Expect.throwsWithType<FormatException> action
+                Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber. Cannot be empty string or whitespace." action
+            
             testProp "invalid number of digits throws" <| fun (Gen.Digits digits) ->
                 isInvalidNumberOfDigits digits ==>
                     lazy
-                        ( toAction parseStrictTwelveDigits digits
-                          |> Expect.throwsWithType<FormatException>
-                          |> Expect.throwsWithMessage "String was not recognized as a twelve digit IdentityNumber." )
+                        let action = fun () -> parseStrictTwelveDigits digits |> ignore
+                        Expect.throwsWithType<FormatException> action
+                        Expect.throwsWithMessage "String was not recognized as a twelve digit IdentityNumber." action
             testProp "pin with invalid year returns parsing error" <| fun (Gen.Pin.PinWithInvalidYear str) ->
                 toAction parseStrictTwelveDigits str
                 |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid year" ]
@@ -212,9 +217,9 @@ let tests =
                 toAction parseStrictTwelveDigits str
                 |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid checksum" ]
             testProp "parseInSpecificYear with empty string throws" <| fun (Gen.EmptyString str, Gen.ValidYear year) ->
-                toAction parseStrictTwelveDigitsInSpecificYear (str, year)
-                |> Expect.throwsWithType<FormatException>
-                |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber. Cannot be empty string or whitespace."
+                let action = fun () -> parseStrictTwelveDigitsInSpecificYear (str, year) |> ignore
+                Expect.throwsWithType<FormatException> action
+                Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber. Cannot be empty string or whitespace." action
             testProp "parseInSpecificYear with null string throws" <| fun (Gen.ValidYear year) ->
                 toAction parseStrictTwelveDigitsInSpecificYear (null, year)
                 |> Expect.throwsWithType<ArgumentNullException>
@@ -256,47 +261,42 @@ let tests =
 
         testList "invalid personal identity number - StrictMode.TenOrTwelveDigits" [
 
-            testProp "string mixed with 'non-digits' except plus"
-                <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
-                    let charsWithoutPlus =
-                        let isDigitOrPlus (c:char) = "0123456789+".Contains c
-                        charArray
-                        |> Array.filter (isDigitOrPlus >> not)
-                    let str =
-                        pin.To10DigitString()
-                        |> (surroundEachChar charsWithoutPlus)
-                    toAction parseStrictTenOrTwelveDigits str
-                    |> Expect.throwsWithType<FormatException>
-                    |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber."
-            testProp "string without hyphen delimiter, mixed with 'non-digits' except plus"
-                <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
-                    let charsWithoutPlus =
-                        let isDigitOrPlus (c:char) = "0123456789+".Contains c
-                        charArray
-                        |> Array.filter (isDigitOrPlus >> not)
-                    let str =
-                        pin.To10DigitString()
-                        |> removeHyphen
-                        |> (surroundEachChar charsWithoutPlus)
-                    toAction parseStrictTenOrTwelveDigits str
-                    |> Expect.throwsWithType<FormatException>
-                    |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber."
+            testProp "string mixed with 'non-digits' except plus" <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
+                let charsWithoutPlus =
+                    let isDigitOrPlus (c:char) = "0123456789+".Contains c
+                    charArray |> Array.filter (isDigitOrPlus >> not)
+            
+                let str = pin.To10DigitString() |> surroundEachChar charsWithoutPlus
+                let action = fun () -> parseStrictTenOrTwelveDigits str |> ignore
+            
+                Expect.throwsWithType<FormatException> action
+                Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber." action
+            testProp "string without hyphen delimiter, mixed with 'non-digits' except plus" <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
+                let charsWithoutPlus =
+                    let isDigitOrPlus (c:char) = "0123456789+".Contains c
+                    charArray |> Array.filter (isDigitOrPlus >> not)
+            
+                let str = pin.To10DigitString() |> removeHyphen |> surroundEachChar charsWithoutPlus
+                let action = fun () -> parseStrictTenOrTwelveDigits str |> ignore
+            
+                Expect.throwsWithType<FormatException> action
+                Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber." action
             test "null string throws" {
                 toAction parseStrictTenOrTwelveDigits null
                 |> Expect.throwsWithType<ArgumentNullException>
                 |> ignore
             }
             testProp "empty string returns throws" <| fun (Gen.EmptyString str) ->
-                toAction parseStrictTenOrTwelveDigits str
-                |> Expect.throwsWithType<FormatException>
-                |> Expect.throwsWithMessage
-                    "String was not recognized as a valid IdentityNumber. Cannot be empty string or whitespace."
+                let action = fun () -> parseStrictTenOrTwelveDigits str |> ignore
+                Expect.throwsWithType<FormatException> action
+                Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber. Cannot be empty string or whitespace." action
+            
             testProp "invalid number of digits throws" <| fun (Gen.Digits digits) ->
                 isInvalidNumberOfDigits digits ==>
                     lazy
-                        ( toAction parseStrictTenOrTwelveDigits digits
-                          |> Expect.throwsWithType<FormatException>
-                          |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber." )
+                        let action = fun () -> parseStrictTenOrTwelveDigits digits |> ignore
+                        Expect.throwsWithType<FormatException> action
+                        Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber." action
             testProp "pin with invalid year returns parsing error" <| fun (Gen.Pin.PinWithInvalidYear str) ->
                 toAction parseStrictTenOrTwelveDigits str
                 |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid year" ]
@@ -313,35 +313,31 @@ let tests =
                 toAction parseStrictTenOrTwelveDigits str
                 |> Expect.throwsWithMessages [ "String was not recognized as a valid IdentityNumber."; "Invalid checksum" ]
             testProp "parseInSpecificYear with empty string throws" <| fun (Gen.EmptyString str, Gen.ValidYear year) ->
-                toAction parseStrictTenOrTwelveDigitsInSpecificYear (str, year)
-                |> Expect.throwsWithType<FormatException>
-                |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber. Cannot be empty string or whitespace."
+                let action = fun () -> parseStrictTenOrTwelveDigitsInSpecificYear (str, year) |> ignore
+                Expect.throwsWithType<FormatException> action
+                Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber. Cannot be empty string or whitespace." action
             testProp "parseInSpecificYear with null string throws" <| fun (Gen.ValidYear year) ->
                 toAction parseStrictTenOrTwelveDigitsInSpecificYear (null, year)
                 |> Expect.throwsWithType<ArgumentNullException>
                 |> ignore
 
-            testProp "10 digit string mixed with 'non-digits' except plus"
-                <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
-                    let charsWithoutPlus =
-                        let isDigitOrPlus (c:char) = "0123456789+".Contains c
-                        charArray
-                        |> Array.filter (isDigitOrPlus >> not)
-                    pin.To10DigitString()
-                    |> (surroundEachChar charsWithoutPlus)
-                    |> toAction parseStrictTenOrTwelveDigits
-                    |> Expect.throwsWithType<FormatException>
-                    |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber."
-
-            testProp "12 digit string mixed with 'non-digits'"
-                <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
-                    let charsWithoutDigits =
-                        charArray
-                        |> Array.filter (isDigit >> not)
-                    pin.To12DigitString()
-                    |> surroundEachChar charsWithoutDigits
-                    |> toAction parseStrictTenOrTwelveDigits
-                    |> Expect.throwsWithType<FormatException>
-                    |> Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber."
+            testProp "10 digit string mixed with 'non-digits' except plus" <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
+                let charsWithoutPlus =
+                    let isDigitOrPlus (c:char) = "0123456789+".Contains c
+                    charArray |> Array.filter (isDigitOrPlus >> not)
+            
+                let str = pin.To10DigitString() |> surroundEachChar charsWithoutPlus
+                let action = fun () -> parseStrictTenOrTwelveDigits str |> ignore
+            
+                Expect.throwsWithType<FormatException> action
+                Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber." action
+            
+            testProp "12 digit string mixed with 'non-digits'" <| fun (Gen.Pin.ValidPin pin, Gen.Char100 charArray) ->
+                let charsWithoutDigits = charArray |> Array.filter (isDigit >> not)
+                let str = pin.To12DigitString() |> surroundEachChar charsWithoutDigits
+                let action = fun () -> parseStrictTenOrTwelveDigits str |> ignore
+            
+                Expect.throwsWithType<FormatException> action
+                Expect.throwsWithMessage "String was not recognized as a valid IdentityNumber." action
         ]
     ]
