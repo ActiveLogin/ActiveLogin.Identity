@@ -64,7 +64,7 @@ jobs:
         shell: pwsh
 
       - name: Upload packages
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with: 
             name: ${{ matrix.artifactName }}
             path: |
