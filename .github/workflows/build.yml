@@ -31,7 +31,10 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v1.7.2
+        uses: actions/setup-dotnet@v3
+        with:
+            dotnet-version: 10.0.101
+            architecture: x64
       
       - name: Dotnet restore
         run: dotnet restore --verbosity ${{ env.dotnetVerbosity }}
@@ -64,7 +67,7 @@ jobs:
         shell: pwsh
 
       - name: Upload packages
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with: 
             name: ${{ matrix.artifactName }}
             path: |

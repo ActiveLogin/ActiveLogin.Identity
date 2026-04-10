@@ -22,62 +22,56 @@ let tests =
                 |> Gen.stringToValues
                 |> PersonalIdentityNumber
             pin.To12DigitString() =! str
-        testPropWithMaxTest 20000 "with invalid year throws" <|
-            fun (Gen.Pin.ValidValues (_, m, d, b, c), Gen.InvalidYear invalidYear) ->
-                toAction PersonalIdentityNumber (invalidYear, m, d, b, c)
-                |> Expect.throwsWithType<ArgumentOutOfRangeException>
-                |> Expect.throwsWithMessage "Invalid year"
+        testPropWithMaxTest 20000 "with invalid year throws" <| fun (Gen.Pin.ValidValues (_, m, d, b, c), Gen.InvalidYear invalidYear) ->
+            let action = fun () -> PersonalIdentityNumber (invalidYear, m, d, b, c) |> ignore
+            Expect.throwsWithType<ArgumentOutOfRangeException> action
+            Expect.throwsWithMessage "Invalid year" action
 
         testPropWithMaxTest 20000 "with valid year does not throw exception for year" <|
             fun (Gen.Pin.ValidValues (_, m, d, b, c), Gen.ValidYear validYear) ->
                 toAction PersonalIdentityNumber (validYear, m, d, b, c)
                 |> Expect.doesNotThrowWithMessage "Invalid year"
 
-        testProp "with invalid month throws" <|
-            fun (Gen.Pin.ValidValues (y, _, d, b, c), Gen.InvalidMonth invalidMonth) ->
-                toAction PersonalIdentityNumber (y, invalidMonth, d, b, c)
-                |> Expect.throwsWithType<ArgumentOutOfRangeException>
-                |> Expect.throwsWithMessage "Invalid month"
+        testProp "with invalid month throws" <| fun (Gen.Pin.ValidValues (y, _, d, b, c), Gen.InvalidMonth invalidMonth) ->
+            let action = fun () -> PersonalIdentityNumber (y, invalidMonth, d, b, c) |> ignore
+            Expect.throwsWithType<ArgumentOutOfRangeException> action
+            Expect.throwsWithMessage "Invalid month" action
 
         testProp "with valid month does not throw exception for month" <|
             fun (Gen.Pin.ValidValues (y, _, d, b, c), Gen.ValidMonth validMonth) ->
                 toAction PersonalIdentityNumber (y, validMonth, d, b, c)
                 |> Expect.doesNotThrowWithMessage "Invalid month"
 
-        testProp "with invalid day throws" <|
-            fun (Gen.Pin.WithInvalidDay (y, m, d, b, c)) ->
-                toAction PersonalIdentityNumber (y, m, d, b, c)
-                |> Expect.throwsWithType<ArgumentOutOfRangeException>
-                |> Expect.throwsWithMessage "Invalid day of month"
+        testProp "with invalid day throws" <| fun (Gen.Pin.WithInvalidDay (y, m, d, b, c)) ->
+            let action = fun () -> PersonalIdentityNumber (y, m, d, b, c) |> ignore
+            Expect.throwsWithType<ArgumentOutOfRangeException> action
+            Expect.throwsWithMessage "Invalid day of month" action
 
         testProp "with valid day does not throw exception for day" <| fun (Gen.Pin.WithValidDay (y, m, d, b, c)) ->
             toAction PersonalIdentityNumber (y, m, d, b, c)
             |> Expect.doesNotThrowWithMessage "Invalid day of month"
 
-        testProp "with invalid birth number throws" <|
-            fun (Gen.Pin.ValidValues (y, m, d, _, c), Gen.InvalidBirthNumber invalidBirthNumber) ->
-                toAction PersonalIdentityNumber (y, m, d, invalidBirthNumber, c)
-                |> Expect.throwsWithType<ArgumentOutOfRangeException>
-                |> Expect.throwsWithMessage "Invalid birth number"
+        testProp "with invalid birth number throws" <| fun (Gen.Pin.ValidValues (y, m, d, _, c), Gen.InvalidBirthNumber invalidBirthNumber) ->
+            let action = fun () -> PersonalIdentityNumber (y, m, d, invalidBirthNumber, c) |> ignore
+            Expect.throwsWithType<ArgumentOutOfRangeException> action
+            Expect.throwsWithMessage "Invalid birth number" action
 
         testPropWithMaxTest 3000 "with valid birth number does not throw exception for birth number" <|
             fun (Gen.Pin.ValidValues (y, m, d, _, c), Gen.ValidBirthNumber validBirthNumber) ->
                 toAction PersonalIdentityNumber (y, m, d, validBirthNumber, c)
                 |> Expect.doesNotThrowWithMessage "Invalid birth number"
 
-        testProp "invalid checksum throws" <|
-            fun (Gen.Pin.ValidValues (y, m, d, b, c)) ->
-                let invalidChecksums =
-                    [ 0..9 ]
-                    |> List.except [ c ]
-
-                let withInvalidChecksums =
-                    invalidChecksums
-                    |> List.map (fun checksum -> (y, m, d, b, checksum))
-
-                withInvalidChecksums
-                |> List.iter (fun (y, m, d, b, cs) ->
-                    toAction PersonalIdentityNumber (y, m, d, b, cs)
-                    |> Expect.throwsWithType<ArgumentException>
-                    |> Expect.throwsWithMessage "Invalid checksum" )
+        testProp "invalid checksum throws" <| fun (Gen.Pin.ValidValues (y, m, d, b, c)) ->
+            let invalidChecksums =
+                [0..9] |> List.except [c]
+        
+            let withInvalidChecksums =
+                invalidChecksums |> List.map (fun cs -> (y, m, d, b, cs))
+        
+            withInvalidChecksums
+            |> List.iter (fun (y, m, d, b, cs) ->
+                let action = fun () -> PersonalIdentityNumber (y, m, d, b, cs) |> ignore
+                Expect.throwsWithType<ArgumentException> action
+                Expect.throwsWithMessage "Invalid checksum" action
+            )
     ]
