@@ -55,19 +55,13 @@ module internal CoordinationNumber =
         parseInSpecificYearInternal strictMode parseYear str
 
     let tryParseInSpecificYear strictMode parseYear str =
-        try
-            parseInSpecificYearInternal strictMode parseYear str
-            |> Some
-        with
-            exn -> None
+        let pYear = Year.create parseYear
+        Parse.tryParseInSpecificYear create strictMode pYear str
 
     let parse strictMode str = Parse.parse create strictMode str
 
     let tryParse strictMode str =
-        try
-            parse strictMode str |> Some
-        with
-            exn -> None
+        Parse.tryParse create strictMode str
 
 open CoordinationNumber
 
